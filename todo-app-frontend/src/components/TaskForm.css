@@ -1,0 +1,215 @@
+.task-form {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px 28px;
+  margin: 24px 48px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid #e0e0e0;
+}
+
+/* ✅ textarea có thể xuống dòng và tự tăng chiều cao */
+.task-title-input {
+  font-size: 18px;
+  font-weight: 600;
+  color: #202020;
+  outline: none;
+  padding: 4px 0;
+  resize: none;
+  overflow: hidden;
+  width: 100%;
+  border: none;
+  line-height: 1.4;
+  background-color: transparent;
+  font-family: inherit;
+}
+
+.task-note-input {
+  border: none;
+  font-size: 15px;
+  color: #666;
+  outline: none;
+  padding: 2px 0;
+  width: 100%;
+  background-color: transparent;
+  font-family: inherit;
+}
+
+.task-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.task-option {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fafafa;
+  font-size: 13px;
+  color: #444;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.task-option:hover {
+  background-color: #f0f0f0;
+}
+
+.task-option svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.task-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.task-type {
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  background-color: #f9f9f9;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.task-type:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown-arrow {
+  font-size: 12px;
+  color: #999;
+}
+
+.project-dropdown {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 4px;
+  z-index: 20;
+  width: max-content;
+  min-width: 140px;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.project-dropdown-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.project-dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+.task-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.cancel-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.submit-btn {
+  background-color: #dc4c3e;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 6px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.submit-btn:hover {
+  background-color: #c03b2f;
+}
+
+/* ✅ Disabled state cho Add task */
+.submit-btn.disabled {
+  background-color: #f9c7c1;
+  color: white;
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+/* ✅ Đảm bảo nút bị disabled có icon chuột "cấm" */
+button:disabled {
+  cursor: not-allowed !important;
+}
+
+/* Animation for dropdown */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .task-form {
+    margin: 16px;
+    padding: 16px 20px;
+  }
+
+  .task-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .task-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .project-dropdown {
+    left: unset;
+    right: 0;
+  }
+}

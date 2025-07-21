@@ -1,0 +1,100 @@
+.completed-section {
+  padding: 24px 48px;
+}
+
+.completed-group {
+  margin-bottom: 32px;
+}
+
+.completed-group h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.completed-task-row {
+  display: flex;
+  align-items: flex-start;
+  margin-left: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #333;
+}
+
+.completed-check-icon {
+  margin-right: 12px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.completed-task-info {
+  flex: 1;
+}
+
+.completed-task-info p {
+  margin: 0;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.completed-task-info .task-title {
+  font-weight: 500;
+  color: #202020;
+}
+
+.completed-meta {
+  font-size: 13px;
+  color: #888;
+  margin-top: 4px;
+  display: block;
+}
+
+/* No completed tasks */
+.no-completed {
+  text-align: center;
+  margin-top: 80px;
+  color: #888;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.no-completed img {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  margin-bottom: 24px;
+}
+
+.no-completed h2 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #202020;
+}
+
+.no-completed p {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .completed-section {
+    padding: 16px 24px;
+  }
+
+  .no-completed img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .no-completed h2 {
+    font-size: 16px;
+  }
+
+  .no-completed p {
+    font-size: 13px;
+  }
+}

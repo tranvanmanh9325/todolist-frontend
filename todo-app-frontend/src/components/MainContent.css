@@ -1,0 +1,242 @@
+.main-content {
+  flex-grow: 1;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Đảm bảo không tràn */
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.main-header {
+  padding: 32px 48px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.main-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #202020;
+  margin: 0;
+}
+
+/* Welcome screen */
+.welcome {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 16px;
+}
+
+.welcome-img {
+  width: 220px;
+  height: 232px;
+  object-fit: contain;
+  margin-bottom: 24px;
+}
+
+.welcome h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #202020;
+  margin-bottom: 8px;
+}
+
+.welcome p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.add-task-centered {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #dc4c3e;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.add-task-centered:hover {
+  background-color: #c03b2f;
+}
+
+.plus-icon {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Task list */
+.task-list {
+  padding: 24px 48px 0;
+  flex-grow: 1;
+}
+
+.task-count {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.task-item:hover {
+  background-color: #f9f9f9;
+}
+
+.task-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.checkbox-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.checkbox-circle:hover {
+  background-color: #f0f0f0;
+}
+
+.task-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.task-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #202020;
+}
+
+.task-time {
+  font-size: 13px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.task-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #888;
+  margin-left: auto;
+  position: relative;
+}
+
+.project-name {
+  color: #666;
+}
+
+.project-icon {
+  font-size: 14px;
+}
+
+/* Add task button khi có task */
+.add-task-main {
+  margin: 24px 48px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #dc4c3e;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.add-task-main:hover {
+  opacity: 0.8;
+}
+
+/* Hover action icons */
+.task-actions-hover {
+  display: none;
+  gap: 8px;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.task-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  transition: background 0.2s ease;
+}
+
+.task-icon-btn:hover {
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.task-item:hover .task-actions-hover {
+  display: flex;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-header {
+    padding: 24px;
+  }
+
+  .welcome-img {
+    width: 96px;
+    height: 96px;
+  }
+
+  .welcome h2 {
+    font-size: 16px;
+  }
+
+  .welcome p {
+    font-size: 13px;
+  }
+
+  .add-task-centered {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+
+  .task-list {
+    padding: 16px 24px 0;
+  }
+
+  .add-task-main {
+    margin: 16px 24px;
+  }
+}
