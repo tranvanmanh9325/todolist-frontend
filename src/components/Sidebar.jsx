@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTaskForm } from '../contexts/TaskFormContext'; // ✅ Sử dụng đúng context
+import { useTaskForm } from '../contexts/TaskFormContext';
 import './Sidebar.css';
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { openOverlayForm } = useTaskForm(); // ✅ Dùng đúng hàm để mở overlay
+  const { openOverlayForm } = useTaskForm();
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
@@ -58,8 +58,8 @@ const Sidebar = () => {
       ),
     },
     {
-      path: '/filters',
-      label: 'Filters & Labels',
+      path: '/overview',
+      label: 'Overview',
       icon: (
         <>
           <path d="M8 2V8L12 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -94,21 +94,7 @@ const Sidebar = () => {
         </div>
 
         <div className="header-actions">
-          {!collapsed && (
-            <>
-              <button className="icon-button">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M8 3V13M3 8H13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-              </button>
-              <button className="icon-button">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M6 1V5M10 1V5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-              </button>
-            </>
-          )}
+          {/* Đã xoá hai nút SVG dưới avatar */}
           <button
             aria-controls="sidebar"
             aria-expanded={!collapsed}
@@ -134,7 +120,7 @@ const Sidebar = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            onClick={openOverlayForm} // ✅ Gọi đúng context để hiển thị TaskOverlay
+            onClick={openOverlayForm}
           >
             <div className="add-icon">+</div>
             <span>Add task</span>

@@ -18,10 +18,6 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       setTitle(task.title || '');
       setNote(task.note || '');
       setType(task.project || 'Type');
-    } else {
-      setTitle('');
-      setNote('');
-      setType('Type');
     }
   }, [task]);
 
@@ -41,18 +37,15 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
 
     const taskData = {
       ...task,
-      title: title.trim(),
-      note: note.trim(),
-      project: type !== 'Type' ? type : '',
+      title,
+      note,
+      project: type,
     };
 
     onSubmit(taskData);
-
-    if (!isEdit) {
-      setTitle('');
-      setNote('');
-      setType('Type');
-    }
+    setTitle('');
+    setNote('');
+    setType('Type');
   };
 
   const handleTypeSelect = (t) => {
@@ -60,11 +53,9 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     setShowTypeDropdown(false);
   };
 
-  const autoResize = (el) => {
-    if (el) {
-      el.style.height = 'auto';
-      el.style.height = el.scrollHeight + 'px';
-    }
+  const handleTextareaInput = (e) => {
+    e.target.style.height = 'auto';
+    e.target.style.height = e.target.scrollHeight + 'px';
   };
 
   const isTitleEmpty = !title.trim();
@@ -80,17 +71,12 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     >
       <div className="task-field">
         <textarea
-          ref={(el) => {
-            titleRef.current = el;
-            autoResize(el);
-          }}
+          ref={titleRef}
           placeholder="Enter a task"
           className="task-title-input"
           value={title}
-          onChange={(e) => {
-            setTitle(e.target.value);
-            autoResize(e.target);
-          }}
+          onChange={(e) => setTitle(e.target.value)}
+          onInput={handleTextareaInput}
           rows={1}
           autoFocus
         />
@@ -114,11 +100,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       </div>
 
       <div className="task-bottom">
-        <div
-          className="task-type"
-          ref={typeRef}
-          onClick={() => setShowTypeDropdown((prev) => !prev)}
-        >
+        <div className="task-type" ref={typeRef} onClick={() => setShowTypeDropdown(!showTypeDropdown)}>
           📁 <span>{type}</span>
           <span className="dropdown-arrow">▾</span>
 
@@ -132,11 +114,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
                 transition={{ duration: 0.2 }}
               >
                 {['Personal', 'Study', 'Work'].map((t) => (
-                  <div
-                    key={t}
-                    className="project-dropdown-item"
-                    onClick={() => handleTypeSelect(t)}
-                  >
+                  <div key={t} className="project-dropdown-item" onClick={() => handleTypeSelect(t)}>
                     {t}
                   </div>
                 ))}
@@ -146,9 +124,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         </div>
 
         <div className="task-actions">
-          <button type="button" className="cancel-btn" onClick={onCancel}>
-            Cancel
-          </button>
+          <button type="button" className="cancel-btn" onClick={onCancel}>Cancel</button>
           <button
             type="submit"
             className={`submit-btn${isTitleEmpty ? ' disabled' : ''}`}

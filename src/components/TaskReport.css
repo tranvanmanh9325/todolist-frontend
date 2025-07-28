@@ -1,0 +1,43 @@
+.task-report {
+  padding: 32px 48px;
+  background-color: #fff;
+  min-height: 100vh;
+}
+
+/* Tiêu đề phía trên biểu đồ */
+.chart-title {
+  font-size: 20px;
+  font-weight: 600;
+  text-align: left;       /* ✅ căn trái */
+  margin-bottom: 16px;
+  margin-left: 0;         /* ✅ thẳng hàng với nội dung chính */
+}
+
+/* Tổng kết phía dưới biểu đồ */
+.task-report-summary {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 32px;
+}
+
+/* Box hiển thị số lượng */
+.summary-box {
+  background-color: #f3f3f3;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  min-width: 120px;
+  text-align: center;
+}
+
+.summary-box span {
+  color: #666;
+}
+
+.summary-box strong {
+  display: block;
+  font-size: 24px;
+  color: #333;
+  margin-top: 4px;
+}

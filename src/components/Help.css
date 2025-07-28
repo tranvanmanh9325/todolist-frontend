@@ -1,0 +1,95 @@
+/* Container chính chiếm toàn bộ chiều cao viewport */
+.help-content {
+  min-height: 100vh;
+  width: 100%;
+  padding: 0; /* Xóa padding-top để tránh khoảng trắng thừa */
+  background-color: #ffffff;
+  color: #202124;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Đẩy footer xuống cuối */
+  box-sizing: border-box;
+  overflow-x: hidden; /* Ngăn tràn ngang */
+  margin: 0; /* Đảm bảo không có margin bên ngoài */
+}
+
+/* Tiêu đề "Help & Resources" */
+.help-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #202124;
+  margin: 16px 0; /* Chỉ giữ margin trên/dưới, không để margin trái/phải */
+  padding-left: 8px; /* Padding nhẹ để tránh dính sát cạnh trái */
+  transition: padding-left 0.2s ease; /* Hiệu ứng mượt khi sidebar thay đổi */
+}
+
+/* Thanh bookmark full chiều ngang */
+.bookmark-fullwidth {
+  width: 100%;
+  margin: 0; /* Xóa margin để không tạo khoảng trắng */
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Nội dung chính */
+.help-inner {
+  width: 100%;
+  padding: 0 48px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+  flex-grow: 1; /* Chiếm không gian còn lại */
+}
+
+/* Footer sát đáy, không có khoảng trắng */
+.help-footer-wrapper {
+  width: 100%;
+  padding: 0; /* Xóa padding-top để footer sát đáy */
+  margin: 0; /* Xóa margin để không tạo khoảng trắng */
+  border-top: 1px solid #e0e0e0;
+  box-sizing: border-box;
+}
+
+/* Đảm bảo footer không có khoảng cách thừa */
+.simple-footer {
+  margin: 0; /* Xóa mọi margin */
+  padding: 5px 16px; /* Giữ padding tối thiểu */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .help-content {
+    padding: 0; /* Không padding trên mobile */
+  }
+
+  .help-title {
+    font-size: 20px; /* Giảm cỡ chữ */
+    padding-left: 4px; /* Giảm padding trái */
+    margin: 12px 0; /* Giảm margin trên mobile */
+  }
+
+  .help-inner {
+    padding: 0 24px; /* Giảm padding bên trong */
+    max-width: 100%;
+  }
+
+  .help-footer-wrapper {
+    padding: 0;
+    margin: 0; /* Đảm bảo không có margin */
+  }
+
+  .simple-footer {
+    padding: 5px 12px; /* Giảm padding trên mobile */
+  }
+}
+
+/* Điều chỉnh khi sidebar thu gọn */
+@media (max-width: 350px) {
+  .help-title {
+    padding-left: 0; /* Sát cạnh trái khi sidebar thu gọn */
+  }
+}

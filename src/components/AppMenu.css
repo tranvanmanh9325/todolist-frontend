@@ -1,0 +1,91 @@
+/* Overlay chiếm toàn màn hình để click ngoài là đóng menu */
+.app-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: transparent;
+  z-index: 2000;
+}
+
+/* Menu chính nổi lệch phải ngay dưới nút "Ứng dụng" */
+.app-menu {
+  position: absolute;
+  top: 48px;        /* cách đỉnh một khoảng bằng chiều cao BookmarkBar */
+  left: 72px;       /* dịch phải để nằm ngay dưới nút "Ứng dụng" */
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  z-index: 2001;
+}
+
+/* Lưới ứng dụng */
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* Từng mục ứng dụng */
+.app-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  padding: 8px;
+  border-radius: 12px;
+}
+
+.app-item:hover {
+  background-color: #f1f3f4;
+}
+
+/* Icon ứng dụng */
+.app-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 8px;
+  background-color: #f1f3f4;
+}
+
+/* Tên ứng dụng */
+.app-name {
+  font-size: 13px;
+  color: #202124;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Responsive: 2 cột khi màn nhỏ */
+@media (max-width: 480px) {
+  .app-menu {
+    width: 280px;
+    left: 50%;                    /* căn giữa màn hình */
+    transform: translateX(-50%);
+  }
+
+  .app-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .app-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .app-name {
+    font-size: 12px;
+  }
+}

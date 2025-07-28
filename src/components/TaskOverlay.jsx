@@ -5,7 +5,11 @@ import { useTaskForm } from '../contexts/TaskFormContext';
 import './TaskOverlay.css'; // 👉 tạo file CSS riêng nếu cần
 
 const TaskOverlay = () => {
-  const { showOverlayForm, closeOverlayForm } = useTaskForm();
+  const {
+    showOverlayForm,
+    closeOverlayForm,
+    submitTask, // ✅ dùng để gửi dữ liệu lên backend
+  } = useTaskForm();
 
   return (
     <AnimatePresence>
@@ -26,7 +30,10 @@ const TaskOverlay = () => {
             transition={{ duration: 0.2 }}
             onClick={(e) => e.stopPropagation()} // Ngăn click vào form đóng overlay
           >
-            <TaskForm onCancel={closeOverlayForm} onSubmit={closeOverlayForm} />
+            <TaskForm
+              onCancel={closeOverlayForm}
+              onSubmit={submitTask} // ✅ thay thế closeOverlayForm để thực sự gửi task
+            />
           </motion.div>
         </motion.div>
       )}

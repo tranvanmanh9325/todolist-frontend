@@ -2,47 +2,19 @@ import React, { useEffect, useState } from 'react';
 import './MainContent.css';
 import TaskForm from './TaskForm';
 import TaskItem from './TaskItem';
-import { useTaskForm } from '../contexts/TaskFormContext'; // ✅ thêm dòng này
+import { useTaskForm } from '../contexts/TaskFormContext'; // ✅ lấy context
 
 const MainContent = () => {
-  const [showForm, setShowForm] = useState(false); // local form (nút trong main)
+  const [showForm, setShowForm] = useState(false);
   const [editTask, setEditTask] = useState(null);
-  const [tasks, setTasks] = useState([]);
-  const { showInlineForm, setShowInlineForm } = useTaskForm(); // ✅ lấy từ context
+  const { tasks, setTasks, submitTask } = useTaskForm(); // ✅ dùng từ context
 
   useEffect(() => {
     fetch('/api/tasks')
       .then((res) => res.json())
       .then((data) => setTasks(data))
       .catch((err) => console.error(err));
-  }, []);
-
-  const handleSubmitTask = (task) => {
-    const isEditing = Boolean(task.id);
-    const method = isEditing ? 'PUT' : 'POST';
-    const url = isEditing ? `/api/tasks/${task.id}` : '/api/tasks';
-    const body = isEditing
-      ? JSON.stringify(task)
-      : JSON.stringify({ ...task, completed: false });
-
-    fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setTasks((prev) =>
-          isEditing
-            ? prev.map((t) => (t.id === data.id ? data : t))
-            : [...prev, data]
-        );
-        setShowForm(false);
-        setEditTask(null);
-        setShowInlineForm(false); // ✅ ẩn form Sidebar nếu đang mở
-      })
-      .catch((err) => console.error(err));
-  };
+  }, [setTasks]);
 
   const handleToggleComplete = (taskId, newStatus) => {
     fetch(`/api/tasks/${taskId}`, {
@@ -80,7 +52,7 @@ const MainContent = () => {
         <h1>Today</h1>
       </header>
 
-      {!showForm && !showInlineForm && activeTasks.length === 0 ? (
+      {!showForm && activeTasks.length === 0 ? (
         <div className="welcome">
           <img src="/assets/sparkle.png" alt="Welcome" className="welcome-img" />
           <h2>Capture now, plan later</h2>
@@ -118,21 +90,16 @@ const MainContent = () => {
             </div>
           )}
 
-          {/* ✅ Hiển thị form khi được gọi từ Sidebar hoặc MainContent */}
-          {(showForm || showInlineForm) && (
+          {showForm ? (
             <TaskForm
               task={editTask}
               onCancel={() => {
                 setShowForm(false);
                 setEditTask(null);
-                setShowInlineForm(false); // ✅ cancel từ Sidebar cũng tắt
               }}
-              onSubmit={handleSubmitTask}
+              onSubmit={submitTask} // ✅ dùng hàm từ context
             />
-          )}
-
-          {/* ✅ Hiện nút "Add task" nếu không hiển thị form */}
-          {!showForm && !showInlineForm && (
+          ) : (
             <button
               className="add-task-main"
               onClick={() => {

@@ -31,11 +31,10 @@ const Completed = () => {
   const grouped = groupByDate(tasks);
 
   return (
-    <div className="main-content completed-section">
-      <header className="main-header">
+    <div className="completed-section">
+      <header>
         <h1>Completed</h1>
       </header>
-
       {tasks.length === 0 ? (
         <div className="no-completed">
           <img src="/assets/sparkle.png" alt="No tasks" />
