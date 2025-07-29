@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import MainContent from './components/MainContent';
-import Completed from './components/Completed';
-import TaskOverlay from './components/TaskOverlay';
-import TaskReport from './components/TaskReport';
+import Sidebar from './components/sidebars/Sidebar';
+import MainContent from './components/routermain/MainContent';
+import Completed from './components/routermain/Completed';
+import TaskOverlay from './components/tasks/TaskOverlay';
+import TaskReport from './components/tasks/TaskReport';
 import Help from './components/Help'; // ✅ thêm Help component
 import { TaskFormProvider } from './contexts/TaskFormContext';
 import './App.css';
