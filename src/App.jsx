@@ -1,37 +1,41 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Sidebar from './components/sidebars/Sidebar';
-import MainContent from './components/routermain/MainContent';
-import Completed from './components/routermain/Completed';
-import TaskOverlay from './components/tasks/TaskOverlay';
-import TaskReport from './components/tasks/TaskReport';
-import Help from './components/routerhelp/Help'; // ✅ thêm Help component
-import { TaskFormProvider } from './contexts/TaskFormContext';
+import React, { useState } from 'react';
 import './App.css';
+import ImageSlider from './components/login/background/ImageSlider';
+import LoginForm from './components/login/signin/LoginForm';
+import SignUpForm from './components/login/signout/SignUpForm';
+// eslint-disable-next-line no-unused-vars
+import { AnimatePresence, motion } from 'framer-motion';
 
 function App() {
+  const [isSignUp, setIsSignUp] = useState(false);
+
+  const toggleForm = () => {
+    setIsSignUp((prev) => !prev);
+  };
+
   return (
-    <Router>
-      <TaskFormProvider>
-        <div className="app-container">
-          {/* Sidebar bên trái */}
-          <Sidebar />
+    <div className="login-container">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={isSignUp ? 'signup' : 'login'}
+          initial={{ opacity: 0, x: isSignUp ? 100 : -100 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: isSignUp ? -100 : 100 }}
+          transition={{ duration: 0.35 }}
+          className="login-left-motion"
+        >
+          {isSignUp ? (
+            <SignUpForm onSwitch={toggleForm} />
+          ) : (
+            <LoginForm onSwitch={toggleForm} />
+          )}
+        </motion.div>
+      </AnimatePresence>
 
-          {/* Nội dung chính bên phải */}
-          <div className="main-wrapper">
-            <Routes>
-              <Route path="/" element={<MainContent />} />
-              <Route path="/completed" element={<Completed />} />
-              <Route path="/overview" element={<TaskReport />} />
-              <Route path="/help" element={<Help />} /> {/* ✅ route mới */}
-            </Routes>
-          </div>
-
-          {/* Overlay hiển thị TaskForm từ Sidebar */}
-          <TaskOverlay />
-        </div>
-      </TaskFormProvider>
-    </Router>
+      <div className="login-right">
+        <ImageSlider />
+      </div>
+    </div>
   );
 }
 

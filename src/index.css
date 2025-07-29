@@ -1,46 +1,15 @@
-/* Reset CSS */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Toàn bộ trang */
-html,
 body {
-  height: 100%;
-  width: 100%;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #fafafa;
-  color: #202020;
-  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  background-color: #f8f9fa;
+  min-height: 100vh;
 }
 
-/* Gốc ứng dụng React */
 #root {
-  height: 100%;
-  width: 100%;
-  display: flex;
-}
-
-/* Wrapper chính để chứa sidebar + main content */
-.app-container {
-  display: flex;
-  flex: 1;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-}
-
-/* Main content (phần bên phải) */
-.main-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  background-color: #fff;
+  min-height: 100vh;
 }

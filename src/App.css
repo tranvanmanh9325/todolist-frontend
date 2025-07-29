@@ -1,16 +1,49 @@
-/* App.css */
+/* ==================== LAYOUT ==================== */
 
-.app-container {
+.login-container {
   display: flex;
-  height: 100vh;
-  width: 100vw;
+  min-height: 100vh;
+  background-color: #f8f9fa;
   overflow: hidden;
 }
 
-.app-container > div {
-  flex-grow: 1;
+.login-left-motion {
+  flex: 1;
+  padding: 40px;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  background-color: #fff;
+  max-width: 500px;
+  background-color: white;
+  justify-content: center; /* 👉 giúp căn giữa form dọc */
+}
+
+/* login-right (background hình ảnh / hiệu ứng bên phải) */
+.login-right {
+  flex: 1;
+  background: #f80000d5; /* 🎯 màu đỏ tươi */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .login-left-motion {
+    max-width: none;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .login-right {
+    min-height: 300px;
+    padding: 10px;
+  }
 }
