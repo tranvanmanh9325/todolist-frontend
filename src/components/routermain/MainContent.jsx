@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './MainContent.css';
-import TaskForm from './TaskForm';
-import TaskItem from './TaskItem';
-import { useTaskForm } from '../contexts/TaskFormContext'; // ✅ lấy context
+import TaskForm from '../TaskForm';
+import TaskItem from '../TaskItem';
+import { useTaskForm } from '../../contexts/TaskFormContext'; // ✅ lấy context
 
 const MainContent = () => {
   const [showForm, setShowForm] = useState(false);
