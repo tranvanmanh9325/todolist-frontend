@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './MainContent.css';
-import TaskForm from '../TaskForm';
-import TaskItem from '../TaskItem';
+import TaskForm from '../tasks/TaskForm';
+import TaskItem from '../tasks/TaskItem';
 import { useTaskForm } from '../../contexts/TaskFormContext'; // ✅ lấy context
 
 const MainContent = () => {

@@ -5,7 +5,7 @@ import MainContent from './components/routermain/MainContent';
 import Completed from './components/routermain/Completed';
 import TaskOverlay from './components/tasks/TaskOverlay';
 import TaskReport from './components/tasks/TaskReport';
-import Help from './components/Help'; // ✅ thêm Help component
+import Help from './components/routerhelp/Help'; // ✅ thêm Help component
 import { TaskFormProvider } from './contexts/TaskFormContext';
 import './App.css';
 
