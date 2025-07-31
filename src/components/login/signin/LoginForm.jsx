@@ -1,23 +1,44 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion'; // ✅ Thêm motion
+import { motion } from 'framer-motion';
+import axios from 'axios';
 import './LoginForm.css';
 
 const LoginForm = ({ onSwitch }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login attempt:', { email, password });
+    setError('');
+
+    try {
+      const response = await axios.post('http://localhost:8080/api/auth/login', {
+        email,
+        password,
+      });
+
+      const { token } = response.data;
+      localStorage.setItem('token', token); // Lưu token vào localStorage
+      console.log('Login successful:', response.data);
+      navigate('/dashboard'); // Chuyển hướng đến dashboard
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      console.error('Login error:', err);
+    }
   };
 
   const handleGoogleLogin = () => {
     console.log('Google login clicked');
+    // TODO: Tích hợp Google OAuth nếu cần
   };
 
   const handleGithubLogin = () => {
     console.log('GitHub login clicked');
+    // TODO: Tích hợp GitHub OAuth nếu cần
   };
 
   return (
@@ -49,6 +70,10 @@ const LoginForm = ({ onSwitch }) => {
       <div className="login-form-section">
         <h1 className="welcome-title">Welcome Back!</h1>
         <p className="welcome-subtitle">Please enter login details below</p>
+
+        {error && (
+          <div style={{ color: 'red', marginBottom: '16px' }}>{error}</div>
+        )}
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">

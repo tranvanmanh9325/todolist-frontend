@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion'; // ✅ Dùng motion để thêm animation
+import { motion } from 'framer-motion';
+import axios from 'axios';
 import './SignUpForm.css';
 
 const SignUpForm = ({ onSwitch }) => {
@@ -8,10 +10,27 @@ const SignUpForm = ({ onSwitch }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Signup attempt:', { name, email, password, confirm });
+    setError('');
+
+    try {
+      const response = await axios.post('http://localhost:8080/api/auth/signup', {
+        name,
+        email,
+        password,
+        confirm,
+      });
+
+      console.log('Signup successful:', response.data);
+      navigate('/login'); // Chuyển hướng về login sau khi đăng ký thành công
+    } catch (err) {
+      setError(err.response?.data?.message || 'Signup failed. Please try again.');
+      console.error('Signup error:', err);
+    }
   };
 
   return (
@@ -37,6 +56,10 @@ const SignUpForm = ({ onSwitch }) => {
       <div className="login-form-section">
         <h1 className="welcome-title">Create Account</h1>
         <p className="welcome-subtitle">Please fill in the information below</p>
+
+        {error && (
+          <div style={{ color: 'red', marginBottom: '16px' }}>{error}</div>
+        )}
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
