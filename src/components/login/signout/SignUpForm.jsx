@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 import './SignUpForm.css';
 
@@ -25,8 +26,25 @@ const SignUpForm = ({ onSwitch }) => {
         confirm,
       });
 
+      // Hiển thị popup thông báo thành công
+      toast.success('Đăng ký tài khoản thành công!', {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
+
+      // Chuyển về giao diện đăng nhập sau 3 giây
+      setTimeout(() => {
+        onSwitch(); // Chuyển về form login
+        navigate('/login');
+      }, 3000);
+
       console.log('Signup successful:', response.data);
-      navigate('/login'); // Chuyển hướng về login sau khi đăng ký thành công
     } catch (err) {
       setError(err.response?.data?.message || 'Signup failed. Please try again.');
       console.error('Signup error:', err);
