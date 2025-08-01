@@ -6,27 +6,44 @@ import './ForgotPasswordForm.css';
 
 const ForgotPasswordForm = () => {
   const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState('');
+  const [step, setStep] = useState('email'); // 'email' hoặc 'otp'
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     try {
       await axios.post('http://localhost:8080/api/auth/reset-password', { email });
-
-      toast.success('Yêu cầu đặt lại mật khẩu đã được gửi! Vui lòng kiểm tra email.', {
+      toast.success('Mã OTP đã được gửi đến email của bạn!', {
         position: 'top-center',
         autoClose: 3000,
       });
-
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
+      setStep('otp'); // Chuyển sang bước nhập OTP
     } catch (err) {
       setError(err.response?.data?.message || 'Không thể gửi yêu cầu. Vui lòng thử lại.');
       console.error('Reset password error:', err);
+    }
+  };
+
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      await axios.post('http://localhost:8080/api/auth/verify-otp', { email, otpCode: otp });
+      toast.success('Mã OTP hợp lệ! Chuyển sang đặt lại mật khẩu.', {
+        position: 'top-center',
+        autoClose: 3000,
+      });
+      setTimeout(() => {
+        navigate(`/reset-password?email=${encodeURIComponent(email)}`);
+      }, 3000);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Mã OTP không hợp lệ. Vui lòng thử lại.');
+      console.error('Verify OTP error:', err);
     }
   };
 
@@ -52,28 +69,47 @@ const ForgotPasswordForm = () => {
 
       <div className="forgot-password-form-section">
         <h1 className="welcome-title">Forgot Password?</h1>
-        <p className="welcome-subtitle">Enter your email to reset your password</p>
+        <p className="welcome-subtitle">
+          {step === 'email' ? 'Enter your email to receive an OTP' : 'Enter the OTP sent to your email'}
+        </p>
 
         {error && (
           <div style={{ color: 'red', marginBottom: '16px' }}>{error}</div>
         )}
 
-        <form onSubmit={handleSubmit} className="forgot-password-form">
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">Email</label>
-            <input
-              type="email"
-              id="email"
-              className="form-input"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <button type="submit" className="reset-btn">Send Reset Link</button>
-        </form>
+        {step === 'email' ? (
+          <form onSubmit={handleEmailSubmit} className="forgot-password-form">
+            <div className="form-group">
+              <label htmlFor="email" className="form-label">Email</label>
+              <input
+                type="email"
+                id="email"
+                className="form-input"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <button type="submit" className="reset-btn">Send OTP</button>
+          </form>
+        ) : (
+          <form onSubmit={handleOtpSubmit} className="forgot-password-form">
+            <div className="form-group">
+              <label htmlFor="otp" className="form-label">OTP Code</label>
+              <input
+                type="text"
+                id="otp"
+                className="form-input"
+                placeholder="Enter the 6-digit OTP"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                required
+              />
+            </div>
+            <button type="submit" className="reset-btn">Verify OTP</button>
+          </form>
+        )}
 
         <div className="back-to-login">
           <span>Back to </span>
