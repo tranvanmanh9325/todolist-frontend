@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
@@ -9,18 +9,39 @@ const ForgotPasswordForm = () => {
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState('email');
   const [error, setError] = useState('');
+  const [isResendDisabled, setIsResendDisabled] = useState(false);
+  const [countdown, setCountdown] = useState(0);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  // Lấy email từ query parameter nếu có
   const initialEmail = searchParams.get('email') || '';
   if (initialEmail && step === 'email') {
     setEmail(initialEmail);
   }
 
+  // Xử lý countdown cho nút Resend OTP
+  useEffect(() => {
+    let timer;
+    if (countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            setIsResendDisabled(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [countdown]);
+
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
+    // Kiểm tra email hợp lệ
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setError('Vui lòng nhập email hợp lệ');
@@ -34,6 +55,8 @@ const ForgotPasswordForm = () => {
         autoClose: 3000,
       });
       setStep('otp');
+      setIsResendDisabled(true);
+      setCountdown(60); // Bắt đầu countdown 60 giây
     } catch (err) {
       setError(err.response?.data?.message || 'Không thể gửi OTP. Vui lòng thử lại.');
       console.error('Reset password error:', err);
@@ -44,6 +67,7 @@ const ForgotPasswordForm = () => {
     e.preventDefault();
     setError('');
 
+    // Validation OTP: Kiểm tra OTP là 6 chữ số
     if (!/^\d{6}$/.test(otp)) {
       setError('Mã OTP phải là 6 chữ số');
       return;
@@ -125,8 +149,14 @@ const ForgotPasswordForm = () => {
               />
             </div>
             <button type="submit" className="reset-btn">Verify OTP</button>
-            <button type="button" onClick={handleEmailSubmit} className="resend-btn">
-              Resend OTP
+            <button
+              type="button"
+              onClick={handleEmailSubmit}
+              className="resend-btn"
+              disabled={isResendDisabled}
+              style={{ opacity: isResendDisabled ? 0.5 : 1, cursor: isResendDisabled ? 'not-allowed' : 'pointer' }}
+            >
+              {isResendDisabled ? `Gửi lại sau ${countdown}s` : 'Resend OTP'}
             </button>
           </form>
         )}
