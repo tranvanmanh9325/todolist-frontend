@@ -6,6 +6,7 @@ import './App.css';
 import ImageSlider from './components/login/background/ImageSlider';
 import LoginForm from './components/login/signin/LoginForm';
 import SignUpForm from './components/login/signout/SignUpForm';
+import ForgotPasswordForm from './components/login/forgotpassword/ForgotPasswordForm';
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -59,6 +60,14 @@ function App() {
               <div className="login-right">
                 <ImageSlider />
               </div>
+            </div>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <div className="centered-container">
+              <ForgotPasswordForm />
             </div>
           }
         />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import axios from 'axios';
@@ -22,9 +22,9 @@ const LoginForm = ({ onSwitch }) => {
       });
 
       const { token } = response.data;
-      localStorage.setItem('token', token); // Lưu token vào localStorage
+      localStorage.setItem('token', token);
       console.log('Login successful:', response.data);
-      navigate('/dashboard'); // Chuyển hướng đến dashboard
+      navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
       console.error('Login error:', err);
@@ -33,12 +33,10 @@ const LoginForm = ({ onSwitch }) => {
 
   const handleGoogleLogin = () => {
     console.log('Google login clicked');
-    // TODO: Tích hợp Google OAuth nếu cần
   };
 
   const handleGithubLogin = () => {
     console.log('GitHub login clicked');
-    // TODO: Tích hợp GitHub OAuth nếu cần
   };
 
   return (
@@ -103,7 +101,7 @@ const LoginForm = ({ onSwitch }) => {
           </div>
 
           <div className="forgot-password">
-            <a href="#" className="forgot-link">Forgot password?</a>
+            <Link to="/forgot-password" className="forgot-link">Forgot password?</Link>
           </div>
 
           <button type="submit" className="sign-in-btn">Sign in</button>

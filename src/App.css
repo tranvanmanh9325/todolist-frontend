@@ -14,19 +14,27 @@
   flex-direction: column;
   max-width: 500px;
   background-color: white;
-  justify-content: center; /* 👉 giúp căn giữa form dọc */
+  justify-content: center;
 }
 
-/* login-right (background hình ảnh / hiệu ứng bên phải) */
 .login-right {
   flex: 1;
-  background: #f80000d5; /* 🎯 màu đỏ tươi */
+  background: #f80000d5;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
   padding: 20px;
+}
+
+/* New centered container for ForgotPasswordForm */
+.centered-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
 }
 
 /* ==================== RESPONSIVE ==================== */
@@ -45,5 +53,9 @@
   .login-right {
     min-height: 300px;
     padding: 10px;
+  }
+
+  .centered-container {
+    padding: 20px;
   }
 }
