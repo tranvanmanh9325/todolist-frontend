@@ -24,9 +24,8 @@ const SignUpForm = ({ onSwitch }) => {
         email,
         password,
         confirm,
-      });
+      }, { withCredentials: true }); // Thêm withCredentials
 
-      // Hiển thị popup thông báo thành công
       toast.success('Đăng ký tài khoản thành công!', {
         position: 'top-center',
         autoClose: 3000,
@@ -38,9 +37,8 @@ const SignUpForm = ({ onSwitch }) => {
         theme: 'light',
       });
 
-      // Chuyển về giao diện đăng nhập sau 3 giây
       setTimeout(() => {
-        onSwitch(); // Chuyển về form login
+        onSwitch();
         navigate('/login');
       }, 3000);
 

@@ -7,12 +7,11 @@ import './ForgotPasswordForm.css';
 const ForgotPasswordForm = () => {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
-  const [step, setStep] = useState('email'); // 'email' hoặc 'otp'
+  const [step, setStep] = useState('email');
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  // Lấy email từ query parameter nếu có
   const initialEmail = searchParams.get('email') || '';
   if (initialEmail && step === 'email') {
     setEmail(initialEmail);
@@ -22,7 +21,6 @@ const ForgotPasswordForm = () => {
     e.preventDefault();
     setError('');
 
-    // Kiểm tra email hợp lệ
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setError('Vui lòng nhập email hợp lệ');
@@ -30,7 +28,7 @@ const ForgotPasswordForm = () => {
     }
 
     try {
-      await axios.post('http://localhost:8080/api/auth/reset-password', { email });
+      await axios.post('http://localhost:8080/api/auth/reset-password', { email }, { withCredentials: true });
       toast.success('Mã OTP đã được gửi đến email của bạn!', {
         position: 'top-center',
         autoClose: 3000,
@@ -46,14 +44,13 @@ const ForgotPasswordForm = () => {
     e.preventDefault();
     setError('');
 
-    // Validation OTP: Kiểm tra OTP là 6 chữ số
     if (!/^\d{6}$/.test(otp)) {
       setError('Mã OTP phải là 6 chữ số');
       return;
     }
 
     try {
-      await axios.post('http://localhost:8080/api/auth/verify-otp', { email, otpCode: otp });
+      await axios.post('http://localhost:8080/api/auth/verify-otp', { email, otpCode: otp }, { withCredentials: true });
       toast.success('Mã OTP hợp lệ! Chuyển sang đặt lại mật khẩu.', {
         position: 'top-center',
         autoClose: 3000,

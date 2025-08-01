@@ -19,7 +19,7 @@ const LoginForm = ({ onSwitch }) => {
       const response = await axios.post('http://localhost:8080/api/auth/login', {
         email,
         password,
-      });
+      }, { withCredentials: true }); // Thêm withCredentials
 
       const { token } = response.data;
       localStorage.setItem('token', token);

@@ -23,7 +23,7 @@ const ResetPasswordForm = () => {
         email,
         password,
         confirm,
-      });
+      }, { withCredentials: true }); // Thêm withCredentials
       toast.success('Mật khẩu đã được thay đổi thành công!', {
         position: 'top-center',
         autoClose: 3000,
