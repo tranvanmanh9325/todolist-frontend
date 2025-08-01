@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import './ForgotPasswordForm.css';
@@ -10,10 +10,24 @@ const ForgotPasswordForm = () => {
   const [step, setStep] = useState('email'); // 'email' hoặc 'otp'
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Lấy email từ query parameter nếu có
+  const initialEmail = searchParams.get('email') || '';
+  if (initialEmail && step === 'email') {
+    setEmail(initialEmail);
+  }
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    // Kiểm tra email hợp lệ
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Vui lòng nhập email hợp lệ');
+      return;
+    }
 
     try {
       await axios.post('http://localhost:8080/api/auth/reset-password', { email });
@@ -21,9 +35,9 @@ const ForgotPasswordForm = () => {
         position: 'top-center',
         autoClose: 3000,
       });
-      setStep('otp'); // Chuyển sang bước nhập OTP
+      setStep('otp');
     } catch (err) {
-      setError(err.response?.data?.message || 'Không thể gửi yêu cầu. Vui lòng thử lại.');
+      setError(err.response?.data?.message || 'Không thể gửi OTP. Vui lòng thử lại.');
       console.error('Reset password error:', err);
     }
   };
@@ -31,6 +45,12 @@ const ForgotPasswordForm = () => {
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    // Validation OTP: Kiểm tra OTP là 6 chữ số
+    if (!/^\d{6}$/.test(otp)) {
+      setError('Mã OTP phải là 6 chữ số');
+      return;
+    }
 
     try {
       await axios.post('http://localhost:8080/api/auth/verify-otp', { email, otpCode: otp });
@@ -108,6 +128,9 @@ const ForgotPasswordForm = () => {
               />
             </div>
             <button type="submit" className="reset-btn">Verify OTP</button>
+            <button type="button" onClick={handleEmailSubmit} className="resend-btn">
+              Resend OTP
+            </button>
           </form>
         )}
 
