@@ -188,3 +188,22 @@
 .no-button:hover {
   text-decoration: underline;
 }
+
+/* Style for GoogleLogin button to match existing design */
+.google-oauth-button {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: white;
+  font-size: 16px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  margin-bottom: 10px;
+}
+
+.google-oauth-button:hover {
+  border-color: #d1d5db;
+}
