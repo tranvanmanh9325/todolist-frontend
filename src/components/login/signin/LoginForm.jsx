@@ -19,7 +19,7 @@ const LoginForm = ({ onSwitch }) => {
       const response = await axios.post('http://localhost:8080/api/auth/login', {
         email,
         password,
-      }, { withCredentials: true }); // Thêm withCredentials
+      }, { withCredentials: true });
 
       const { token } = response.data;
       localStorage.setItem('token', token);
@@ -33,10 +33,6 @@ const LoginForm = ({ onSwitch }) => {
 
   const handleGoogleLogin = () => {
     console.log('Google login clicked');
-  };
-
-  const handleGithubLogin = () => {
-    console.log('GitHub login clicked');
   };
 
   return (
@@ -119,13 +115,6 @@ const LoginForm = ({ onSwitch }) => {
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
           </svg>
           Log in with Google
-        </button>
-
-        <button onClick={handleGithubLogin} className="github-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="black">
-            <path d="M12 .5C5.7.5.6 5.6.6 12.1c0 5.1 3.3 9.5 7.9 11.1.6.1.8-.2.8-.6v-2.3c-3.2.7-3.9-1.4-3.9-1.4-.5-1.2-1.2-1.6-1.2-1.6-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 .1 1.6-.8 1.9-1.2.1-.7.4-1.2.7-1.5-2.5-.3-5.1-1.3-5.1-5.9 0-1.3.5-2.3 1.2-3.2-.1-.3-.6-1.6.1-3.3 0 0 1-.3 3.4 1.2.9-.3 2-.4 3-.4s2.1.1 3 .4c2.4-1.5 3.4-1.2 3.4-1.2.7 1.7.2 3 .1 3.3.8.9 1.2 1.9 1.2 3.2 0 4.7-2.6 5.6-5.1 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.6 7.9-6 7.9-11.1C23.4 5.6 18.3.5 12 .5z" />
-          </svg>
-          Log in with GitHub
         </button>
 
         <div className="signup-link">
