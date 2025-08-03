@@ -118,7 +118,14 @@ const LoginForm = ({ onSwitch }) => {
           <img
             src="https://developers.google.com/identity/images/g-logo.png"
             alt="Google"
-            style={{ width: 20, height: 20, marginRight: 10 }}
+            style={{
+              width: 21,
+              height: 21,
+              marginRight: 10,
+              marginTop: -2,
+              verticalAlign: 'middle',
+              display: 'inline-block',
+            }}
           />
           Login with Google
         </button>

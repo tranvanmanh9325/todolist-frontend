@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './GoogleCallback.css'; // Thêm CSS riêng
 
 const GoogleCallback = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const GoogleCallback = () => {
     const exchangeCode = async () => {
       try {
         const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/auth/google-login`, // Ensure backend is mapped correctly
+          `${import.meta.env.VITE_API_URL}/auth/google-login`,
           { code },
           { withCredentials: true }
         );
@@ -45,7 +46,12 @@ const GoogleCallback = () => {
     exchangeCode();
   }, [navigate]);
 
-  return <p>Logging in with Google...</p>;
+  return (
+    <div className="google-callback-container">
+      <div className="spinner" />
+      <p className="loading-text">Loading...</p>
+    </div>
+  );
 };
 
 export default GoogleCallback;
