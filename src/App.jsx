@@ -8,6 +8,7 @@ import LoginForm from './components/login/signin/LoginForm';
 import SignUpForm from './components/login/signout/SignUpForm';
 import ForgotPasswordForm from './components/login/forgotpassword/ForgotPasswordForm';
 import ResetPasswordForm from './components/login/resetpassword/ResetPasswordForm';
+import GoogleCallback from './components/login/googlecallback/GoogleCallback'; // ✅ NEW
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -79,6 +80,10 @@ function App() {
               <ResetPasswordForm />
             </div>
           }
+        />
+        <Route
+          path="/google-callback"
+          element={<GoogleCallback />} // ✅ Google OAuth2 callback handler
         />
         <Route
           path="/dashboard"

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import './LoginForm.css';
 
@@ -24,28 +23,20 @@ const LoginForm = ({ onSwitch }) => {
 
       const { token } = response.data;
       localStorage.setItem('token', token);
-      console.log('Login successful:', response.data);
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
-      console.error('Login error:', err);
     }
   };
 
-  const handleGoogleLoginSuccess = async (credentialResponse) => {
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/google-login`, {
-        idToken: credentialResponse.credential,
-      }, { withCredentials: true });
+  const handleGoogleLogin = () => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const redirectUri = `${window.location.origin}/google-callback`;
+    const scope = encodeURIComponent("email profile openid");
+    const responseType = "code";
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}`;
 
-      const { token } = response.data;
-      localStorage.setItem('token', token);
-      console.log('Google login successful:', response.data);
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Google login failed. Please try again.');
-      console.error('Google login error:', err);
-    }
+    window.location.href = authUrl;
   };
 
   return (
@@ -120,16 +111,17 @@ const LoginForm = ({ onSwitch }) => {
           <span>Or continue</span>
         </div>
 
-        <GoogleLogin
-          onSuccess={handleGoogleLoginSuccess}
-          onError={() => {
-            setError('Google login failed. Please try again.');
-            console.error('Google Login Failed');
-          }}
-          text="signin_with"
-          shape="rectangular"
-          logo_alignment="left"
-        />
+        <button
+          onClick={handleGoogleLogin}
+          className="google-oauth-button"
+        >
+          <img
+            src="https://developers.google.com/identity/images/g-logo.png"
+            alt="Google"
+            style={{ width: 20, height: 20, marginRight: 10 }}
+          />
+          Login with Google
+        </button>
 
         <div className="signup-link">
           <span>Don't have an account? </span>
