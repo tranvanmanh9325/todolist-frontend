@@ -1,104 +1,125 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-import ImageSlider from './components/login/background/ImageSlider';
-import LoginForm from './components/login/signin/LoginForm';
-import SignUpForm from './components/login/signout/SignUpForm';
-import ForgotPasswordForm from './components/login/forgotpassword/ForgotPasswordForm';
-import ResetPasswordForm from './components/login/resetpassword/ResetPasswordForm';
-import GoogleCallback from './components/login/googlecallback/GoogleCallback'; // ✅ NEW
-// eslint-disable-next-line no-unused-vars
-import { AnimatePresence, motion } from 'framer-motion';
 
-// Giả định một component Dashboard
-const Dashboard = () => {
-  return <div>Welcome to the Dashboard!</div>;
-};
+const App = () => {
+  const [currentTopDay, setCurrentTopDay] = useState(2); // Wednesday is index 2
+  const scrollContainerRef = useRef(null);
+  const dayRefs = useRef([]);
 
-function App() {
-  const [isSignUp, setIsSignUp] = useState(false);
+  const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const fullDayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-  const toggleForm = () => {
-    setIsSignUp((prev) => !prev);
+  // Generate dates starting from August 4, 2025 (Monday)
+  const generateDates = () => {
+    const dates = [];
+    const startDate = new Date(2025, 7, 4); // August 4, 2025
+    
+    for (let i = 0; i < 30; i++) {
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + i);
+      dates.push({
+        date: date.getDate(),
+        dayOfWeek: date.getDay() === 0 ? 6 : date.getDay() - 1, // Convert Sunday=0 to Sunday=6
+        fullDate: date,
+        dayName: fullDayNames[date.getDay() === 0 ? 6 : date.getDay() - 1]
+      });
+    }
+    return dates;
   };
 
+  const dates = generateDates();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleScroll = () => {
+    if (!scrollContainerRef.current) return;
+
+    // eslint-disable-next-line no-unused-vars
+    const scrollTop = scrollContainerRef.current.scrollTop;
+    const containerTop = scrollContainerRef.current.getBoundingClientRect().top;
+
+    // Find which day section is currently at the top
+    for (let i = 0; i < dayRefs.current.length; i++) {
+      const dayElement = dayRefs.current[i];
+      if (dayElement) {
+        const elementTop = dayElement.getBoundingClientRect().top;
+        const elementBottom = dayElement.getBoundingClientRect().bottom;
+        
+        // Check if this element is at or near the top of the visible area
+        if (elementTop <= containerTop + 100 && elementBottom > containerTop + 100) {
+          const dayIndex = dates[i].dayOfWeek;
+          if (dayIndex !== currentTopDay) {
+            setCurrentTopDay(dayIndex);
+          }
+          break;
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleScroll);
+      return () => scrollContainer.removeEventListener('scroll', handleScroll);
+    }
+  }, [currentTopDay, handleScroll]);
+
   return (
-    <Router>
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-      <Routes>
-        <Route
-          path="/login"
-          element={
-            <div className="login-container">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={isSignUp ? 'signup' : 'login'}
-                  initial={{ opacity: 0, x: isSignUp ? 100 : -100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: isSignUp ? -100 : 100 }}
-                  transition={{ duration: 0.35 }}
-                  className="login-left-motion"
-                >
-                  {isSignUp ? (
-                    <SignUpForm onSwitch={toggleForm} />
-                  ) : (
-                    <LoginForm onSwitch={toggleForm} />
-                  )}
-                </motion.div>
-              </AnimatePresence>
-              <div className="login-right">
-                <ImageSlider />
-              </div>
+    <div className="calendar-container">
+      <header className="calendar-header">
+        <div className="header-top">
+          <h1>Upcoming</h1>
+          <button className="display-btn">
+            <span>Display</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        
+        <div className="month-selector">
+          <span>August 2025</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <button className="today-btn">Today</button>
+        </div>
+
+        <div className="week-header">
+          {daysOfWeek.map((day, index) => (
+            <div key={day} className="day-header">
+              <span className="day-name">{day}</span>
+              <span className={`day-number ${index === 2 ? 'current-day' : ''}`}>
+                {4 + index}
+              </span>
+              {index === currentTopDay && <div className="day-indicator"></div>}
             </div>
-          }
-        />
-        <Route
-          path="/forgot-password"
-          element={
-            <div className="centered-container">
-              <ForgotPasswordForm />
+          ))}
+        </div>
+      </header>
+
+      <div className="calendar-content" ref={scrollContainerRef}>
+        {dates.map((dateInfo, index) => (
+          <div 
+            key={index}
+            ref={el => dayRefs.current[index] = el}
+            className="day-section"
+          >
+            <div className="day-title">
+              <span className="date-number">{dateInfo.date}</span>
+              <span className="date-info">Aug · {dateInfo.date === 6 ? 'Today · ' : dateInfo.date === 7 ? 'Tomorrow · ' : ''}{dateInfo.dayName}</span>
             </div>
-          }
-        />
-        <Route
-          path="/reset-password"
-          element={
-            <div className="centered-container">
-              <ResetPasswordForm />
-            </div>
-          }
-        />
-        <Route
-          path="/google-callback"
-          element={<GoogleCallback />} // ✅ Google OAuth2 callback handler
-        />
-        <Route
-          path="/dashboard"
-          element={
-            localStorage.getItem('token') ? (
-              <Dashboard />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </Router>
+            <button className="add-task-btn">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 3V13M3 8H13" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              <span>Add task</span>
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
   );
-}
+};
 
 export default App;
