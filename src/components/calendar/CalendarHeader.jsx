@@ -20,10 +20,9 @@ const CalendarHeader = ({ daysOfWeek, currentTopDay }) => {
         {daysOfWeek.map((day, index) => (
           <div key={day} className="day-header">
             <span className="day-name">{day}</span>
-            <span className={`day-number ${index === 2 ? 'current-day' : ''}`}>
+            <span className={`day-number ${index === currentTopDay ? 'current-day' : ''}`}>
               {4 + index}
             </span>
-            {index === currentTopDay && <div className="day-indicator"></div>}
           </div>
         ))}
       </div>

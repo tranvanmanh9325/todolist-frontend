@@ -20,7 +20,7 @@
   color: #111827;
 }
 
-/* Đã xóa phần .display-btn và hover */
+/* Nút Display đã xóa nên không còn CSS liên quan */
 
 .month-selector {
   display: flex;
@@ -91,15 +91,4 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-}
-
-.day-indicator {
-  position: absolute;
-  bottom: -16px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 6px;
-  height: 6px;
-  background: #ef4444;
-  border-radius: 50%;
 }
