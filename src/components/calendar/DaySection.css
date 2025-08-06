@@ -1,0 +1,46 @@
+.day-section {
+  padding: 24px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.day-section:last-child {
+  border-bottom: none;
+}
+
+.day-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.date-number {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.date-info {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.add-task-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 0;
+}
+
+.add-task-btn:hover {
+  opacity: 0.8;
+}
+
+.add-task-btn span {
+  color: #ef4444;
+}
