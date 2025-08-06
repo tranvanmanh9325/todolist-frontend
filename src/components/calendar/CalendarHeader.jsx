@@ -1,7 +1,7 @@
 import './CalendarHeader.css';
 import React from 'react';
 
-const CalendarHeader = ({ daysOfWeek, currentTopDay }) => {
+const CalendarHeader = ({ daysOfWeek, currentWeekIndex }) => {
   return (
     <header className="calendar-header">
       <div className="header-top">
@@ -20,7 +20,7 @@ const CalendarHeader = ({ daysOfWeek, currentTopDay }) => {
         {daysOfWeek.map((day, index) => (
           <div key={day} className="day-header">
             <span className="day-name">{day}</span>
-            <span className={`day-number ${index === currentTopDay ? 'current-day' : ''}`}>
+            <span className={`day-number ${index === currentWeekIndex ? 'current-day' : ''}`}>
               {4 + index}
             </span>
           </div>

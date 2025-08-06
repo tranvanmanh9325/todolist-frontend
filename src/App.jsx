@@ -4,7 +4,7 @@ import CalendarHeader from './components/calendar/CalendarHeader';
 import CalendarContent from './components/calendar/CalendarContent';
 
 const App = () => {
-  const [currentTopDay, setCurrentTopDay] = useState(2);
+  const [currentTopDay, setCurrentTopDay] = useState(0); // index thực tế trong mảng dates
   const scrollContainerRef = useRef(null);
   const dayRefs = useRef([]);
 
@@ -29,20 +29,21 @@ const App = () => {
 
   const dates = generateDates();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleScroll = () => {
     if (!scrollContainerRef.current) return;
+
     const containerTop = scrollContainerRef.current.getBoundingClientRect().top;
+    const offset = 50; // điều chỉnh độ trễ đổi ngày
 
     for (let i = 0; i < dayRefs.current.length; i++) {
       const dayElement = dayRefs.current[i];
       if (dayElement) {
-        const elementTop = dayElement.getBoundingClientRect().top;
-        const elementBottom = dayElement.getBoundingClientRect().bottom;
-        if (elementTop <= containerTop + 100 && elementBottom > containerTop + 100) {
-          const dayIndex = dates[i].dayOfWeek;
-          if (dayIndex !== currentTopDay) {
-            setCurrentTopDay(dayIndex);
+        const elementRect = dayElement.getBoundingClientRect();
+
+        // Chỉ đổi khi phần tử này đã vượt qua điểm trên cùng + offset
+        if (elementRect.top <= containerTop + offset && elementRect.bottom > containerTop + offset) {
+          if (i !== currentTopDay) {
+            setCurrentTopDay(i);
           }
           break;
         }
@@ -56,11 +57,14 @@ const App = () => {
       scrollContainer.addEventListener('scroll', handleScroll);
       return () => scrollContainer.removeEventListener('scroll', handleScroll);
     }
-  }, [currentTopDay, handleScroll]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTopDay]);
+
+  const currentWeekIndex = currentTopDay % 7; // tính vị trí trong tuần
 
   return (
     <div className="calendar-container">
-      <CalendarHeader daysOfWeek={daysOfWeek} currentTopDay={currentTopDay} />
+      <CalendarHeader daysOfWeek={daysOfWeek} currentWeekIndex={currentWeekIndex} />
       <CalendarContent dates={dates} dayRefs={dayRefs} scrollContainerRef={scrollContainerRef} />
     </div>
   );
