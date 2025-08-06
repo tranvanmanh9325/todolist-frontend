@@ -20,22 +20,7 @@
   color: #111827;
 }
 
-.display-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: none;
-  border: 1px solid #d1d5db;
-  padding: 8px 16px;
-  border-radius: 6px;
-  color: #6b7280;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.display-btn:hover {
-  background: #f9fafb;
-}
+/* Đã xóa phần .display-btn và hover */
 
 .month-selector {
   display: flex;
