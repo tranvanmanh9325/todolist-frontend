@@ -4,16 +4,22 @@ import CalendarHeader from './components/calendar/CalendarHeader';
 import CalendarContent from './components/calendar/CalendarContent';
 
 const App = () => {
-  const [currentTopDay, setCurrentTopDay] = useState(0); // index thực tế trong mảng dates
+  const [currentTopDay, setCurrentTopDay] = useState(0);
   const scrollContainerRef = useRef(null);
   const dayRefs = useRef([]);
 
-  const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const fullDayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const startDate = new Date(2025, 7, 4); // 4 Aug 2025
+
+  // ✅ Hàm đảm bảo lấy ISO format theo local timezone
+  const toLocalISODate = (date) => {
+    const tzOffset = date.getTimezoneOffset() * 60000; // offset in milliseconds
+    const localISO = new Date(date.getTime() - tzOffset).toISOString().split('T')[0];
+    return localISO;
+  };
 
   const generateDates = () => {
     const dates = [];
-    const startDate = new Date(2025, 7, 4);
     for (let i = 0; i < 30; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
@@ -21,7 +27,8 @@ const App = () => {
         date: date.getDate(),
         dayOfWeek: date.getDay() === 0 ? 6 : date.getDay() - 1,
         fullDate: date,
-        dayName: fullDayNames[date.getDay() === 0 ? 6 : date.getDay() - 1]
+        dayName: fullDayNames[date.getDay() === 0 ? 6 : date.getDay() - 1],
+        iso: toLocalISODate(date), // ✅ Dùng ISO theo local timezone
       });
     }
     return dates;
@@ -33,14 +40,12 @@ const App = () => {
     if (!scrollContainerRef.current) return;
 
     const containerTop = scrollContainerRef.current.getBoundingClientRect().top;
-    const offset = 50; // điều chỉnh độ trễ đổi ngày
+    const offset = 50;
 
     for (let i = 0; i < dayRefs.current.length; i++) {
       const dayElement = dayRefs.current[i];
       if (dayElement) {
         const elementRect = dayElement.getBoundingClientRect();
-
-        // Chỉ đổi khi phần tử này đã vượt qua điểm trên cùng + offset
         if (elementRect.top <= containerTop + offset && elementRect.bottom > containerTop + offset) {
           if (i !== currentTopDay) {
             setCurrentTopDay(i);
@@ -60,12 +65,21 @@ const App = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTopDay]);
 
-  const currentWeekIndex = currentTopDay % 7; // tính vị trí trong tuần
+  const startOfWeek = currentTopDay - (currentTopDay % 7);
+  const weekDates = dates.slice(startOfWeek, startOfWeek + 7);
 
   return (
     <div className="calendar-container">
-      <CalendarHeader daysOfWeek={daysOfWeek} currentWeekIndex={currentWeekIndex} />
-      <CalendarContent dates={dates} dayRefs={dayRefs} scrollContainerRef={scrollContainerRef} />
+      <CalendarHeader
+        weekDates={weekDates}
+        currentTopDay={currentTopDay}
+        dates={dates}
+      />
+      <CalendarContent
+        dates={dates}
+        dayRefs={dayRefs}
+        scrollContainerRef={scrollContainerRef}
+      />
     </div>
   );
 };
