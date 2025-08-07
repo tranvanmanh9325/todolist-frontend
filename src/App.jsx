@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import CalendarHeader from './components/calendar/CalendarHeader';
 import CalendarContent from './components/calendar/CalendarContent';
+import { addDays, format } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
 
 const App = () => {
   const [currentTopDay, setCurrentTopDay] = useState(0);
@@ -11,23 +13,22 @@ const App = () => {
   const fullDayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const startDate = new Date(2025, 7, 4); // 4 Aug 2025
 
-  // ✅ Đảm bảo định dạng ISO đúng theo local timezone
+  // Đảm bảo định dạng ISO đúng theo local timezone
   const toLocalISODate = (date) => {
-    const tzOffset = date.getTimezoneOffset() * 60000;
-    const localISO = new Date(date.getTime() - tzOffset).toISOString().split('T')[0];
-    return localISO;
+    const zonedDate = toZonedTime(date, 'UTC'); // Hoặc múi giờ khác nếu cần
+    return format(zonedDate, 'yyyy-MM-dd');
   };
 
   const generateDates = () => {
     const dates = [];
     for (let i = 0; i < 30; i++) {
-      const date = new Date(startDate);
-      date.setDate(startDate.getDate() + i);
+      const date = addDays(startDate, i);
+      const dayOfWeek = date.getDay() === 0 ? 6 : date.getDay() - 1;
       dates.push({
-        date: date.getDate(),
-        dayOfWeek: date.getDay() === 0 ? 6 : date.getDay() - 1,
+        date: format(date, 'd'), // Lấy ngày trong tháng (1-31)
+        dayOfWeek,
         fullDate: date,
-        dayName: fullDayNames[date.getDay() === 0 ? 6 : date.getDay() - 1],
+        dayName: fullDayNames[dayOfWeek],
         iso: toLocalISODate(date),
       });
     }
@@ -74,7 +75,7 @@ const App = () => {
         weekDates={weekDates}
         currentTopDay={currentTopDay}
         dates={dates}
-        dayRefs={dayRefs} // ✅ Truyền xuống để scroll mượt khi click
+        dayRefs={dayRefs}
       />
       <CalendarContent
         dates={dates}
