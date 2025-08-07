@@ -1,12 +1,22 @@
 .calendar-header {
   position: sticky;
   top: 0;
-  background: white;
+  background: #f8f9fa; /* ✅ Giống CalendarContent */
   z-index: 100;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 24px 32px 0;
+  border-bottom: 1px solid #f3f4f6; /* ✅ Đồng bộ với DaySection */
+  display: flex;
+  justify-content: center;
+  padding: 24px 16px 0;
+  box-sizing: border-box;
 }
 
+/* Giới hạn chiều rộng nội dung giống CalendarContent */
+.calendar-header-inner {
+  width: 100%;
+  max-width: 800px;
+}
+
+/* Tiêu đề chính "Upcoming" */
 .header-top {
   display: flex;
   justify-content: space-between;
@@ -20,6 +30,7 @@
   color: #111827;
 }
 
+/* Phần chọn tháng và nút Today */
 .month-selector {
   display: flex;
   align-items: center;
@@ -52,7 +63,7 @@
   background: #f9fafb;
 }
 
-/* Week Header giống Todoist */
+/* Thanh hiển thị 7 ngày trong tuần */
 .week-header {
   display: grid;
   grid-template-columns: repeat(7, 1fr);

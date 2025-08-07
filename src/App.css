@@ -1,8 +1,16 @@
 /* App.css */
-/* Chỉ giữ style tổng quan cho layout */
+/* Layout toàn màn hình, không còn giới hạn chiều rộng */
+
+body {
+  background: white;
+}
+
+/* Nếu bạn vẫn muốn dùng .calendar-container, thì nên viết như sau: */
 .calendar-container {
-  max-width: 800px;
-  margin: 0 auto;
+  width: 100vw;            /* Chiếm toàn bộ chiều rộng màn hình */
+  margin: 0;
   background: white;
   min-height: 100vh;
+  padding: 0;              /* Không cần padding ngang nếu dùng full width */
+  box-sizing: border-box;
 }

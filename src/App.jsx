@@ -6,27 +6,28 @@ import { addDays, format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 
 const App = () => {
-  const [currentTopDay, setCurrentTopDay] = useState(0);
-  const scrollContainerRef = useRef(null);
+  const [currentTopDay, setCurrentTopDay] = useState(0); // dùng để xác định tuần hiển thị
+  const [selectedDayIndex, setSelectedDayIndex] = useState(null); // ngày được chọn để highlight
   const dayRefs = useRef([]);
-  const isInitialMount = useRef(true); // Biến để kiểm soát mount lần đầu
+  const isInitialMount = useRef(true);
 
   const fullDayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const startDate = new Date(2025, 7, 4); // 4 Aug 2025
 
-  // Đảm bảo định dạng ISO đúng theo múi giờ cục bộ (+07:00)
+  // Chuyển về định dạng ISO theo múi giờ Việt Nam
   const toLocalISODate = (date) => {
-    const zonedDate = toZonedTime(date, 'Asia/Ho_Chi_Minh'); // Sử dụng múi giờ +07:00
+    const zonedDate = toZonedTime(date, 'Asia/Ho_Chi_Minh');
     return format(zonedDate, 'yyyy-MM-dd');
   };
 
+  // Tạo danh sách 30 ngày
   const generateDates = () => {
     const dates = [];
     for (let i = 0; i < 30; i++) {
       const date = addDays(startDate, i);
       const dayOfWeek = date.getDay() === 0 ? 6 : date.getDay() - 1;
       dates.push({
-        date: format(date, 'd'), // Lấy ngày trong tháng (1-31)
+        date: format(date, 'd'),
         dayOfWeek,
         fullDate: date,
         dayName: fullDayNames[dayOfWeek],
@@ -38,34 +39,38 @@ const App = () => {
 
   const dates = generateDates();
 
-  // Cuộn đến ngày hôm nay chỉ khi mount lần đầu
+  // Cuộn đến ngày hôm nay khi load lần đầu
   useEffect(() => {
     if (isInitialMount.current) {
       const todayIso = toLocalISODate(new Date());
-      console.log('Today ISO:', todayIso); // Kiểm tra giá trị trong console
       const todayIndex = dates.findIndex(d => d.iso === todayIso);
       if (todayIndex !== -1) {
         setCurrentTopDay(todayIndex);
-        if (dayRefs.current[todayIndex] && scrollContainerRef.current) {
-          dayRefs.current[todayIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setSelectedDayIndex(todayIndex); // ✅ highlight ngày hôm nay
+        if (dayRefs.current[todayIndex]) {
+          const element = dayRefs.current[todayIndex];
+          const rect = element.getBoundingClientRect();
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const header = document.querySelector('.calendar-header');
+          const headerHeight = header?.offsetHeight || 0;
+          const top = rect.top + scrollTop - headerHeight - 8;
+          window.scrollTo({ top, behavior: 'smooth' });
         }
       }
-      isInitialMount.current = false; // Đặt lại để không chạy lại
+      isInitialMount.current = false;
     }
-  }, [dates]); // Chạy một lần khi dates được tạo
+  }, [dates]);
 
-  // Memoize handleScroll với useCallback
+  // Xác định ngày đang hiển thị trên màn hình (dùng để cập nhật tuần)
   const handleScroll = useCallback(() => {
-    if (!scrollContainerRef.current) return;
-
-    const containerTop = scrollContainerRef.current.getBoundingClientRect().top;
     const offset = 50;
+    const containerTop = 0;
 
     for (let i = 0; i < dayRefs.current.length; i++) {
       const dayElement = dayRefs.current[i];
       if (dayElement) {
-        const elementRect = dayElement.getBoundingClientRect();
-        if (elementRect.top <= containerTop + offset && elementRect.bottom > containerTop + offset) {
+        const rect = dayElement.getBoundingClientRect();
+        if (rect.top <= containerTop + offset && rect.bottom > containerTop + offset) {
           if (i !== currentTopDay) {
             setCurrentTopDay(i);
           }
@@ -73,33 +78,32 @@ const App = () => {
         }
       }
     }
-  }, [currentTopDay, scrollContainerRef]); // Dependency: currentTopDay và scrollContainerRef
+  }, [currentTopDay]);
 
   useEffect(() => {
-    const scrollContainer = scrollContainerRef.current;
-    if (scrollContainer) {
-      scrollContainer.addEventListener('scroll', handleScroll);
-      return () => scrollContainer.removeEventListener('scroll', handleScroll);
-    }
-  }, [handleScroll]); // Thêm handleScroll vào dependency array
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
 
   const startOfWeek = currentTopDay - (currentTopDay % 7);
   const weekDates = dates.slice(startOfWeek, startOfWeek + 7);
 
   return (
-    <div className="calendar-container">
+    <>
       <CalendarHeader
         weekDates={weekDates}
         currentTopDay={currentTopDay}
+        selectedDayIndex={selectedDayIndex} // ✅ dùng để highlight ngày chọn
+        setSelectedDayIndex={setSelectedDayIndex} // ✅ để cập nhật khi click
         dates={dates}
         dayRefs={dayRefs}
       />
       <CalendarContent
         dates={dates}
         dayRefs={dayRefs}
-        scrollContainerRef={scrollContainerRef}
+        scrollContainerRef={null}
       />
-    </div>
+    </>
   );
 };
 

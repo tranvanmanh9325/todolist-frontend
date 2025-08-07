@@ -1,23 +1,31 @@
 .calendar-content {
-  padding: 0 32px 32px;
-  max-height: calc(100vh - 200px);
-  overflow-y: auto;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px 32px; /* khoảng trắng 2 bên cho màn hình nhỏ */
+  box-sizing: border-box;
 }
 
-/* Scrollbar styling */
-.calendar-content::-webkit-scrollbar {
+/* Container bên trong để giới hạn độ rộng nội dung */
+.calendar-inner {
+  width: 100%;
+  max-width: 800px; /* giống Todoist */
+}
+
+/* Scrollbar styling – áp dụng toàn trang */
+::-webkit-scrollbar {
   width: 6px;
 }
 
-.calendar-content::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background: #f1f5f9;
 }
 
-.calendar-content::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 3px;
 }
 
-.calendar-content::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
