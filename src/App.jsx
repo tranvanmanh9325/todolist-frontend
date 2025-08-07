@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './App.css';
 import CalendarHeader from './components/calendar/CalendarHeader';
 import CalendarContent from './components/calendar/CalendarContent';
@@ -9,13 +9,14 @@ const App = () => {
   const [currentTopDay, setCurrentTopDay] = useState(0);
   const scrollContainerRef = useRef(null);
   const dayRefs = useRef([]);
+  const isInitialMount = useRef(true); // Biến để kiểm soát mount lần đầu
 
   const fullDayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const startDate = new Date(2025, 7, 4); // 4 Aug 2025
 
-  // Đảm bảo định dạng ISO đúng theo local timezone
+  // Đảm bảo định dạng ISO đúng theo múi giờ cục bộ (+07:00)
   const toLocalISODate = (date) => {
-    const zonedDate = toZonedTime(date, 'UTC'); // Hoặc múi giờ khác nếu cần
+    const zonedDate = toZonedTime(date, 'Asia/Ho_Chi_Minh'); // Sử dụng múi giờ +07:00
     return format(zonedDate, 'yyyy-MM-dd');
   };
 
@@ -37,7 +38,24 @@ const App = () => {
 
   const dates = generateDates();
 
-  const handleScroll = () => {
+  // Cuộn đến ngày hôm nay chỉ khi mount lần đầu
+  useEffect(() => {
+    if (isInitialMount.current) {
+      const todayIso = toLocalISODate(new Date());
+      console.log('Today ISO:', todayIso); // Kiểm tra giá trị trong console
+      const todayIndex = dates.findIndex(d => d.iso === todayIso);
+      if (todayIndex !== -1) {
+        setCurrentTopDay(todayIndex);
+        if (dayRefs.current[todayIndex] && scrollContainerRef.current) {
+          dayRefs.current[todayIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+      isInitialMount.current = false; // Đặt lại để không chạy lại
+    }
+  }, [dates]); // Chạy một lần khi dates được tạo
+
+  // Memoize handleScroll với useCallback
+  const handleScroll = useCallback(() => {
     if (!scrollContainerRef.current) return;
 
     const containerTop = scrollContainerRef.current.getBoundingClientRect().top;
@@ -55,7 +73,7 @@ const App = () => {
         }
       }
     }
-  };
+  }, [currentTopDay, scrollContainerRef]); // Dependency: currentTopDay và scrollContainerRef
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
@@ -63,8 +81,7 @@ const App = () => {
       scrollContainer.addEventListener('scroll', handleScroll);
       return () => scrollContainer.removeEventListener('scroll', handleScroll);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTopDay]);
+  }, [handleScroll]); // Thêm handleScroll vào dependency array
 
   const startOfWeek = currentTopDay - (currentTopDay % 7);
   const weekDates = dates.slice(startOfWeek, startOfWeek + 7);
