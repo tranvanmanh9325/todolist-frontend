@@ -11,9 +11,9 @@ const App = () => {
   const fullDayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const startDate = new Date(2025, 7, 4); // 4 Aug 2025
 
-  // ✅ Hàm đảm bảo lấy ISO format theo local timezone
+  // ✅ Đảm bảo định dạng ISO đúng theo local timezone
   const toLocalISODate = (date) => {
-    const tzOffset = date.getTimezoneOffset() * 60000; // offset in milliseconds
+    const tzOffset = date.getTimezoneOffset() * 60000;
     const localISO = new Date(date.getTime() - tzOffset).toISOString().split('T')[0];
     return localISO;
   };
@@ -28,7 +28,7 @@ const App = () => {
         dayOfWeek: date.getDay() === 0 ? 6 : date.getDay() - 1,
         fullDate: date,
         dayName: fullDayNames[date.getDay() === 0 ? 6 : date.getDay() - 1],
-        iso: toLocalISODate(date), // ✅ Dùng ISO theo local timezone
+        iso: toLocalISODate(date),
       });
     }
     return dates;
@@ -74,6 +74,7 @@ const App = () => {
         weekDates={weekDates}
         currentTopDay={currentTopDay}
         dates={dates}
+        dayRefs={dayRefs} // ✅ Truyền xuống để scroll mượt khi click
       />
       <CalendarContent
         dates={dates}

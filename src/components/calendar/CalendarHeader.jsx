@@ -1,8 +1,18 @@
 import './CalendarHeader.css';
 import React from 'react';
 
-const CalendarHeader = ({ weekDates, currentTopDay, dates }) => {
+const CalendarHeader = ({ weekDates, currentTopDay, dates, dayRefs }) => {
   const currentIso = dates[currentTopDay]?.iso;
+
+  const handleClick = (iso) => {
+    const index = dates.findIndex(d => d.iso === iso);
+    if (index !== -1 && dayRefs.current[index]) {
+      dayRefs.current[index].scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  };
 
   return (
     <header className="calendar-header">
@@ -33,7 +43,11 @@ const CalendarHeader = ({ weekDates, currentTopDay, dates }) => {
             aria-disabled="false"
             aria-selected={dayObj.iso === currentIso}
             className={`day-cell ${dayObj.iso === currentIso ? 'selected' : ''}`}
-            href={`#section-${dayObj.iso}`}
+            onClick={(e) => {
+              e.preventDefault(); // Ngăn chuyển hướng trang
+              handleClick(dayObj.iso); // Scroll mượt đến section
+            }}
+            href={`#`} // Vẫn để href="#" để giữ cấu trúc HTML đúng
           >
             <span className="day-wrapper">
               <span className="day-name">{dayObj.dayName}</span>
