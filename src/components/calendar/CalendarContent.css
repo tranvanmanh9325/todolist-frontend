@@ -1,15 +1,18 @@
 .calendar-content {
-  width: 100vw;
+  width: 100%;              /* ✅ Thay 100vw → 100% để không vượt viewport */
+  max-width: 100%;          /* ✅ Giới hạn tuyệt đối chiều ngang */
+  overflow-x: hidden;       /* ✅ Chặn tràn ngang */
   display: flex;
   justify-content: center;
-  padding: 0 16px 32px; /* khoảng trắng 2 bên cho màn hình nhỏ */
+  padding: 0 16px 32px;     /* Khoảng trắng 2 bên cho màn hình nhỏ */
   box-sizing: border-box;
 }
 
 /* Container bên trong để giới hạn độ rộng nội dung */
 .calendar-inner {
   width: 100%;
-  max-width: 800px; /* giống Todoist */
+  max-width: 800px;         /* Giống Todoist */
+  overflow-x: hidden;       /* ✅ Ngăn nội dung con tràn ngang */
 }
 
 /* Scrollbar styling – áp dụng toàn trang */

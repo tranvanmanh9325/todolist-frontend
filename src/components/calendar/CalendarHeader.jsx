@@ -4,30 +4,9 @@ import React from 'react';
 const CalendarHeader = ({
   weekDates,
   selectedDayIndex,
-  setSelectedDayIndex,
-  dates,
-  dayRefs
+  setSelectedDayIndex, // Đây là handleDayClick
+  dates
 }) => {
-  const handleClick = (iso) => {
-    const index = dates.findIndex(d => d.iso === iso);
-    if (index !== -1 && dayRefs.current[index]) {
-      const element = dayRefs.current[index];
-      const rect = element.getBoundingClientRect();
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-      const header = document.querySelector('.calendar-header');
-      const headerHeight = header?.offsetHeight || 0;
-      const top = rect.top + scrollTop - headerHeight - 8;
-
-      window.scrollTo({
-        top,
-        behavior: 'smooth',
-      });
-
-      setSelectedDayIndex(index); // ✅ cập nhật ngày được highlight
-    }
-  };
-
   return (
     <header className="calendar-header">
       <div className="calendar-header-inner">
@@ -64,7 +43,7 @@ const CalendarHeader = ({
                 className={`day-cell ${isSelected ? 'selected' : ''}`}
                 onClick={(e) => {
                   e.preventDefault();
-                  handleClick(dayObj.iso);
+                  setSelectedDayIndex(index);
                 }}
                 href="#"
               >

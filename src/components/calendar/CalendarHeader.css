@@ -8,12 +8,15 @@
   justify-content: center;
   padding: 24px 16px 0;
   box-sizing: border-box;
+  max-width: 100%;         /* ✅ Giới hạn ngang */
+  overflow-x: hidden;      /* ✅ Ẩn tràn ngang */
 }
 
 /* Giới hạn chiều rộng nội dung giống CalendarContent */
 .calendar-header-inner {
   width: 100%;
   max-width: 800px;
+  overflow-x: hidden;      /* ✅ Đảm bảo nội dung không tràn */
 }
 
 /* Tiêu đề chính "Upcoming" */
@@ -36,6 +39,8 @@
   align-items: center;
   gap: 16px;
   margin-bottom: 24px;
+  flex-wrap: nowrap;       /* ✅ Ngăn wrap gây tràn */
+  max-width: 100%;         /* ✅ Không vượt viewport */
 }
 
 .month-selector span {
@@ -69,6 +74,8 @@
   grid-template-columns: repeat(7, 1fr);
   gap: 8px;
   padding-bottom: 16px;
+  max-width: 100%;         /* ✅ Không vượt viewport */
+  overflow-x: hidden;      /* ✅ Ẩn tràn ngang */
 }
 
 .day-cell {
