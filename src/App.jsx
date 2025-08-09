@@ -8,7 +8,9 @@ import { toZonedTime } from 'date-fns-tz';
 const App = () => {
   const [currentTopDay, setCurrentTopDay] = useState(0);
   const [selectedDayIndex, setSelectedDayIndex] = useState(null);
-  const [isLockedScroll, setIsLockedScroll] = useState(false); // khóa handleScroll khi click
+  const [isLockedScroll, setIsLockedScroll] = useState(false);
+  const [headerScrolled, setHeaderScrolled] = useState(false); // ✅ Thêm state cho hiệu ứng bóng
+
   const dayRefs = useRef([]);
   const isInitialMount = useRef(true);
   const scrollTimeout = useRef(null);
@@ -61,13 +63,7 @@ const App = () => {
     }
   }, [dates]);
 
-  /**
-   * handleScroll (mạnh mẽ):
-   * - tìm nút '.add-task-btn' bên trong mỗi dayRefs[i]
-   * - tính vị trí bottom của add-btn so với headerHeight
-   * - ngày hiện tại = ngày đầu tiên có addBtn.bottom > headerHeight (tức vẫn còn nhìn thấy dưới header)
-   * - nếu isLockedScroll === true thì không làm gì (trường hợp click + scrollTo)
-   */
+  // Xác định ngày hiện tại khi cuộn
   const handleScroll = useCallback(() => {
     if (isLockedScroll) return;
 
@@ -78,12 +74,13 @@ const App = () => {
       const dayElement = dayRefs.current[i];
       if (!dayElement) continue;
 
-      // tìm phần tử add-task bên trong dayElement (nếu có)
-      const addBtn = dayElement.querySelector ? dayElement.querySelector('.add-task-btn') : null;
-      const targetRect = addBtn ? addBtn.getBoundingClientRect() : dayElement.getBoundingClientRect();
+      const addBtn = dayElement.querySelector
+        ? dayElement.querySelector('.add-task-btn')
+        : null;
+      const targetRect = addBtn
+        ? addBtn.getBoundingClientRect()
+        : dayElement.getBoundingClientRect();
 
-      // Nếu bottom của nút Add task (hoặc bottom của dayElement nếu ko tìm thấy nút)
-      // vẫn nằm dưới header => đây là ngày hiện tại đang hiển thị
       if (targetRect.bottom > headerHeight + 4) {
         if (i !== selectedDayIndex) {
           setCurrentTopDay(i);
@@ -98,7 +95,13 @@ const App = () => {
     const onScroll = () => {
       handleScroll();
 
-      // Debounce để unlock khi scroll dừng: 120ms đủ mượt
+      // ✅ Toggle hiệu ứng bóng cho header
+      if (window.scrollY > 0) {
+        setHeaderScrolled(true);
+      } else {
+        setHeaderScrolled(false);
+      }
+
       clearTimeout(scrollTimeout.current);
       scrollTimeout.current = setTimeout(() => {
         setIsLockedScroll(false);
@@ -112,10 +115,10 @@ const App = () => {
     };
   }, [handleScroll]);
 
-  // Click chọn ngày (được truyền xuống CalendarHeader)
+  // Click chọn ngày
   const handleDayClick = (index) => {
     setSelectedDayIndex(index);
-    setIsLockedScroll(true); // khóa update từ handleScroll trong lúc scrollTo đang chạy
+    setIsLockedScroll(true);
 
     if (dayRefs.current[index]) {
       const element = dayRefs.current[index];
@@ -138,6 +141,7 @@ const App = () => {
         selectedDayIndex={selectedDayIndex}
         setSelectedDayIndex={handleDayClick}
         dates={dates}
+        headerClassName={`calendar-header${headerScrolled ? ' scrolled' : ''}`} // ✅ Thêm class
       />
       <CalendarContent
         dates={dates}

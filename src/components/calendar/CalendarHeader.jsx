@@ -5,10 +5,11 @@ const CalendarHeader = ({
   weekDates,
   selectedDayIndex,
   setSelectedDayIndex, // handleDayClick
-  dates
+  dates,
+  headerClassName = 'calendar-header' // ✅ nhận class từ App.jsx, default là calendar-header
 }) => {
   return (
-    <header className="calendar-header">
+    <header className={headerClassName}>
       <div className="calendar-header-inner">
         <div className="header-top">
           <h1>Upcoming</h1>

@@ -20,11 +20,17 @@
   top: 0;
   background: var(--color-bg);
   z-index: 100;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border); /* ✅ giữ viền dưới */
   display: flex;
   justify-content: center;
   padding: var(--space-top-gap) var(--space-md) var(--space-md);
   box-sizing: border-box;
+  transition: box-shadow 0.2s ease; /* ✅ bóng mượt khi cuộn */
+}
+
+/* Khi cuộn xuống sẽ có bóng mờ */
+.calendar-header.scrolled {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* giống Todoist */
 }
 
 .calendar-header-inner {
@@ -42,7 +48,7 @@
   font-weight: 700;
   color: var(--color-text);
   margin: 0;
-  transform: translateY(-5px); /* bạn có thể chỉnh số -6px tùy ý */
+  transform: translateY(-5px);
 }
 
 /* Tháng + nút Today */
@@ -54,9 +60,9 @@
 }
 
 .month-left {
-  display: inline-flex; /* ✅ giữ chữ và icon cùng một dòng */
+  display: inline-flex;
   align-items: center;
-  gap: 4px; /* ✅ sát hơn */
+  gap: 4px;
   font-size: 14px;
   font-weight: 600;
   color: var(--color-text);
@@ -71,7 +77,7 @@
 .month-left svg {
   width: 14px;
   height: 14px;
-  vertical-align: middle; /* ✅ căn giữa icon với chữ */
+  vertical-align: middle;
 }
 
 /* Nút Today */
