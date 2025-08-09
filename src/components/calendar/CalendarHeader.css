@@ -1,125 +1,166 @@
+:root {
+  /* Màu sắc */
+  --color-text: #111827;
+  --color-text-light: #9ca3af;
+  --color-border: #e5e7eb;
+  --color-accent: #ef4444;
+  --color-bg: #fff;
+  --color-bg-hover: #f9fafb;
+
+  /* Khoảng cách */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-top-gap: 60px; /* khoảng trắng phía trên header */
+}
+
+/* Header chính */
 .calendar-header {
   position: sticky;
   top: 0;
-  background: #f8f9fa; /* ✅ Giống CalendarContent */
+  background: var(--color-bg);
   z-index: 100;
-  border-bottom: 1px solid #f3f4f6; /* ✅ Đồng bộ với DaySection */
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   justify-content: center;
-  padding: 24px 16px 0;
+  
+  /* ✅ tăng chiều cao bằng padding-top */
+  padding: var(--space-top-gap) var(--space-md) var(--space-md);
+  
   box-sizing: border-box;
-  max-width: 100%;         /* ✅ Giới hạn ngang */
-  overflow-x: hidden;      /* ✅ Ẩn tràn ngang */
 }
 
-/* Giới hạn chiều rộng nội dung giống CalendarContent */
 .calendar-header-inner {
   width: 100%;
   max-width: 800px;
-  overflow-x: hidden;      /* ✅ Đảm bảo nội dung không tràn */
 }
 
-/* Tiêu đề chính "Upcoming" */
+/* Dòng tiêu đề */
 .header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: var(--space-sm);
 }
 
 .header-top h1 {
-  font-size: 28px;
-  font-weight: 600;
-  color: #111827;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
 }
 
-/* Phần chọn tháng và nút Today */
+/* Tháng + nút Today */
 .month-selector {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-  flex-wrap: nowrap;       /* ✅ Ngăn wrap gây tràn */
-  max-width: 100%;         /* ✅ Không vượt viewport */
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
 }
 
-.month-selector span {
+.month-left {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 500;
-  color: #374151;
+  gap: var(--space-xs);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
   cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.month-left:hover {
+  color: var(--color-accent);
+}
+
+.month-left svg {
+  width: 12px;
+  height: 12px;
 }
 
 .today-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
   background: none;
   border: 1px solid #d1d5db;
-  padding: 6px 12px;
   border-radius: 6px;
-  color: #6b7280;
+  padding: var(--space-xs) var(--space-sm);
+  font-size: 13px;
+  color: var(--color-text);
   cursor: pointer;
-  font-size: 14px;
-  margin-left: auto;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .today-btn:hover {
-  background: #f9fafb;
+  background: var(--color-bg-hover);
+  border-color: var(--color-accent);
 }
 
-/* Thanh hiển thị 7 ngày trong tuần */
+.today-btn svg {
+  width: 12px;
+  height: 12px;
+  stroke: currentColor;
+}
+
+/* Thanh ngày */
 .week-header {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-  padding-bottom: 16px;
-  max-width: 100%;         /* ✅ Không vượt viewport */
-  overflow-x: hidden;      /* ✅ Ẩn tràn ngang */
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-xs) 0;
 }
 
 .day-cell {
   text-align: center;
   text-decoration: none;
-  color: inherit;
-  border-radius: 8px;
-  padding: 4px 0;
-  transition: background 0.2s ease;
-  display: flex;
-  justify-content: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-light);
+  padding: var(--space-xs) 0;
+  transition: color 0.2s ease;
 }
 
 .day-cell:hover {
-  background: #f3f4f6;
+  color: var(--color-accent);
+}
+
+.day-cell.selected {
+  color: var(--color-text);
 }
 
 .day-wrapper {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: var(--space-xs);
 }
 
 .day-name {
-  font-size: 12px;
-  color: #6b7280;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .day-number {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
-  color: #374151;
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: inherit;
 }
 
 .day-cell.selected .day-number {
-  background: #ef4444;
+  background: var(--color-accent);
   color: white;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 480px) {
+  .header-top h1 {
+    font-size: 18px;
+  }
+  .month-selector {
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+  .week-header {
+    font-size: 12px;
+  }
 }
