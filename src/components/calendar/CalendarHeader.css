@@ -38,10 +38,11 @@
 }
 
 .header-top h1 {
-  font-size: 27px;
+  font-size: 29px;
   font-weight: 700;
   color: var(--color-text);
   margin: 0;
+  transform: translateY(-5px); /* bạn có thể chỉnh số -6px tùy ý */
 }
 
 /* Tháng + nút Today */
