@@ -23,10 +23,7 @@
   border-bottom: 1px solid var(--color-border);
   display: flex;
   justify-content: center;
-  
-  /* ✅ tăng chiều cao bằng padding-top */
   padding: var(--space-top-gap) var(--space-md) var(--space-md);
-  
   box-sizing: border-box;
 }
 
@@ -56,9 +53,9 @@
 }
 
 .month-left {
-  display: flex;
+  display: inline-flex; /* ✅ giữ chữ và icon cùng một dòng */
   align-items: center;
-  gap: var(--space-xs);
+  gap: 4px; /* ✅ sát hơn */
   font-size: 14px;
   font-weight: 600;
   color: var(--color-text);
@@ -71,10 +68,12 @@
 }
 
 .month-left svg {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
+  vertical-align: middle; /* ✅ căn giữa icon với chữ */
 }
 
+/* Nút Today */
 .today-btn {
   display: flex;
   align-items: center;
