@@ -25,16 +25,28 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
+/* Ngày: đậm, màu xám */
 .date-number {
   font-size: 16px;
-  font-weight: 600;
-  color: #111827;
+  font-weight: 700;
+  color: gray;
   flex-shrink: 0;
 }
 
+/* Tháng, Thứ, Today, Tomorrow: đậm, màu xám */
 .date-info {
   font-size: 14px;
-  color: #6b7280;
+  color: gray;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.date-info .month,
+.date-info .day-name,
+.date-info .today-label,
+.date-info .tomorrow-label {
+  font-weight: 700;
+  color: gray;
 }
 
 .add-task-btn {

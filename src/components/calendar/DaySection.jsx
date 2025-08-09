@@ -1,30 +1,28 @@
 import './DaySection.css';
 import React from 'react';
-import { format } from 'date-fns';
+import { format, addDays } from 'date-fns';
 
 const DaySection = ({ dateInfo }) => {
   const month = format(dateInfo.fullDate, 'MMM');
-  const isToday =
-    dateInfo.date === new Date().getDate() &&
-    format(dateInfo.fullDate, 'yyyy-MM') === format(new Date(), 'yyyy-MM');
-  const isTomorrow =
-    dateInfo.date === new Date().getDate() + 1 &&
-    format(dateInfo.fullDate, 'yyyy-MM') === format(new Date(), 'yyyy-MM');
+
+  const todayISO = format(new Date(), 'yyyy-MM-dd');
+  const tomorrowISO = format(addDays(new Date(), 1), 'yyyy-MM-dd');
+  const currentISO = format(dateInfo.fullDate, 'yyyy-MM-dd');
+
+  const isToday = currentISO === todayISO;
+  const isTomorrow = currentISO === tomorrowISO;
 
   return (
     <div className="day-section">
       <div className="day-title">
         <span className="date-number">{dateInfo.date}</span>
-        {/* ✅ Bọc date-info trong wrapper để gạch bắt đầu sau số ngày */}
         <span className="date-info-wrapper">
           <span className="date-info">
-            {month} ·{' '}
-            {isToday
-              ? 'Today · '
-              : isTomorrow
-              ? 'Tomorrow · '
-              : ''}
-            {dateInfo.dayName}
+            <span className="month">{month}</span>
+            {isToday && <span className="today-label"> · Today</span>}
+            {isTomorrow && <span className="tomorrow-label"> · Tomorrow</span>}
+            {' · '}
+            <span className="day-name">{dateInfo.dayName}</span>
           </span>
         </span>
       </div>
