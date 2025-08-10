@@ -49,19 +49,24 @@ const App = () => {
       if (todayIndex !== -1) {
         setCurrentTopDay(todayIndex);
         setSelectedDayIndex(todayIndex);
-        if (dayRefs.current[todayIndex]) {
-          const element = dayRefs.current[todayIndex];
-          const rect = element.getBoundingClientRect();
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-          const header = document.querySelector('.calendar-header');
-          const headerHeight = header?.offsetHeight || 0;
-          const top = rect.top + scrollTop - headerHeight - 8;
-          window.scrollTo({ top, behavior: 'smooth' });
-        }
+        scrollToDay(todayIndex);
       }
       isInitialMount.current = false;
     }
   }, [dates]);
+
+  // Hàm cuộn đến ngày bất kỳ
+  const scrollToDay = (index) => {
+    if (dayRefs.current[index]) {
+      const element = dayRefs.current[index];
+      const rect = element.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const header = document.querySelector('.calendar-header');
+      const headerHeight = header?.offsetHeight || 0;
+      const top = rect.top + scrollTop - headerHeight - 8;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  };
 
   // Xác định ngày hiện tại khi cuộn
   const handleScroll = useCallback(() => {
@@ -119,24 +124,31 @@ const App = () => {
     setSelectedDayIndex(index);
     setCurrentTopDay(index);
     setIsLockedScroll(true);
-
-    if (dayRefs.current[index]) {
-      const element = dayRefs.current[index];
-      const rect = element.getBoundingClientRect();
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const header = document.querySelector('.calendar-header');
-      const headerHeight = header?.offsetHeight || 0;
-      const top = rect.top + scrollTop - headerHeight - 8;
-      window.scrollTo({ top, behavior: 'smooth' });
-    }
+    scrollToDay(index);
   };
 
-  // ✅ Hàm cuộn về Today
+  // ✅ Cuộn về Today
   const handleTodayClick = () => {
     const todayIso = toLocalISODate(new Date());
     const todayIndex = dates.findIndex(d => d.iso === todayIso);
     if (todayIndex !== -1) {
       handleDayClick(todayIndex);
+    }
+  };
+
+  // ✅ Chuyển sang tuần sau
+  const handleNextWeekClick = () => {
+    const nextWeekIndex = currentTopDay + 7;
+    if (nextWeekIndex < dates.length) {
+      handleDayClick(nextWeekIndex);
+    }
+  };
+
+  // ✅ Chuyển sang tuần trước
+  const handlePrevWeekClick = () => {
+    const prevWeekIndex = currentTopDay - 7;
+    if (prevWeekIndex >= 0) {
+      handleDayClick(prevWeekIndex);
     }
   };
 
@@ -151,7 +163,9 @@ const App = () => {
         setSelectedDayIndex={handleDayClick}
         dates={dates}
         headerClassName={`calendar-header${headerScrolled ? ' scrolled' : ''}`}
-        onTodayClick={handleTodayClick} // ✅ truyền xuống header
+        onTodayClick={handleTodayClick}
+        onNextWeekClick={handleNextWeekClick}   // ✅ truyền xuống header
+        onPrevWeekClick={handlePrevWeekClick}   // ✅ truyền xuống header
       />
       <CalendarContent
         dates={dates}
