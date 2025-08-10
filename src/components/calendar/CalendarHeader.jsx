@@ -52,9 +52,20 @@ const CalendarHeader = ({
     e.stopPropagation();
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
   };
-  const handleTodayMonth = (e) => {
-    e.stopPropagation();
-    setCurrentMonth(new Date());
+
+  // Cuộn đến ngày trong lịch chính (trừ chiều cao header)
+  const scrollToDate = (iso) => {
+    const target = document.querySelector(`.calendar-inner [data-iso="${iso}"]`);
+    if (!target) return;
+
+    const headerEl = document.querySelector('.calendar-header');
+    const headerHeight = headerEl ? headerEl.offsetHeight : 0;
+
+    const rect = target.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const top = rect.top + scrollTop - headerHeight - 8;
+
+    window.scrollTo({ top, behavior: 'smooth' });
   };
 
   return (
@@ -67,7 +78,6 @@ const CalendarHeader = ({
 
         {/* Chọn tháng + điều hướng */}
         <div className="month-selector">
-          {/* Tháng + icon dropdown */}
           <div
             className="month-left"
             ref={monthRef}
@@ -102,17 +112,10 @@ const CalendarHeader = ({
                       gap: '8px'
                     }}
                   >
-                    {/* Nút prev */}
+                    {/* Prev */}
                     <button
                       className="date-picker-header-action"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '24px',
-                        height: '24px',
-                        padding: 0
-                      }}
+                      style={{ width: '24px', height: '24px', padding: 0 }}
                       onClick={handlePrevMonth}
                     >
                       <svg viewBox="0 0 24 24" style={{ width: '16px', height: '16px' }}>
@@ -127,7 +130,7 @@ const CalendarHeader = ({
                       </svg>
                     </button>
 
-                    {/* Nút Today tròn */}
+                    {/* Today */}
                     <button
                       className="date-picker-header-action outline-circle"
                       style={{
@@ -135,27 +138,26 @@ const CalendarHeader = ({
                         height: '8px',
                         border: '1px solid gray',
                         borderRadius: '50%',
-                        padding: 0,
-                        margin: 0,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
+                        padding: 0
                       }}
-                      onClick={handleTodayMonth}
+                      onClick={() => {
+                        const isoToday = format(today, 'yyyy-MM-dd');
+                        const idx = dates.findIndex(d => d.iso === isoToday);
+                        if (idx !== -1) {
+                          setSelectedDayIndex(idx);
+                          setShowDatePicker(false);
+                          setTimeout(() => scrollToDate(isoToday), 0);
+                        } else {
+                          setCurrentMonth(new Date());
+                        }
+                      }}
                       aria-label="Today"
                     />
 
-                    {/* Nút next */}
+                    {/* Next */}
                     <button
                       className="date-picker-header-action"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '24px',
-                        height: '24px',
-                        padding: 0
-                      }}
+                      style={{ width: '24px', height: '24px', padding: 0 }}
                       onClick={handleNextMonth}
                     >
                       <svg viewBox="0 0 24 24" style={{ width: '16px', height: '16px' }}>
@@ -191,6 +193,22 @@ const CalendarHeader = ({
                       <button
                         key={idx}
                         className={`calendar-day ${isToday ? 'selected' : ''}`}
+                        onClick={() => {
+                          const clickedDate = new Date(
+                            currentMonth.getFullYear(),
+                            currentMonth.getMonth(),
+                            day
+                          );
+                          const iso = format(clickedDate, 'yyyy-MM-dd');
+                          const index = dates.findIndex(d => d.iso === iso);
+                          if (index !== -1) {
+                            setSelectedDayIndex(index);
+                            setShowDatePicker(false);
+                            setTimeout(() => scrollToDate(iso), 0);
+                          } else {
+                            setShowDatePicker(false);
+                          }
+                        }}
                       >
                         {day}
                       </button>
@@ -244,6 +262,7 @@ const CalendarHeader = ({
             return (
               <a
                 key={dayObj.iso}
+                data-iso={dayObj.iso}
                 role="gridcell"
                 aria-label={dayObj.iso}
                 aria-selected={isSelected}
