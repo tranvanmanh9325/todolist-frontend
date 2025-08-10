@@ -15,6 +15,7 @@ const CalendarHeader = ({
   const [showDatePicker, setShowDatePicker] = useState(false);
   const monthRef = useRef(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDateInPopup, setSelectedDateInPopup] = useState(null); // lưu ngày chọn trong popup
   const today = new Date();
 
   // Đóng popup khi click ngoài
@@ -27,6 +28,13 @@ const CalendarHeader = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Cập nhật selectedDateInPopup khi selectedDayIndex thay đổi từ bên ngoài
+  useEffect(() => {
+    if (selectedDayIndex != null && selectedDayIndex >= 0) {
+      setSelectedDateInPopup(dates[selectedDayIndex]?.iso || null);
+    }
+  }, [selectedDayIndex, dates]);
 
   // Sinh lưới ngày
   const generateMonthDays = (monthDate) => {
@@ -53,7 +61,7 @@ const CalendarHeader = ({
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
   };
 
-  // Cuộn đến ngày trong lịch chính (trừ chiều cao header)
+  // Cuộn đến ngày trong lịch chính
   const scrollToDate = (iso) => {
     const target = document.querySelector(`.calendar-inner [data-iso="${iso}"]`);
     if (!target) return;
@@ -142,6 +150,7 @@ const CalendarHeader = ({
                       }}
                       onClick={() => {
                         const isoToday = format(today, 'yyyy-MM-dd');
+                        setSelectedDateInPopup(isoToday);
                         const idx = dates.findIndex(d => d.iso === isoToday);
                         if (idx !== -1) {
                           setSelectedDayIndex(idx);
@@ -184,22 +193,21 @@ const CalendarHeader = ({
                 {/* Lưới ngày */}
                 <div className="calendar-grid">
                   {monthDays.map((day, idx) => {
-                    const isToday =
-                      day &&
-                      currentMonth.getMonth() === today.getMonth() &&
-                      currentMonth.getFullYear() === today.getFullYear() &&
-                      day === today.getDate();
-                    return day ? (
+                    if (!day) return <div key={idx}></div>;
+
+                    const iso = format(
+                      new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day),
+                      'yyyy-MM-dd'
+                    );
+                    const isToday = iso === format(today, 'yyyy-MM-dd');
+                    const isSelected = iso === selectedDateInPopup;
+
+                    return (
                       <button
                         key={idx}
-                        className={`calendar-day ${isToday ? 'selected' : ''}`}
+                        className={`calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}`}
                         onClick={() => {
-                          const clickedDate = new Date(
-                            currentMonth.getFullYear(),
-                            currentMonth.getMonth(),
-                            day
-                          );
-                          const iso = format(clickedDate, 'yyyy-MM-dd');
+                          setSelectedDateInPopup(iso);
                           const index = dates.findIndex(d => d.iso === iso);
                           if (index !== -1) {
                             setSelectedDayIndex(index);
@@ -212,8 +220,6 @@ const CalendarHeader = ({
                       >
                         {day}
                       </button>
-                    ) : (
-                      <div key={idx}></div>
                     );
                   })}
                 </div>
@@ -270,6 +276,7 @@ const CalendarHeader = ({
                 onClick={(e) => {
                   e.preventDefault();
                   setSelectedDayIndex(index);
+                  setSelectedDateInPopup(dayObj.iso); // đồng bộ highlight popup
                 }}
                 href="#"
               >
