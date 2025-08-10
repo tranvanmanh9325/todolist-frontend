@@ -9,7 +9,7 @@ const App = () => {
   const [currentTopDay, setCurrentTopDay] = useState(0);
   const [selectedDayIndex, setSelectedDayIndex] = useState(null);
   const [isLockedScroll, setIsLockedScroll] = useState(false);
-  const [headerScrolled, setHeaderScrolled] = useState(false); // ✅ Thêm state cho hiệu ứng bóng
+  const [headerScrolled, setHeaderScrolled] = useState(false);
 
   const dayRefs = useRef([]);
   const isInitialMount = useRef(true);
@@ -95,7 +95,6 @@ const App = () => {
     const onScroll = () => {
       handleScroll();
 
-      // ✅ Toggle hiệu ứng bóng cho header
       if (window.scrollY > 0) {
         setHeaderScrolled(true);
       } else {
@@ -118,6 +117,7 @@ const App = () => {
   // Click chọn ngày
   const handleDayClick = (index) => {
     setSelectedDayIndex(index);
+    setCurrentTopDay(index);
     setIsLockedScroll(true);
 
     if (dayRefs.current[index]) {
@@ -131,6 +131,15 @@ const App = () => {
     }
   };
 
+  // ✅ Hàm cuộn về Today
+  const handleTodayClick = () => {
+    const todayIso = toLocalISODate(new Date());
+    const todayIndex = dates.findIndex(d => d.iso === todayIso);
+    if (todayIndex !== -1) {
+      handleDayClick(todayIndex);
+    }
+  };
+
   const startOfWeek = currentTopDay - (currentTopDay % 7);
   const weekDates = dates.slice(startOfWeek, startOfWeek + 7);
 
@@ -141,7 +150,8 @@ const App = () => {
         selectedDayIndex={selectedDayIndex}
         setSelectedDayIndex={handleDayClick}
         dates={dates}
-        headerClassName={`calendar-header${headerScrolled ? ' scrolled' : ''}`} // ✅ Thêm class
+        headerClassName={`calendar-header${headerScrolled ? ' scrolled' : ''}`}
+        onTodayClick={handleTodayClick} // ✅ truyền xuống header
       />
       <CalendarContent
         dates={dates}

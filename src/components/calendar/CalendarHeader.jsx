@@ -6,7 +6,8 @@ const CalendarHeader = ({
   selectedDayIndex,
   setSelectedDayIndex, // handleDayClick
   dates,
-  headerClassName = 'calendar-header' // ✅ nhận class từ App.jsx, default là calendar-header
+  headerClassName = 'calendar-header',
+  onTodayClick // ✅ nhận prop mới từ App.jsx
 }) => {
   return (
     <header className={headerClassName}>
@@ -16,7 +17,6 @@ const CalendarHeader = ({
         </div>
 
         <div className="month-selector">
-          {/* ✅ Gộp chữ và icon chung 1 nhóm */}
           <div className="month-left">
             <span>August 2025</span>
             <svg
@@ -35,7 +35,10 @@ const CalendarHeader = ({
             </svg>
           </div>
 
-          <button className="today-btn">Today</button>
+          {/* ✅ Bấm vào sẽ cuộn về ngày hiện tại */}
+          <button className="today-btn" onClick={onTodayClick}>
+            Today
+          </button>
         </div>
 
         <div className="week-header" role="grid" tabIndex="-1">
