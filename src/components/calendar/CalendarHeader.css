@@ -67,6 +67,7 @@
   color: var(--color-text);
   cursor: pointer;
   transition: color 0.2s ease;
+  position: relative; /* để popup định vị theo tháng */
 }
 
 .month-left:hover {
@@ -77,6 +78,77 @@
   width: 14px;
   height: 14px;
   vertical-align: middle;
+}
+
+/* ===== Popup Date Picker ===== */
+.date-picker-popup {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: var(--space-sm);
+  z-index: 200;
+  min-width: 250px;
+}
+
+.date-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--space-xs);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--space-xs);
+}
+
+.date-picker-header-month {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.date-picker-header-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.date-picker-header-action {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.date-picker-header-action:hover {
+  background: var(--color-bg-hover);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-day {
+  padding: 4px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.calendar-day:hover {
+  background: var(--color-bg-hover);
+}
+
+.calendar-day.selected {
+  background: var(--color-accent);
+  color: white;
 }
 
 /* ===== Nút Prev – Today – Next dạng group ===== */
@@ -117,8 +189,8 @@
   position: relative;
   padding: 0 14px;
   font-size: 13px;
-  font-weight: 600; /* In đậm */
-  color: #6f7070; /* Màu xám */
+  font-weight: 600;
+  color: #6f7070;
 }
 
 .week-nav-today::before,
@@ -128,7 +200,7 @@
   top: 50%;
   transform: translateY(-50%);
   width: 1px;
-  height: 14px; /* chiều cao vạch */
+  height: 14px;
   background: var(--color-border);
 }
 
@@ -208,5 +280,8 @@
   }
   .week-header {
     font-size: 12px;
+  }
+  .date-picker-popup {
+    min-width: 200px;
   }
 }

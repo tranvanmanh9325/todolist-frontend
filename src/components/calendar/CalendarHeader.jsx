@@ -1,5 +1,5 @@
 import './CalendarHeader.css';
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 const CalendarHeader = ({
   weekDates,
@@ -11,6 +11,20 @@ const CalendarHeader = ({
   onNextWeekClick,
   onPrevWeekClick
 }) => {
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const monthRef = useRef(null);
+
+  // Đóng popup khi click ra ngoài
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (monthRef.current && !monthRef.current.contains(e.target)) {
+        setShowDatePicker(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
     <header className={headerClassName}>
       <div className="calendar-header-inner">
@@ -22,7 +36,12 @@ const CalendarHeader = ({
         {/* Khu vực tháng + nút điều hướng */}
         <div className="month-selector">
           {/* Tháng + icon dropdown */}
-          <div className="month-left">
+          <div
+            className="month-left"
+            ref={monthRef}
+            style={{ position: 'relative' }}
+            onClick={() => setShowDatePicker(!showDatePicker)}
+          >
             <span>August 2025</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path
@@ -33,6 +52,46 @@ const CalendarHeader = ({
                 strokeLinejoin="round"
               />
             </svg>
+
+            {showDatePicker && (
+              <div className="date-picker-popup">
+                {/* Phần header của popup */}
+                <div className="date-picker-header">
+                  <span className="date-picker-header-month">Aug 2025</span>
+                  <div className="date-picker-header-actions">
+                    <button
+                      className="date-picker-header-action"
+                      aria-label="Navigate to previous month"
+                    >
+                      ◀
+                    </button>
+                    <button
+                      className="date-picker-header-action"
+                      aria-label="Navigate to current month"
+                    >
+                      ●
+                    </button>
+                    <button
+                      className="date-picker-header-action"
+                      aria-label="Navigate to next month"
+                    >
+                      ▶
+                    </button>
+                  </div>
+                </div>
+
+                {/* Phần body - bạn có thể render lưới ngày từ JS */}
+                <div className="date-picker-monthlist">
+                  <div className="calendar-grid">
+                    {Array.from({ length: 30 }, (_, i) => (
+                      <button key={i} className="calendar-day">
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Group nút điều hướng tuần */}
