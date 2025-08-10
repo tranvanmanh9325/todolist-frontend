@@ -14,11 +14,10 @@ const CalendarHeader = ({
 }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const monthRef = useRef(null);
-
-  // Dùng state cho tháng hiện tại trong popup
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const today = new Date();
 
-  // Đóng popup khi click ra ngoài
+  // Đóng popup khi click ngoài
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (monthRef.current && !monthRef.current.contains(e.target)) {
@@ -29,34 +28,34 @@ const CalendarHeader = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Tính lưới ngày trong tháng
+  // Sinh lưới ngày
   const generateMonthDays = (monthDate) => {
     const start = startOfMonth(monthDate);
     const end = endOfMonth(monthDate);
-
-    // getDay() trả 0 cho Chủ nhật, 1 cho Thứ 2...
     let startOffset = getDay(start);
-    if (startOffset === 0) startOffset = 7; // Chủ nhật thành 7 để M=1 ... S=7
+    if (startOffset === 0) startOffset = 7;
 
     const daysInMonth = [];
-    // Thêm các ô trống trước ngày 1
-    for (let i = 1; i < startOffset; i++) {
-      daysInMonth.push(null);
-    }
-    // Thêm các ngày trong tháng
-    for (let d = 1; d <= end.getDate(); d++) {
-      daysInMonth.push(d);
-    }
+    for (let i = 1; i < startOffset; i++) daysInMonth.push(null);
+    for (let d = 1; d <= end.getDate(); d++) daysInMonth.push(d);
     return daysInMonth;
   };
 
   const monthDays = generateMonthDays(currentMonth);
 
-  // Ngày hôm nay
-  const today = new Date();
-  const todayDay = today.getDate();
-  const todayMonth = today.getMonth();
-  const todayYear = today.getFullYear();
+  // Điều hướng tháng
+  const handlePrevMonth = (e) => {
+    e.stopPropagation();
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+  };
+  const handleNextMonth = (e) => {
+    e.stopPropagation();
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+  };
+  const handleTodayMonth = (e) => {
+    e.stopPropagation();
+    setCurrentMonth(new Date());
+  };
 
   return (
     <header className={headerClassName}>
@@ -66,7 +65,7 @@ const CalendarHeader = ({
           <h1>Upcoming</h1>
         </div>
 
-        {/* Khu vực tháng + nút điều hướng */}
+        {/* Chọn tháng + điều hướng */}
         <div className="month-selector">
           {/* Tháng + icon dropdown */}
           <div
@@ -88,47 +87,92 @@ const CalendarHeader = ({
 
             {showDatePicker && (
               <div className="date-picker-popup">
-                {/* Header của popup */}
+                {/* Header popup */}
                 <div className="date-picker-header">
                   <span className="date-picker-header-month">
                     {format(currentMonth, 'MMM yyyy')}
                   </span>
-                  <div className="date-picker-header-actions">
+
+                  <div
+                    className="date-picker-header-actions"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    {/* Nút prev */}
                     <button
                       className="date-picker-header-action"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCurrentMonth(
-                          new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)
-                        );
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '24px',
+                        height: '24px',
+                        padding: 0
                       }}
+                      onClick={handlePrevMonth}
                     >
-                      ◀
+                      <svg viewBox="0 0 24 24" style={{ width: '16px', height: '16px' }}>
+                        <path
+                          d="M15 18l-6-6 6-6"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
                     </button>
+
+                    {/* Nút Today tròn */}
+                    <button
+                      className="date-picker-header-action outline-circle"
+                      style={{
+                        width: '8px',
+                        height: '8px',
+                        border: '1px solid gray',
+                        borderRadius: '50%',
+                        padding: 0,
+                        margin: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                      onClick={handleTodayMonth}
+                      aria-label="Today"
+                    />
+
+                    {/* Nút next */}
                     <button
                       className="date-picker-header-action"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCurrentMonth(new Date());
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '24px',
+                        height: '24px',
+                        padding: 0
                       }}
+                      onClick={handleNextMonth}
                     >
-                      ●
-                    </button>
-                    <button
-                      className="date-picker-header-action"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCurrentMonth(
-                          new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
-                        );
-                      }}
-                    >
-                      ▶
+                      <svg viewBox="0 0 24 24" style={{ width: '16px', height: '16px' }}>
+                        <path
+                          d="M9 6l6 6-6 6"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
                     </button>
                   </div>
                 </div>
 
-                {/* Hàng tên thứ */}
+                {/* Tên thứ */}
                 <div className="calendar-grid weekdays">
                   {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
                     <div key={i} style={{ textAlign: 'center' }}>{d}</div>
@@ -140,9 +184,9 @@ const CalendarHeader = ({
                   {monthDays.map((day, idx) => {
                     const isToday =
                       day &&
-                      currentMonth.getMonth() === todayMonth &&
-                      currentMonth.getFullYear() === todayYear &&
-                      day === todayDay;
+                      currentMonth.getMonth() === today.getMonth() &&
+                      currentMonth.getFullYear() === today.getFullYear() &&
+                      day === today.getDate();
                     return day ? (
                       <button
                         key={idx}
@@ -159,41 +203,39 @@ const CalendarHeader = ({
             )}
           </div>
 
-          {/* Group nút điều hướng tuần */}
+          {/* Nút điều hướng tuần */}
           <div className="week-nav-group">
-            {/* Prev */}
-            <button
-              className="week-nav-btn"
-              aria-label="Previous week"
-              onClick={onPrevWeekClick}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M14.354 8.354a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L10.707 12z" />
+            <button className="week-nav-btn" aria-label="Previous week" onClick={onPrevWeekClick}>
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M15 18l-6-6 6-6"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
-
-            {/* Today */}
-            <button
-              className="week-nav-today"
-              onClick={onTodayClick}
-            >
+            <button className="week-nav-today" onClick={onTodayClick}>
               Today
             </button>
-
-            {/* Next */}
-            <button
-              className="week-nav-btn"
-              aria-label="Next week"
-              onClick={onNextWeekClick}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M9.646 8.354a.5.5 0 1 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 12z" />
+            <button className="week-nav-btn" aria-label="Next week" onClick={onNextWeekClick}>
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M9 6l6 6-6 6"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
           </div>
         </div>
 
-        {/* Hiển thị các ngày trong tuần */}
+        {/* Thanh ngày */}
         <div className="week-header" role="grid" tabIndex="-1">
           {weekDates.map((dayObj) => {
             const index = dates.findIndex(d => d.iso === dayObj.iso);
@@ -204,7 +246,6 @@ const CalendarHeader = ({
                 key={dayObj.iso}
                 role="gridcell"
                 aria-label={dayObj.iso}
-                aria-disabled="false"
                 aria-selected={isSelected}
                 className={`day-cell ${isSelected ? 'selected' : ''}`}
                 onClick={(e) => {

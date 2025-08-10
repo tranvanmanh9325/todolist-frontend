@@ -85,7 +85,7 @@
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  background-color: #fff;
+  background-color: var(--color-bg);
   border: none;
   border-radius: 8px;
   width: 250px;
@@ -93,49 +93,87 @@
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0, 0, 0, 0.3);
   z-index: 200;
   overflow: hidden;
+  font-size: 13px;
+  font-family: inherit;
 }
 
+/* Xóa outline khi dùng chuột */
+[data-whatinput=mouse] *,
+.focus-marker-enabled-within .focus-marker,
+.focus-marker-enabled-within :focus {
+  outline: none !important;
+}
+
+/* Header tháng */
 .date-picker-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 6px 12px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .date-picker-header-month {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
 }
 
+/* Căn giữa hoàn toàn cho 3 nút */
 .date-picker-header-actions {
   display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 6px;
 }
 
 .date-picker-header-action {
-  background: none;
+  background: transparent;
   border: none;
   cursor: pointer;
-  padding: 2px 4px;
+  padding: 4px;
   border-radius: 4px;
-  font-size: 14px;
-  color: #666;
-  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: gray;
+  transition: background-color 0.2s ease;
 }
 
 .date-picker-header-action:hover {
-  background-color: #f2f3f5;
+  background-color: var(--color-bg-hover);
+}
+
+.date-picker-header-action svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+}
+
+/* Nút giữa Today dạng vòng tròn rỗng */
+.date-picker-header-action.outline-circle {
+  width: 8px;
+  height: 8px;
+  border: 1px solid gray;
+  border-radius: 50%;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.date-picker-header-action.outline-circle:hover {
+  background-color: var(--color-bg-hover);
 }
 
 /* Lưới ngày & tên thứ */
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  font-size: 12px;
+  font-size: 13px;
   padding: 0 6px 6px;
-  gap: 0;
 }
 
 .calendar-grid.weekdays {
@@ -145,23 +183,24 @@
   padding-bottom: 4px;
 }
 
+/* Nút ngày */
 .calendar-day {
-  padding: 4px;
   border: none;
   background: none;
   cursor: pointer;
   border-radius: 50%;
-  font-size: 12px;
+  font-size: 13px;
   text-align: center;
-  line-height: 20px;
+  line-height: 28px;
   height: 28px;
   width: 28px;
   margin: auto;
-  transition: background 0.2s ease;
+  color: #202020;
+  transition: background-color 0.2s ease;
 }
 
 .calendar-day:hover {
-  background-color: #f2f3f5;
+  background-color: var(--color-bg-hover);
 }
 
 .calendar-day.selected {
@@ -169,7 +208,7 @@
   color: white;
 }
 
-/* ===== Nút Prev – Today – Next dạng group ===== */
+/* ===== Nút Prev – Today – Next ===== */
 .week-nav-group {
   display: inline-flex;
   align-items: center;
@@ -199,7 +238,7 @@
 .week-nav-btn svg {
   width: 16px;
   height: 16px;
-  fill: currentColor;
+  stroke: currentColor;
 }
 
 .week-nav-today {
