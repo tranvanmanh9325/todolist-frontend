@@ -15,10 +15,9 @@ const CalendarHeader = ({
   const [showDatePicker, setShowDatePicker] = useState(false);
   const monthRef = useRef(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedDateInPopup, setSelectedDateInPopup] = useState(null); // lưu ngày chọn trong popup
+  const [selectedDateInPopup, setSelectedDateInPopup] = useState(null);
   const today = new Date();
 
-  // Đóng popup khi click ngoài
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (monthRef.current && !monthRef.current.contains(e.target)) {
@@ -29,14 +28,12 @@ const CalendarHeader = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Cập nhật selectedDateInPopup khi selectedDayIndex thay đổi từ bên ngoài
   useEffect(() => {
     if (selectedDayIndex != null && selectedDayIndex >= 0) {
       setSelectedDateInPopup(dates[selectedDayIndex]?.iso || null);
     }
   }, [selectedDayIndex, dates]);
 
-  // Sinh lưới ngày
   const generateMonthDays = (monthDate) => {
     const start = startOfMonth(monthDate);
     const end = endOfMonth(monthDate);
@@ -51,7 +48,6 @@ const CalendarHeader = ({
 
   const monthDays = generateMonthDays(currentMonth);
 
-  // Điều hướng tháng
   const handlePrevMonth = (e) => {
     e.stopPropagation();
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
@@ -61,35 +57,28 @@ const CalendarHeader = ({
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
   };
 
-  // Cuộn đến ngày trong lịch chính
   const scrollToDate = (iso) => {
     const target = document.querySelector(`.calendar-inner [data-iso="${iso}"]`);
     if (!target) return;
-
     const headerEl = document.querySelector('.calendar-header');
     const headerHeight = headerEl ? headerEl.offsetHeight : 0;
-
     const rect = target.getBoundingClientRect();
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const top = rect.top + scrollTop - headerHeight - 8;
-
     window.scrollTo({ top, behavior: 'smooth' });
   };
 
   return (
     <header className={headerClassName}>
       <div className="calendar-header-inner">
-        {/* Tiêu đề */}
         <div className="header-top">
           <h1>Upcoming</h1>
         </div>
 
-        {/* Chọn tháng + điều hướng */}
         <div className="month-selector">
           <div
             className="month-left"
             ref={monthRef}
-            style={{ position: 'relative' }}
             onClick={() => setShowDatePicker(!showDatePicker)}
           >
             <span>{format(currentMonth, 'MMMM yyyy')}</span>
@@ -105,28 +94,20 @@ const CalendarHeader = ({
 
             {showDatePicker && (
               <div className="date-picker-popup">
-                {/* Header popup */}
+                {/* Mũi tên popup */}
+                <div className="popper__arrow"></div>
+
                 <div className="date-picker-header">
                   <span className="date-picker-header-month">
                     {format(currentMonth, 'MMM yyyy')}
                   </span>
 
-                  <div
-                    className="date-picker-header-actions"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px'
-                    }}
-                  >
-                    {/* Prev */}
+                  <div className="date-picker-header-actions">
                     <button
                       className="date-picker-header-action"
-                      style={{ width: '24px', height: '24px', padding: 0 }}
                       onClick={handlePrevMonth}
                     >
-                      <svg viewBox="0 0 24 24" style={{ width: '16px', height: '16px' }}>
+                      <svg viewBox="0 0 24 24">
                         <path
                           d="M15 18l-6-6 6-6"
                           stroke="currentColor"
@@ -138,16 +119,8 @@ const CalendarHeader = ({
                       </svg>
                     </button>
 
-                    {/* Today */}
                     <button
                       className="date-picker-header-action outline-circle"
-                      style={{
-                        width: '8px',
-                        height: '8px',
-                        border: '1px solid gray',
-                        borderRadius: '50%',
-                        padding: 0
-                      }}
                       onClick={() => {
                         const isoToday = format(today, 'yyyy-MM-dd');
                         setSelectedDateInPopup(isoToday);
@@ -163,13 +136,11 @@ const CalendarHeader = ({
                       aria-label="Today"
                     />
 
-                    {/* Next */}
                     <button
                       className="date-picker-header-action"
-                      style={{ width: '24px', height: '24px', padding: 0 }}
                       onClick={handleNextMonth}
                     >
-                      <svg viewBox="0 0 24 24" style={{ width: '16px', height: '16px' }}>
+                      <svg viewBox="0 0 24 24">
                         <path
                           d="M9 6l6 6-6 6"
                           stroke="currentColor"
@@ -183,25 +154,21 @@ const CalendarHeader = ({
                   </div>
                 </div>
 
-                {/* Tên thứ */}
                 <div className="calendar-grid weekdays">
                   {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
                     <div key={i} style={{ textAlign: 'center' }}>{d}</div>
                   ))}
                 </div>
 
-                {/* Lưới ngày */}
                 <div className="calendar-grid">
                   {monthDays.map((day, idx) => {
                     if (!day) return <div key={idx}></div>;
-
                     const iso = format(
                       new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day),
                       'yyyy-MM-dd'
                     );
                     const isToday = iso === format(today, 'yyyy-MM-dd');
                     const isSelected = iso === selectedDateInPopup;
-
                     return (
                       <button
                         key={idx}
@@ -227,7 +194,6 @@ const CalendarHeader = ({
             )}
           </div>
 
-          {/* Nút điều hướng tuần */}
           <div className="week-nav-group">
             <button className="week-nav-btn" aria-label="Previous week" onClick={onPrevWeekClick}>
               <svg viewBox="0 0 24 24">
@@ -259,12 +225,10 @@ const CalendarHeader = ({
           </div>
         </div>
 
-        {/* Thanh ngày */}
         <div className="week-header" role="grid" tabIndex="-1">
           {weekDates.map((dayObj) => {
             const index = dates.findIndex(d => d.iso === dayObj.iso);
             const isSelected = index === selectedDayIndex;
-
             return (
               <a
                 key={dayObj.iso}
@@ -276,7 +240,7 @@ const CalendarHeader = ({
                 onClick={(e) => {
                   e.preventDefault();
                   setSelectedDayIndex(index);
-                  setSelectedDateInPopup(dayObj.iso); // đồng bộ highlight popup
+                  setSelectedDateInPopup(dayObj.iso);
                 }}
                 href="#"
               >
