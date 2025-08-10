@@ -11,7 +11,7 @@
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
-  --space-top-gap: 60px; /* khoảng trắng phía trên header */
+  --space-top-gap: 60px;
 }
 
 /* Header chính */
@@ -67,7 +67,7 @@
   color: var(--color-text);
   cursor: pointer;
   transition: color 0.2s ease;
-  position: relative; /* để popup định vị theo tháng */
+  position: relative;
 }
 
 .month-left:hover {
@@ -83,54 +83,66 @@
 /* ===== Popup Date Picker ===== */
 .date-picker-popup {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 4px);
   left: 0;
-  margin-top: 4px;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  padding: var(--space-sm);
+  background-color: #fff;
+  border: none;
+  border-radius: 8px;
+  width: 250px;
+  padding-top: 4px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0, 0, 0, 0.3);
   z-index: 200;
-  min-width: 250px;
+  overflow: hidden;
 }
 
 .date-picker-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: var(--space-xs);
-  border-bottom: 1px solid var(--color-border);
-  margin-bottom: var(--space-xs);
-}
-
-.date-picker-header-month {
+  padding: 6px 12px;
   font-weight: 600;
   font-size: 14px;
 }
 
+.date-picker-header-month {
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .date-picker-header-actions {
   display: flex;
-  gap: 4px;
+  gap: 6px;
 }
 
 .date-picker-header-action {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 2px 6px;
+  padding: 2px 4px;
   border-radius: 4px;
+  font-size: 14px;
+  color: #666;
   transition: background 0.2s ease;
 }
 
 .date-picker-header-action:hover {
-  background: var(--color-bg-hover);
+  background-color: #f2f3f5;
 }
 
+/* Lưới ngày & tên thứ */
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  font-size: 12px;
+  padding: 0 6px 6px;
+  gap: 0;
+}
+
+.calendar-grid.weekdays {
+  font-weight: 600;
+  color: #999;
+  text-align: center;
+  padding-bottom: 4px;
 }
 
 .calendar-day {
@@ -138,16 +150,22 @@
   border: none;
   background: none;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 50%;
   font-size: 12px;
+  text-align: center;
+  line-height: 20px;
+  height: 28px;
+  width: 28px;
+  margin: auto;
+  transition: background 0.2s ease;
 }
 
 .calendar-day:hover {
-  background: var(--color-bg-hover);
+  background-color: #f2f3f5;
 }
 
 .calendar-day.selected {
-  background: var(--color-accent);
+  background-color: var(--color-accent);
   color: white;
 }
 
@@ -184,7 +202,6 @@
   fill: currentColor;
 }
 
-/* Nút Today với vạch hai bên */
 .week-nav-today {
   position: relative;
   padding: 0 14px;
@@ -269,7 +286,7 @@
   color: white;
 }
 
-/* Responsive cho mobile */
+/* Responsive */
 @media (max-width: 480px) {
   .header-top h1 {
     font-size: 18px;

@@ -1,5 +1,6 @@
 import './CalendarHeader.css';
 import React, { useState, useRef, useEffect } from 'react';
+import { startOfMonth, endOfMonth, getDay, format } from 'date-fns';
 
 const CalendarHeader = ({
   weekDates,
@@ -14,6 +15,9 @@ const CalendarHeader = ({
   const [showDatePicker, setShowDatePicker] = useState(false);
   const monthRef = useRef(null);
 
+  // Dùng state cho tháng hiện tại trong popup
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
   // Đóng popup khi click ra ngoài
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -24,6 +28,35 @@ const CalendarHeader = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Tính lưới ngày trong tháng
+  const generateMonthDays = (monthDate) => {
+    const start = startOfMonth(monthDate);
+    const end = endOfMonth(monthDate);
+
+    // getDay() trả 0 cho Chủ nhật, 1 cho Thứ 2...
+    let startOffset = getDay(start);
+    if (startOffset === 0) startOffset = 7; // Chủ nhật thành 7 để M=1 ... S=7
+
+    const daysInMonth = [];
+    // Thêm các ô trống trước ngày 1
+    for (let i = 1; i < startOffset; i++) {
+      daysInMonth.push(null);
+    }
+    // Thêm các ngày trong tháng
+    for (let d = 1; d <= end.getDate(); d++) {
+      daysInMonth.push(d);
+    }
+    return daysInMonth;
+  };
+
+  const monthDays = generateMonthDays(currentMonth);
+
+  // Ngày hôm nay
+  const today = new Date();
+  const todayDay = today.getDate();
+  const todayMonth = today.getMonth();
+  const todayYear = today.getFullYear();
 
   return (
     <header className={headerClassName}>
@@ -42,7 +75,7 @@ const CalendarHeader = ({
             style={{ position: 'relative' }}
             onClick={() => setShowDatePicker(!showDatePicker)}
           >
-            <span>August 2025</span>
+            <span>{format(currentMonth, 'MMMM yyyy')}</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path
                 d="M4 6L8 10L12 6"
@@ -55,40 +88,72 @@ const CalendarHeader = ({
 
             {showDatePicker && (
               <div className="date-picker-popup">
-                {/* Phần header của popup */}
+                {/* Header của popup */}
                 <div className="date-picker-header">
-                  <span className="date-picker-header-month">Aug 2025</span>
+                  <span className="date-picker-header-month">
+                    {format(currentMonth, 'MMM yyyy')}
+                  </span>
                   <div className="date-picker-header-actions">
                     <button
                       className="date-picker-header-action"
-                      aria-label="Navigate to previous month"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentMonth(
+                          new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)
+                        );
+                      }}
                     >
                       ◀
                     </button>
                     <button
                       className="date-picker-header-action"
-                      aria-label="Navigate to current month"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentMonth(new Date());
+                      }}
                     >
                       ●
                     </button>
                     <button
                       className="date-picker-header-action"
-                      aria-label="Navigate to next month"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentMonth(
+                          new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
+                        );
+                      }}
                     >
                       ▶
                     </button>
                   </div>
                 </div>
 
-                {/* Phần body - bạn có thể render lưới ngày từ JS */}
-                <div className="date-picker-monthlist">
-                  <div className="calendar-grid">
-                    {Array.from({ length: 30 }, (_, i) => (
-                      <button key={i} className="calendar-day">
-                        {i + 1}
+                {/* Hàng tên thứ */}
+                <div className="calendar-grid weekdays">
+                  {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
+                    <div key={i} style={{ textAlign: 'center' }}>{d}</div>
+                  ))}
+                </div>
+
+                {/* Lưới ngày */}
+                <div className="calendar-grid">
+                  {monthDays.map((day, idx) => {
+                    const isToday =
+                      day &&
+                      currentMonth.getMonth() === todayMonth &&
+                      currentMonth.getFullYear() === todayYear &&
+                      day === todayDay;
+                    return day ? (
+                      <button
+                        key={idx}
+                        className={`calendar-day ${isToday ? 'selected' : ''}`}
+                      >
+                        {day}
                       </button>
-                    ))}
-                  </div>
+                    ) : (
+                      <div key={idx}></div>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -107,8 +172,6 @@ const CalendarHeader = ({
               </svg>
             </button>
 
-            <div className="week-nav-separator"></div>
-
             {/* Today */}
             <button
               className="week-nav-today"
@@ -116,8 +179,6 @@ const CalendarHeader = ({
             >
               Today
             </button>
-
-            <div className="week-nav-separator"></div>
 
             {/* Next */}
             <button
