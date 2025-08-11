@@ -7,6 +7,7 @@ import {
   addMonths,
   subMonths,
   getDaysInMonth,
+  isSameMonth,
 } from 'date-fns';
 
 const DatePickerPopup = ({
@@ -22,11 +23,12 @@ const DatePickerPopup = ({
 }) => {
   const scrollContainerRef = useRef(null);
   const [visibleMonth, setVisibleMonth] = useState(currentMonth);
+  const [currentToday, setCurrentToday] = useState(today);
 
-  // Danh sách tháng cuộn quanh currentMonth
+  // Danh sách tháng: luôn 24 tháng liên tiếp kể từ currentMonth
   const monthsList = useMemo(() => {
     const arr = [];
-    for (let i = -6; i <= 6; i++) {
+    for (let i = 0; i < 24; i++) {
       arr.push(addMonths(currentMonth, i));
     }
     return arr;
@@ -38,7 +40,7 @@ const DatePickerPopup = ({
     const daysInMonth = getDaysInMonth(monthDate);
 
     let startOffset = getDay(start);
-    if (startOffset === 0) startOffset = 7; // Chủ nhật = 7
+    if (startOffset === 0) startOffset = 7;
 
     const daysArray = [];
     for (let i = 1; i < startOffset; i++) daysArray.push(null);
@@ -73,14 +75,23 @@ const DatePickerPopup = ({
     return () => observer.disconnect();
   }, [monthsList]);
 
+  // Auto update khi sang tháng mới
+  useEffect(() => {
+    const checkNewMonth = () => {
+      const now = new Date();
+      if (!isSameMonth(now, currentToday)) {
+        setCurrentToday(now);
+        setCurrentMonth(startOfMonth(now)); // dịch danh sách tháng
+      }
+    };
+    const timer = setInterval(checkNewMonth, 1000 * 60 * 60); // mỗi giờ
+    return () => clearInterval(timer);
+  }, [currentToday, setCurrentMonth]);
+
   // Cuộn tới tháng cụ thể
   const scrollToMonth = (targetMonth) => {
     const container = scrollContainerRef.current;
-    const monthIndex = monthsList.findIndex(
-      (m) =>
-        m.getFullYear() === targetMonth.getFullYear() &&
-        m.getMonth() === targetMonth.getMonth()
-    );
+    const monthIndex = monthsList.findIndex((m) => isSameMonth(m, targetMonth));
     const targetEl = container.querySelector(
       `[data-month-index="${monthIndex}"]`
     );
@@ -92,20 +103,20 @@ const DatePickerPopup = ({
   // Chuyển tháng
   const handlePrevMonth = (e) => {
     e.stopPropagation();
-    const newMonth = subMonths(visibleMonth, 1);
+    const newMonth = subMonths(currentMonth, 1);
     setCurrentMonth(newMonth);
     scrollToMonth(newMonth);
   };
 
   const handleNextMonth = (e) => {
     e.stopPropagation();
-    const newMonth = addMonths(visibleMonth, 1);
+    const newMonth = addMonths(currentMonth, 1);
     setCurrentMonth(newMonth);
     scrollToMonth(newMonth);
   };
 
   const handleTodayClick = () => {
-    const isoToday = format(today, 'yyyy-MM-dd');
+    const isoToday = format(currentToday, 'yyyy-MM-dd');
     setSelectedDateInPopup(isoToday);
     const idx = dates.findIndex((d) => d.iso === isoToday);
     if (idx !== -1) {
@@ -113,14 +124,15 @@ const DatePickerPopup = ({
       setShowDatePicker(false);
       setTimeout(() => scrollToDate(isoToday), 0);
     }
-    scrollToMonth(today);
+    setCurrentMonth(startOfMonth(currentToday));
+    scrollToMonth(currentToday);
   };
 
   return (
     <div className="date-picker-popup">
       <div className="popper__arrow"></div>
 
-      {/* Header cố định luôn hiện tháng đang xem */}
+      {/* Header cố định */}
       <div className="date-picker-header sticky-header">
         <span className="date-picker-header-month">
           {format(visibleMonth, 'MMM yyyy')}
@@ -170,7 +182,6 @@ const DatePickerPopup = ({
           const monthDays = generateMonthDays(month);
           return (
             <div key={mi} className="month-block" data-month-index={mi}>
-              {/* Tiêu đề tháng tĩnh trong block */}
               <div className="month-title">{format(month, 'MMM yyyy')}</div>
 
               <div className="calendar-grid weekdays">
@@ -187,7 +198,7 @@ const DatePickerPopup = ({
                     new Date(month.getFullYear(), month.getMonth(), day),
                     'yyyy-MM-dd'
                   );
-                  const isToday = iso === format(today, 'yyyy-MM-dd');
+                  const isToday = iso === format(currentToday, 'yyyy-MM-dd');
                   const isSelected = iso === selectedDateInPopup;
                   return (
                     <button
