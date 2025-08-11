@@ -12,7 +12,6 @@
   font-size: 13px;
   font-family: inherit;
 
-  /* Vùng scroll bên trong */
   display: flex;
   flex-direction: column;
   max-height: 300px;
@@ -134,18 +133,17 @@
   background: var(--color-bg);
   border-radius: 6px;
   padding-bottom: 8px;
+  min-height: calc(28px * 8); /* 1 hàng tiêu đề + 7 hàng ngày */
 }
 
-/* Tiêu đề tháng bên trong nội dung */
+/* Tiêu đề tháng trong nội dung (tĩnh, không sticky) */
 .month-title {
   font-weight: 600;
   font-size: 13px;
   padding: 6px 12px;
   background: var(--color-bg);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 28px; /* nằm ngay dưới header */
-  z-index: 4;
+  position: static;
 }
 
 /* Lưới ngày */

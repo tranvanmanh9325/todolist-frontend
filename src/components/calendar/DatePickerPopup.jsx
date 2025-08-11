@@ -1,6 +1,13 @@
 import './DatePickerPopup.css';
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { format, startOfMonth, endOfMonth, getDay, addMonths, subMonths } from 'date-fns';
+import {
+  format,
+  startOfMonth,
+  getDay,
+  addMonths,
+  subMonths,
+  getDaysInMonth,
+} from 'date-fns';
 
 const DatePickerPopup = ({
   currentMonth,
@@ -11,7 +18,7 @@ const DatePickerPopup = ({
   setSelectedDayIndex,
   setCurrentMonth,
   setShowDatePicker,
-  scrollToDate
+  scrollToDate,
 }) => {
   const scrollContainerRef = useRef(null);
   const [visibleMonth, setVisibleMonth] = useState(currentMonth);
@@ -25,17 +32,20 @@ const DatePickerPopup = ({
     return arr;
   }, [currentMonth]);
 
-  // Tạo mảng ngày cho một tháng
+  // Tạo mảng ngày cho một tháng (42 ô)
   const generateMonthDays = (monthDate) => {
     const start = startOfMonth(monthDate);
-    const end = endOfMonth(monthDate);
+    const daysInMonth = getDaysInMonth(monthDate);
+
     let startOffset = getDay(start);
     if (startOffset === 0) startOffset = 7; // Chủ nhật = 7
 
-    const daysInMonth = [];
-    for (let i = 1; i < startOffset; i++) daysInMonth.push(null);
-    for (let d = 1; d <= end.getDate(); d++) daysInMonth.push(d);
-    return daysInMonth;
+    const daysArray = [];
+    for (let i = 1; i < startOffset; i++) daysArray.push(null);
+    for (let d = 1; d <= daysInMonth; d++) daysArray.push(d);
+    while (daysArray.length < 42) daysArray.push(null);
+
+    return daysArray;
   };
 
   // Theo dõi tháng đang hiển thị khi cuộn
@@ -110,13 +120,16 @@ const DatePickerPopup = ({
     <div className="date-picker-popup">
       <div className="popper__arrow"></div>
 
-      {/* Header cố định */}
+      {/* Header cố định luôn hiện tháng đang xem */}
       <div className="date-picker-header sticky-header">
         <span className="date-picker-header-month">
           {format(visibleMonth, 'MMM yyyy')}
         </span>
         <div className="date-picker-header-actions">
-          <button className="date-picker-header-action" onClick={handlePrevMonth}>
+          <button
+            className="date-picker-header-action"
+            onClick={handlePrevMonth}
+          >
             <svg viewBox="0 0 24 24">
               <path
                 d="M15 18l-6-6 6-6"
@@ -133,7 +146,10 @@ const DatePickerPopup = ({
             onClick={handleTodayClick}
             aria-label="Today"
           />
-          <button className="date-picker-header-action" onClick={handleNextMonth}>
+          <button
+            className="date-picker-header-action"
+            onClick={handleNextMonth}
+          >
             <svg viewBox="0 0 24 24">
               <path
                 d="M9 6l6 6-6 6"
@@ -154,7 +170,7 @@ const DatePickerPopup = ({
           const monthDays = generateMonthDays(month);
           return (
             <div key={mi} className="month-block" data-month-index={mi}>
-              {/* Tiêu đề tháng trong nội dung */}
+              {/* Tiêu đề tháng tĩnh trong block */}
               <div className="month-title">{format(month, 'MMM yyyy')}</div>
 
               <div className="calendar-grid weekdays">
