@@ -1,0 +1,146 @@
+.date-picker-popup {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-bg);
+  border: none;
+  border-radius: 8px;
+  width: 250px;
+  padding-top: 4px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0, 0, 0, 0.3);
+  z-index: 200;
+  overflow: visible;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.popper__arrow {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+}
+
+.popper__arrow::before,
+.popper__arrow::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+}
+
+.popper__arrow::after {
+  border-bottom: 8px solid rgba(0, 0, 0, 0.1);
+  top: 0;
+  z-index: 1;
+}
+
+.popper__arrow::before {
+  border-bottom: 8px solid var(--color-bg);
+  top: 1px;
+  z-index: 2;
+}
+
+.date-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.date-picker-header-month {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.date-picker-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.date-picker-header-action {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: gray;
+  transition: background-color 0.2s ease;
+}
+
+.date-picker-header-action:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.date-picker-header-action svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+}
+
+.date-picker-header-action.outline-circle {
+  width: 8px;
+  height: 8px;
+  border: 1px solid gray;
+  border-radius: 50%;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.date-picker-header-action.outline-circle:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  font-size: 13px;
+  padding: 0 6px 6px;
+}
+
+.calendar-grid.weekdays {
+  font-weight: 600;
+  color: #999;
+  text-align: center;
+  padding-bottom: 4px;
+}
+
+.calendar-day {
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 50%;
+  font-size: 13px;
+  text-align: center;
+  line-height: 28px;
+  height: 28px;
+  width: 28px;
+  margin: auto;
+  color: #202020;
+  transition: background-color 0.2s ease;
+}
+
+.calendar-day:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.calendar-day.selected {
+  background-color: var(--color-accent);
+  color: white;
+}
