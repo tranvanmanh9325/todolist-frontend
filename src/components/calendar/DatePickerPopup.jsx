@@ -25,7 +25,7 @@ const DatePickerPopup = ({
   const [visibleMonth, setVisibleMonth] = useState(currentMonth);
   const [currentToday, setCurrentToday] = useState(today);
 
-  // Danh sách tháng: từ tháng 8/2025 đến tháng 7/2027 (24 tháng)
+  // Danh sách tháng: từ tháng 8/2025 đến tháng 7/2027
   const monthsList = useMemo(() => {
     const arr = [];
     for (let i = 0; i < 24; i++) {
@@ -34,7 +34,7 @@ const DatePickerPopup = ({
     return arr;
   }, []);
 
-  // Cuộn popup tới tháng cụ thể (chỉ trong container)
+  // Cuộn tới tháng cụ thể
   const scrollToMonth = useCallback((targetMonth) => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -50,11 +50,10 @@ const DatePickerPopup = ({
     }
   }, [monthsList]);
 
-  // Tạo mảng ngày cho một tháng (42 ô)
+  // Tạo mảng ngày
   const generateMonthDays = (monthDate) => {
     const start = startOfMonth(monthDate);
     const daysInMonth = getDaysInMonth(monthDate);
-
     let startOffset = getDay(start);
     if (startOffset === 0) startOffset = 7;
 
@@ -66,13 +65,12 @@ const DatePickerPopup = ({
     return daysArray;
   };
 
-  // Theo dõi tháng đang hiển thị khi cuộn trong popup
+  // Theo dõi tháng hiển thị
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
     const monthElements = container.querySelectorAll('.month-block');
-
     const observer = new IntersectionObserver(
       (entries) => {
         const visibleEntry = entries.find((e) => e.isIntersecting);
@@ -91,7 +89,7 @@ const DatePickerPopup = ({
     return () => observer.disconnect();
   }, [monthsList]);
 
-  // Auto update khi sang tháng mới (theo hệ thống)
+  // Auto update khi sang tháng mới
   useEffect(() => {
     const checkNewMonth = () => {
       const now = new Date();
@@ -104,7 +102,7 @@ const DatePickerPopup = ({
     return () => clearInterval(timer);
   }, [currentToday]);
 
-  // Khi selectedDateInPopup thay đổi -> đồng bộ popup hiển thị đúng tháng
+  // Đồng bộ khi chọn ngày
   useEffect(() => {
     if (selectedDateInPopup) {
       const dateObj = new Date(selectedDateInPopup);
@@ -113,13 +111,17 @@ const DatePickerPopup = ({
     }
   }, [selectedDateInPopup, scrollToMonth]);
 
-  // Xác định disable nút
+  // Điều kiện disable nút prev/next
   const firstAllowedMonth = startOfMonth(new Date(2025, 7, 1));
   const lastAllowedMonth = startOfMonth(new Date(2027, 6, 1));
   const isAtFirstMonth = isSameMonth(visibleMonth, firstAllowedMonth);
   const isAtLastMonth = isSameMonth(visibleMonth, lastAllowedMonth);
 
-  // Chuyển tháng trong popup
+  // Kiểm tra có đang ở hôm nay không
+  const isOnToday = selectedDateInPopup === format(currentToday, 'yyyy-MM-dd');
+  const disableTodayButton = isOnToday && isAtFirstMonth;
+
+  // Chuyển tháng
   const handlePrevMonth = (e) => {
     if (isAtFirstMonth) return;
     e.stopPropagation();
@@ -136,8 +138,9 @@ const DatePickerPopup = ({
     scrollToMonth(newMonth);
   };
 
+  // Nút Today
   const handleTodayClick = () => {
-    if (isAtFirstMonth) return;
+    if (disableTodayButton) return;
     const isoToday = format(currentToday, 'yyyy-MM-dd');
     setSelectedDateInPopup(isoToday);
     const idx = dates.findIndex((d) => d.iso === isoToday);
@@ -148,14 +151,14 @@ const DatePickerPopup = ({
       setTimeout(() => scrollToDate(isoToday), 0);
     }
     setVisibleMonth(startOfMonth(currentToday));
-    scrollToMonth(currentToday);
+    scrollToMonth(startOfMonth(currentToday));
   };
 
   return (
     <div className="date-picker-popup">
       <div className="popper__arrow"></div>
 
-      {/* Header cố định */}
+      {/* Header */}
       <div className="date-picker-header sticky-header">
         <span className="date-picker-header-month">
           {format(visibleMonth, 'MMM yyyy')}
@@ -167,20 +170,13 @@ const DatePickerPopup = ({
             disabled={isAtFirstMonth}
           >
             <svg viewBox="0 0 24 24">
-              <path
-                d="M15 18l-6-6 6-6"
-                stroke="currentColor"
-                strokeWidth="2"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+              <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
           <button
-            className={`date-picker-header-action outline-circle ${isAtFirstMonth ? 'disabled' : ''}`}
+            className={`date-picker-header-action outline-circle ${disableTodayButton ? 'disabled' : ''}`}
             onClick={handleTodayClick}
-            disabled={isAtFirstMonth}
+            disabled={disableTodayButton}
             aria-label="Today"
           />
           <button
@@ -189,20 +185,13 @@ const DatePickerPopup = ({
             disabled={isAtLastMonth}
           >
             <svg viewBox="0 0 24 24">
-              <path
-                d="M9 6l6 6-6 6"
-                stroke="currentColor"
-                strokeWidth="2"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+              <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
         </div>
       </div>
 
-      {/* Nội dung cuộn */}
+      {/* Nội dung */}
       <div
         className="month-scroll-container"
         ref={scrollContainerRef}
@@ -213,7 +202,6 @@ const DatePickerPopup = ({
           return (
             <div key={mi} className="month-block" data-month-index={mi}>
               <div className="month-title">{format(month, 'MMM yyyy')}</div>
-
               <div className="calendar-grid weekdays">
                 {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
                   <div key={i} style={{ textAlign: 'center' }}>{d}</div>
