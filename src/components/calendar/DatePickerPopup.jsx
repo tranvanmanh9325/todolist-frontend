@@ -50,7 +50,7 @@ const DatePickerPopup = ({
     return daysArray;
   };
 
-  // Theo dõi tháng đang hiển thị khi cuộn
+  // Theo dõi tháng đang hiển thị khi cuộn trong popup
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -75,28 +75,33 @@ const DatePickerPopup = ({
     return () => observer.disconnect();
   }, [monthsList]);
 
-  // Auto update khi sang tháng mới
+  // Auto update khi sang tháng mới (theo hệ thống)
   useEffect(() => {
     const checkNewMonth = () => {
       const now = new Date();
       if (!isSameMonth(now, currentToday)) {
         setCurrentToday(now);
-        setCurrentMonth(startOfMonth(now));
+        // Chỉ đổi popup nếu đang ở Today
+        setVisibleMonth(startOfMonth(now));
       }
     };
     const timer = setInterval(checkNewMonth, 1000 * 60 * 60);
     return () => clearInterval(timer);
-  }, [currentToday, setCurrentMonth]);
+  }, [currentToday]);
 
-  // Cuộn tới tháng cụ thể
+  // Cuộn popup tới tháng cụ thể (chỉ trong container)
   const scrollToMonth = (targetMonth) => {
     const container = scrollContainerRef.current;
+    if (!container) return;
     const monthIndex = monthsList.findIndex((m) => isSameMonth(m, targetMonth));
     const targetEl = container.querySelector(
       `[data-month-index="${monthIndex}"]`
     );
     if (targetEl) {
-      targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      container.scrollTo({
+        top: targetEl.offsetTop,
+        behavior: 'smooth',
+      });
     }
   };
 
@@ -106,12 +111,12 @@ const DatePickerPopup = ({
   const isAtFirstMonth = isSameMonth(visibleMonth, firstAllowedMonth);
   const isAtLastMonth = isSameMonth(visibleMonth, lastAllowedMonth);
 
-  // Chuyển tháng
+  // Chuyển tháng trong popup (không ảnh hưởng main calendar)
   const handlePrevMonth = (e) => {
     if (isAtFirstMonth) return;
     e.stopPropagation();
     const newMonth = subMonths(visibleMonth, 1);
-    setCurrentMonth(newMonth);
+    setVisibleMonth(newMonth);
     scrollToMonth(newMonth);
   };
 
@@ -119,7 +124,7 @@ const DatePickerPopup = ({
     if (isAtLastMonth) return;
     e.stopPropagation();
     const newMonth = addMonths(visibleMonth, 1);
-    setCurrentMonth(newMonth);
+    setVisibleMonth(newMonth);
     scrollToMonth(newMonth);
   };
 
@@ -130,10 +135,11 @@ const DatePickerPopup = ({
     const idx = dates.findIndex((d) => d.iso === isoToday);
     if (idx !== -1) {
       setSelectedDayIndex(idx);
+      setCurrentMonth(startOfMonth(currentToday)); // đồng bộ với main calendar
       setShowDatePicker(false);
       setTimeout(() => scrollToDate(isoToday), 0);
     }
-    setCurrentMonth(startOfMonth(currentToday));
+    setVisibleMonth(startOfMonth(currentToday));
     scrollToMonth(currentToday);
   };
 
@@ -188,8 +194,12 @@ const DatePickerPopup = ({
         </div>
       </div>
 
-      {/* Nội dung cuộn */}
-      <div className="month-scroll-container" ref={scrollContainerRef}>
+      {/* Nội dung cuộn độc lập */}
+      <div
+        className="month-scroll-container"
+        ref={scrollContainerRef}
+        style={{ overscrollBehavior: 'contain' }}
+      >
         {monthsList.map((month, mi) => {
           const monthDays = generateMonthDays(month);
           return (
@@ -214,7 +224,7 @@ const DatePickerPopup = ({
                       className={`calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}`}
                       onClick={() => {
                         setSelectedDateInPopup(iso);
-                        setCurrentMonth(startOfMonth(dateObj));
+                        setCurrentMonth(startOfMonth(dateObj)); // đồng bộ với main calendar khi chọn ngày
                         const index = dates.findIndex((d) => d.iso === iso);
                         if (index !== -1) {
                           setSelectedDayIndex(index);
