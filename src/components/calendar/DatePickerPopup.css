@@ -118,6 +118,16 @@
   background-color: var(--color-bg-hover);
 }
 
+/* Trạng thái disabled cho nút điều hướng */
+.date-picker-header-action.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.date-picker-header-action.disabled:hover {
+  background-color: transparent; /* Không đổi màu khi hover */
+}
+
 /* Vùng cuộn chứa nhiều tháng */
 .month-scroll-container {
   flex: 1;

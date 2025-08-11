@@ -25,14 +25,14 @@ const DatePickerPopup = ({
   const [visibleMonth, setVisibleMonth] = useState(currentMonth);
   const [currentToday, setCurrentToday] = useState(today);
 
-  // Danh sách tháng: luôn 24 tháng liên tiếp kể từ currentMonth
+  // Danh sách tháng: từ tháng 8/2025 đến tháng 7/2027 (24 tháng)
   const monthsList = useMemo(() => {
     const arr = [];
     for (let i = 0; i < 24; i++) {
-      arr.push(addMonths(currentMonth, i));
+      arr.push(addMonths(startOfMonth(new Date(2025, 7, 1)), i));
     }
     return arr;
-  }, [currentMonth]);
+  }, []);
 
   // Tạo mảng ngày cho một tháng (42 ô)
   const generateMonthDays = (monthDate) => {
@@ -81,10 +81,10 @@ const DatePickerPopup = ({
       const now = new Date();
       if (!isSameMonth(now, currentToday)) {
         setCurrentToday(now);
-        setCurrentMonth(startOfMonth(now)); // dịch danh sách tháng
+        setCurrentMonth(startOfMonth(now));
       }
     };
-    const timer = setInterval(checkNewMonth, 1000 * 60 * 60); // mỗi giờ
+    const timer = setInterval(checkNewMonth, 1000 * 60 * 60);
     return () => clearInterval(timer);
   }, [currentToday, setCurrentMonth]);
 
@@ -100,22 +100,31 @@ const DatePickerPopup = ({
     }
   };
 
+  // Xác định disable nút
+  const firstAllowedMonth = startOfMonth(new Date(2025, 7, 1)); // Aug 2025
+  const lastAllowedMonth = startOfMonth(new Date(2027, 6, 1)); // Jul 2027
+  const isAtFirstMonth = isSameMonth(visibleMonth, firstAllowedMonth);
+  const isAtLastMonth = isSameMonth(visibleMonth, lastAllowedMonth);
+
   // Chuyển tháng
   const handlePrevMonth = (e) => {
+    if (isAtFirstMonth) return;
     e.stopPropagation();
-    const newMonth = subMonths(currentMonth, 1);
+    const newMonth = subMonths(visibleMonth, 1);
     setCurrentMonth(newMonth);
     scrollToMonth(newMonth);
   };
 
   const handleNextMonth = (e) => {
+    if (isAtLastMonth) return;
     e.stopPropagation();
-    const newMonth = addMonths(currentMonth, 1);
+    const newMonth = addMonths(visibleMonth, 1);
     setCurrentMonth(newMonth);
     scrollToMonth(newMonth);
   };
 
   const handleTodayClick = () => {
+    if (isAtFirstMonth) return;
     const isoToday = format(currentToday, 'yyyy-MM-dd');
     setSelectedDateInPopup(isoToday);
     const idx = dates.findIndex((d) => d.iso === isoToday);
@@ -139,8 +148,9 @@ const DatePickerPopup = ({
         </span>
         <div className="date-picker-header-actions">
           <button
-            className="date-picker-header-action"
+            className={`date-picker-header-action ${isAtFirstMonth ? 'disabled' : ''}`}
             onClick={handlePrevMonth}
+            disabled={isAtFirstMonth}
           >
             <svg viewBox="0 0 24 24">
               <path
@@ -154,13 +164,15 @@ const DatePickerPopup = ({
             </svg>
           </button>
           <button
-            className="date-picker-header-action outline-circle"
+            className={`date-picker-header-action outline-circle ${isAtFirstMonth ? 'disabled' : ''}`}
             onClick={handleTodayClick}
+            disabled={isAtFirstMonth}
             aria-label="Today"
           />
           <button
-            className="date-picker-header-action"
+            className={`date-picker-header-action ${isAtLastMonth ? 'disabled' : ''}`}
             onClick={handleNextMonth}
+            disabled={isAtLastMonth}
           >
             <svg viewBox="0 0 24 24">
               <path
@@ -186,9 +198,7 @@ const DatePickerPopup = ({
 
               <div className="calendar-grid weekdays">
                 {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
-                  <div key={i} style={{ textAlign: 'center' }}>
-                    {d}
-                  </div>
+                  <div key={i} style={{ textAlign: 'center' }}>{d}</div>
                 ))}
               </div>
               <div className="calendar-grid">
@@ -204,7 +214,7 @@ const DatePickerPopup = ({
                       className={`calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}`}
                       onClick={() => {
                         setSelectedDateInPopup(iso);
-                        setCurrentMonth(startOfMonth(dateObj)); // ✅ cập nhật tháng ở header
+                        setCurrentMonth(startOfMonth(dateObj));
                         const index = dates.findIndex((d) => d.iso === iso);
                         if (index !== -1) {
                           setSelectedDayIndex(index);
