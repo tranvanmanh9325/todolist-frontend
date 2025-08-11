@@ -83,7 +83,7 @@
 /* ===== Popup Date Picker ===== */
 .date-picker-popup {
   position: absolute;
-  top: calc(100% + 14px); /* ✅ Khoảng cách popup so với chữ tháng */
+  top: calc(100% + 14px); /* Khoảng cách popup so với chữ tháng */
   left: 50%;
   transform: translateX(-50%);
   background-color: var(--color-bg);
@@ -93,32 +93,41 @@
   padding-top: 4px;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0, 0, 0, 0.3);
   z-index: 200;
-  overflow: hidden;
+  overflow: visible; /* Cho phép mũi tên nhô ra */
   font-size: 13px;
   font-family: inherit;
 }
 
-/* Mũi tên popup */
+/* ===== Mũi tên popup dạng nổi ===== */
 .popper__arrow {
   position: absolute;
-  top: -6px; /* ✅ đặt mũi tên sát viền trên popup */
+  top: -8px;
   left: 50%;
   transform: translateX(-50%);
   width: 0;
   height: 0;
-  pointer-events: none;
+}
+
+.popper__arrow::before,
+.popper__arrow::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+}
+
+.popper__arrow::after {
+  border-bottom: 8px solid rgba(0, 0, 0, 0.1); /* bóng đổ */
+  top: 0;
+  z-index: 1;
 }
 
 .popper__arrow::before {
-  content: "";
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-bottom: 6px solid var(--color-bg);
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  filter: drop-shadow(0 -1px 1px rgba(0, 0, 0, 0.08));
+  border-bottom: 8px solid var(--color-bg); /* màu nền popup */
+  top: 1px; /* đè lên bóng để tạo hiệu ứng nổi */
+  z-index: 2;
 }
 
 /* Xóa outline khi dùng chuột */
