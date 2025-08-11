@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './App.css';
 import CalendarHeader from './components/calendar/CalendarHeader';
 import CalendarContent from './components/calendar/CalendarContent';
-import { startOfMonth, differenceInMonths } from 'date-fns';
+import { startOfMonth, differenceInMonths, startOfWeek as dfStartOfWeek } from 'date-fns';
 import { generateDatesByMonths, toLocalISODate } from './utils/dateUtils';
 
 const App = () => {
@@ -137,9 +137,10 @@ const App = () => {
     }
   };
 
-  // Tính tuần hiện tại
-  const startOfWeek = currentTopDay - (currentTopDay % 7);
-  const weekDates = dates.slice(startOfWeek, startOfWeek + 7);
+  // Tính tuần hiện tại (luôn bắt đầu Thứ 2 - Chủ Nhật)
+  const startOfWeekDate = dfStartOfWeek(dates[currentTopDay]?.fullDate || new Date(), { weekStartsOn: 1 });
+  const startOfWeekIndex = dates.findIndex(d => d.iso === toLocalISODate(startOfWeekDate));
+  const weekDates = dates.slice(startOfWeekIndex, startOfWeekIndex + 7);
 
   return (
     <>
