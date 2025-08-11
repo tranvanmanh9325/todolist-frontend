@@ -7,12 +7,15 @@
   border: none;
   border-radius: 8px;
   width: 250px;
-  padding-top: 4px;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0, 0, 0, 0.3);
   z-index: 200;
-  overflow: visible;
   font-size: 13px;
   font-family: inherit;
+
+  /* Vùng scroll bên trong */
+  display: flex;
+  flex-direction: column;
+  max-height: 300px;
 }
 
 .popper__arrow {
@@ -44,6 +47,15 @@
   border-bottom: 8px solid var(--color-bg);
   top: 1px;
   z-index: 2;
+}
+
+/* Header cố định khi cuộn */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  background: var(--color-bg);
+  z-index: 5;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .date-picker-header {
@@ -107,6 +119,36 @@
   background-color: var(--color-bg-hover);
 }
 
+/* Vùng cuộn chứa nhiều tháng */
+.month-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  scroll-behavior: smooth;
+}
+
+/* Mỗi tháng */
+.month-block {
+  background: var(--color-bg);
+  border-radius: 6px;
+  padding-bottom: 8px;
+}
+
+/* Tiêu đề tháng bên trong nội dung */
+.month-title {
+  font-weight: 600;
+  font-size: 13px;
+  padding: 6px 12px;
+  background: var(--color-bg);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 28px; /* nằm ngay dưới header */
+  z-index: 4;
+}
+
+/* Lưới ngày */
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
