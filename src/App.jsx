@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './App.css';
 import CalendarHeader from './components/calendar/CalendarHeader';
 import CalendarContent from './components/calendar/CalendarContent';
-import { addDays, format } from 'date-fns';
-import { toZonedTime } from 'date-fns-tz';
+import { startOfMonth, differenceInMonths } from 'date-fns';
+import { generateDatesByMonths, toLocalISODate } from './utils/dateUtils';
 
 const App = () => {
   const [currentTopDay, setCurrentTopDay] = useState(0);
@@ -15,33 +15,24 @@ const App = () => {
   const isInitialMount = useRef(true);
   const scrollTimeout = useRef(null);
 
-  const fullDayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const startDate = new Date(2025, 7, 4); // 4 Aug 2025
+  // Ngày bắt đầu = ngày đầu tháng hiện tại
+  const [startDate, setStartDate] = useState(() => startOfMonth(new Date()));
+  const [dates, setDates] = useState(() => generateDatesByMonths(startDate, 24));
 
-  const toLocalISODate = (date) => {
-    const zonedDate = toZonedTime(date, 'Asia/Ho_Chi_Minh');
-    return format(zonedDate, 'yyyy-MM-dd');
-  };
+  // Tự động cập nhật khi sang tháng mới
+  useEffect(() => {
+    const checkMonthChange = () => {
+      const now = startOfMonth(new Date());
+      if (differenceInMonths(now, startDate) !== 0) {
+        setStartDate(now);
+        setDates(generateDatesByMonths(now, 24));
+      }
+    };
+    const timer = setInterval(checkMonthChange, 60 * 1000); // check mỗi phút
+    return () => clearInterval(timer);
+  }, [startDate]);
 
-  const generateDates = () => {
-    const dates = [];
-    for (let i = 0; i < 30; i++) {
-      const date = addDays(startDate, i);
-      const dayOfWeek = date.getDay() === 0 ? 6 : date.getDay() - 1;
-      dates.push({
-        date: format(date, 'd'),
-        dayOfWeek,
-        fullDate: date,
-        dayName: fullDayNames[dayOfWeek],
-        iso: toLocalISODate(date),
-      });
-    }
-    return dates;
-  };
-
-  const dates = generateDates();
-
-  // Cuộn đến ngày hôm nay khi load lần đầu
+  // Cuộn tới hôm nay khi load lần đầu
   useEffect(() => {
     if (isInitialMount.current) {
       const todayIso = toLocalISODate(new Date());
@@ -55,7 +46,7 @@ const App = () => {
     }
   }, [dates]);
 
-  // Hàm cuộn đến ngày bất kỳ
+  // Cuộn tới 1 ngày bất kỳ
   const scrollToDay = (index) => {
     if (dayRefs.current[index]) {
       const element = dayRefs.current[index];
@@ -71,7 +62,6 @@ const App = () => {
   // Xác định ngày hiện tại khi cuộn
   const handleScroll = useCallback(() => {
     if (isLockedScroll) return;
-
     const header = document.querySelector('.calendar-header');
     const headerHeight = header?.offsetHeight || 0;
 
@@ -96,16 +86,11 @@ const App = () => {
     }
   }, [selectedDayIndex, isLockedScroll]);
 
+  // Lắng nghe scroll
   useEffect(() => {
     const onScroll = () => {
       handleScroll();
-
-      if (window.scrollY > 0) {
-        setHeaderScrolled(true);
-      } else {
-        setHeaderScrolled(false);
-      }
-
+      setHeaderScrolled(window.scrollY > 0);
       clearTimeout(scrollTimeout.current);
       scrollTimeout.current = setTimeout(() => {
         setIsLockedScroll(false);
@@ -119,7 +104,7 @@ const App = () => {
     };
   }, [handleScroll]);
 
-  // Click chọn ngày
+  // Chọn ngày
   const handleDayClick = (index) => {
     setSelectedDayIndex(index);
     setCurrentTopDay(index);
@@ -127,7 +112,7 @@ const App = () => {
     scrollToDay(index);
   };
 
-  // ✅ Cuộn về Today
+  // Chuyển nhanh về hôm nay
   const handleTodayClick = () => {
     const todayIso = toLocalISODate(new Date());
     const todayIndex = dates.findIndex(d => d.iso === todayIso);
@@ -136,7 +121,7 @@ const App = () => {
     }
   };
 
-  // ✅ Chuyển sang tuần sau
+  // Chuyển sang tuần sau
   const handleNextWeekClick = () => {
     const nextWeekIndex = currentTopDay + 7;
     if (nextWeekIndex < dates.length) {
@@ -144,7 +129,7 @@ const App = () => {
     }
   };
 
-  // ✅ Chuyển sang tuần trước
+  // Chuyển sang tuần trước
   const handlePrevWeekClick = () => {
     const prevWeekIndex = currentTopDay - 7;
     if (prevWeekIndex >= 0) {
@@ -152,6 +137,7 @@ const App = () => {
     }
   };
 
+  // Tính tuần hiện tại
   const startOfWeek = currentTopDay - (currentTopDay % 7);
   const weekDates = dates.slice(startOfWeek, startOfWeek + 7);
 
@@ -164,8 +150,8 @@ const App = () => {
         dates={dates}
         headerClassName={`calendar-header${headerScrolled ? ' scrolled' : ''}`}
         onTodayClick={handleTodayClick}
-        onNextWeekClick={handleNextWeekClick}   // ✅ truyền xuống header
-        onPrevWeekClick={handlePrevWeekClick}   // ✅ truyền xuống header
+        onNextWeekClick={handleNextWeekClick}
+        onPrevWeekClick={handlePrevWeekClick}
       />
       <CalendarContent
         dates={dates}
