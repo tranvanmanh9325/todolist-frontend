@@ -194,20 +194,17 @@ const DatePickerPopup = ({
               <div className="calendar-grid">
                 {monthDays.map((day, idx) => {
                   if (!day) return <div key={idx}></div>;
-                  const iso = format(
-                    new Date(month.getFullYear(), month.getMonth(), day),
-                    'yyyy-MM-dd'
-                  );
+                  const dateObj = new Date(month.getFullYear(), month.getMonth(), day);
+                  const iso = format(dateObj, 'yyyy-MM-dd');
                   const isToday = iso === format(currentToday, 'yyyy-MM-dd');
                   const isSelected = iso === selectedDateInPopup;
                   return (
                     <button
                       key={idx}
-                      className={`calendar-day ${
-                        isToday ? 'today' : ''
-                      } ${isSelected ? 'selected' : ''}`}
+                      className={`calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}`}
                       onClick={() => {
                         setSelectedDateInPopup(iso);
+                        setCurrentMonth(startOfMonth(dateObj)); // ✅ cập nhật tháng ở header
                         const index = dates.findIndex((d) => d.iso === iso);
                         if (index !== -1) {
                           setSelectedDayIndex(index);

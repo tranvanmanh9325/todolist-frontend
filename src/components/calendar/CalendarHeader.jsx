@@ -1,6 +1,6 @@
 import './CalendarHeader.css';
 import React, { useState, useRef, useEffect } from 'react';
-import { format } from 'date-fns';
+import { format, startOfMonth } from 'date-fns';
 import DatePickerPopup from './DatePickerPopup';
 
 const CalendarHeader = ({
@@ -19,6 +19,7 @@ const CalendarHeader = ({
   const [selectedDateInPopup, setSelectedDateInPopup] = useState(null);
   const today = new Date();
 
+  // Đóng popup khi click ra ngoài
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (monthRef.current && !monthRef.current.contains(e.target)) {
@@ -29,9 +30,11 @@ const CalendarHeader = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Đồng bộ khi thay đổi ngày được chọn
   useEffect(() => {
-    if (selectedDayIndex != null && selectedDayIndex >= 0) {
-      setSelectedDateInPopup(dates[selectedDayIndex]?.iso || null);
+    if (selectedDayIndex != null && selectedDayIndex >= 0 && dates[selectedDayIndex]) {
+      setSelectedDateInPopup(dates[selectedDayIndex].iso || null);
+      setCurrentMonth(startOfMonth(dates[selectedDayIndex].fullDate)); // ✅ update tháng
     }
   }, [selectedDayIndex, dates]);
 
@@ -86,7 +89,11 @@ const CalendarHeader = ({
           </div>
 
           <div className="week-nav-group">
-            <button className="week-nav-btn" aria-label="Previous week" onClick={onPrevWeekClick}>
+            <button
+              className="week-nav-btn"
+              aria-label="Previous week"
+              onClick={onPrevWeekClick}
+            >
               <svg viewBox="0 0 24 24">
                 <path
                   d="M15 18l-6-6 6-6"
@@ -101,7 +108,11 @@ const CalendarHeader = ({
             <button className="week-nav-today" onClick={onTodayClick}>
               Today
             </button>
-            <button className="week-nav-btn" aria-label="Next week" onClick={onNextWeekClick}>
+            <button
+              className="week-nav-btn"
+              aria-label="Next week"
+              onClick={onNextWeekClick}
+            >
               <svg viewBox="0 0 24 24">
                 <path
                   d="M9 6l6 6-6 6"
@@ -132,6 +143,7 @@ const CalendarHeader = ({
                   e.preventDefault();
                   setSelectedDayIndex(index);
                   setSelectedDateInPopup(dayObj.iso);
+                  setCurrentMonth(startOfMonth(dayObj.fullDate || new Date(dayObj.iso))); // ✅ update tháng khi click tuần
                 }}
                 href="#"
               >
