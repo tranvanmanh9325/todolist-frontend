@@ -146,6 +146,21 @@
   color: var(--color-accent);
 }
 
+/* Nút bị disable */
+.week-nav-btn.disabled,
+.week-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: none !important;
+  color: var(--color-text-light) !important;
+}
+
+.week-nav-btn.disabled:hover,
+.week-nav-btn:disabled:hover {
+  background: none;
+  color: var(--color-text-light);
+}
+
 /* Thanh ngày */
 .week-header {
   display: grid;
@@ -201,11 +216,11 @@
 .day-cell.other-month {
   color: var(--color-text-light);
   opacity: 0.6;
-  pointer-events: none; /* không click được */
+  pointer-events: none;
 }
 
 .day-cell.other-month:hover {
-  color: var(--color-text-light); /* không đổi màu khi hover */
+  color: var(--color-text-light);
 }
 
 /* Responsive */

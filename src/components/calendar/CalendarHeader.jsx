@@ -8,14 +8,16 @@ const CalendarHeader = ({
   selectedDayIndex,
   setSelectedDayIndex,
   dates,
+  currentMonth,
+  setCurrentMonth,
   headerClassName = 'calendar-header',
   onTodayClick,
   onNextWeekClick,
-  onPrevWeekClick
+  onPrevWeekClick,
+  disablePrevWeek // ✅ nhận prop từ App.jsx
 }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const monthRef = useRef(null);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDateInPopup, setSelectedDateInPopup] = useState(null);
   const today = new Date();
 
@@ -34,9 +36,9 @@ const CalendarHeader = ({
   useEffect(() => {
     if (selectedDayIndex != null && selectedDayIndex >= 0 && dates[selectedDayIndex]) {
       setSelectedDateInPopup(dates[selectedDayIndex].iso || null);
-      setCurrentMonth(startOfMonth(dates[selectedDayIndex].fullDate)); // update tháng
+      setCurrentMonth(startOfMonth(dates[selectedDayIndex].fullDate));
     }
-  }, [selectedDayIndex, dates]);
+  }, [selectedDayIndex, dates, setCurrentMonth]);
 
   const scrollToDate = (iso) => {
     const target = document.querySelector(`.calendar-inner [data-iso="${iso}"]`);
@@ -90,9 +92,12 @@ const CalendarHeader = ({
 
           <div className="week-nav-group">
             <button
-              className="week-nav-btn"
+              className={`week-nav-btn ${disablePrevWeek ? 'disabled' : ''}`}
               aria-label="Previous week"
-              onClick={onPrevWeekClick}
+              onClick={() => {
+                if (!disablePrevWeek) onPrevWeekClick();
+              }}
+              disabled={disablePrevWeek}
             >
               <svg viewBox="0 0 24 24">
                 <path
@@ -143,7 +148,7 @@ const CalendarHeader = ({
                 className={`day-cell ${isSelected ? 'selected' : ''} ${isOtherMonth ? 'other-month' : ''}`}
                 onClick={(e) => {
                   e.preventDefault();
-                  if (isOtherMonth) return; // ngày khác tháng -> không chọn
+                  if (isOtherMonth) return;
                   setSelectedDayIndex(index);
                   setSelectedDateInPopup(dayObj.iso);
                   setCurrentMonth(startOfMonth(dayObj.fullDate || new Date(dayObj.iso)));
