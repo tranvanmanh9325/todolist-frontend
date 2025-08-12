@@ -17,20 +17,24 @@ const TaskOverlay = () => {
     closeOverlayForm();
   };
 
+  const handleCancel = () => {
+    closeOverlayForm();
+  };
+
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {showOverlayForm && (
         <Motion.div
           key="overlay-content"
           className="overlay-content"
-          initial={{ y: -8, scale: 0.98, opacity: 0 }}
-          animate={{ y: 0, scale: 1, opacity: 1 }}
-          exit={{ y: -8, scale: 0.98, opacity: 0 }}
-          transition={{ duration: 0.15 }}
+          initial={{ opacity: 0, scale: 0.98, y: -8 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.98, y: -8 }}
+          transition={{ duration: 0.18, ease: 'easeOut' }}
         >
           <TaskForm
             task={editTask || null}
-            onCancel={closeOverlayForm}
+            onCancel={handleCancel}
             onSubmit={handleSubmit}
           />
         </Motion.div>

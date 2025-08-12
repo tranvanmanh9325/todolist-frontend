@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import './TaskForm.css';
 
 const TaskForm = ({ onCancel, onSubmit, task }) => {
@@ -9,6 +9,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const [note, setNote] = useState('');
   const [type, setType] = useState('Type');
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
+  const [isExiting, setIsExiting] = useState(false); // trạng thái thoát
 
   const typeRef = useRef();
   const titleRef = useRef();
@@ -48,6 +49,13 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     setType('Type');
   };
 
+  const handleCancelClick = () => {
+    setIsExiting(true); // bắt đầu animation thoát
+    setTimeout(() => {
+      onCancel();
+    }, 180); // khớp với thời gian animation
+  };
+
   const handleTypeSelect = (t) => {
     setType(t);
     setShowTypeDropdown(false);
@@ -61,13 +69,12 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const isTitleEmpty = !title.trim();
 
   return (
-    <motion.form
+    <Motion.form
       className="task-form"
       onSubmit={handleSubmit}
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
+      animate={isExiting ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
+      transition={{ duration: 0.18, ease: 'easeOut' }}
     >
       <div className="task-field">
         <textarea
@@ -100,13 +107,17 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       </div>
 
       <div className="task-bottom">
-        <div className="task-type" ref={typeRef} onClick={() => setShowTypeDropdown(!showTypeDropdown)}>
+        <div
+          className="task-type"
+          ref={typeRef}
+          onClick={() => setShowTypeDropdown(!showTypeDropdown)}
+        >
           📁 <span>{type}</span>
           <span className="dropdown-arrow">▾</span>
 
           <AnimatePresence>
             {showTypeDropdown && (
-              <motion.div
+              <Motion.div
                 className="project-dropdown"
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -114,17 +125,27 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
                 transition={{ duration: 0.2 }}
               >
                 {['Personal', 'Study', 'Work'].map((t) => (
-                  <div key={t} className="project-dropdown-item" onClick={() => handleTypeSelect(t)}>
+                  <div
+                    key={t}
+                    className="project-dropdown-item"
+                    onClick={() => handleTypeSelect(t)}
+                  >
                     {t}
                   </div>
                 ))}
-              </motion.div>
+              </Motion.div>
             )}
           </AnimatePresence>
         </div>
 
         <div className="task-actions">
-          <button type="button" className="cancel-btn" onClick={onCancel}>Cancel</button>
+          <button
+            type="button"
+            className="cancel-btn"
+            onClick={handleCancelClick} // gọi animation thoát
+          >
+            Cancel
+          </button>
           <button
             type="submit"
             className={`submit-btn${isTitleEmpty ? ' disabled' : ''}`}
@@ -134,7 +155,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           </button>
         </div>
       </div>
-    </motion.form>
+    </Motion.form>
   );
 };
 
