@@ -14,7 +14,8 @@ const CalendarHeader = ({
   onTodayClick,
   onNextWeekClick,
   onPrevWeekClick,
-  disablePrevWeek
+  disablePrevWeek,
+  disableNextWeek // ✅ Thêm prop mới
 }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const monthRef = useRef(null);
@@ -91,6 +92,7 @@ const CalendarHeader = ({
           </div>
 
           <div className="week-nav-group">
+            {/* Nút lùi tuần */}
             <button
               className={`week-nav-btn ${disablePrevWeek ? 'disabled' : ''}`}
               aria-label="Previous week"
@@ -110,13 +112,20 @@ const CalendarHeader = ({
                 />
               </svg>
             </button>
+
+            {/* Nút Today */}
             <button className="week-nav-today" onClick={onTodayClick}>
               Today
             </button>
+
+            {/* Nút tiến tuần */}
             <button
-              className="week-nav-btn"
+              className={`week-nav-btn ${disableNextWeek ? 'disabled' : ''}`}
               aria-label="Next week"
-              onClick={onNextWeekClick}
+              onClick={() => {
+                if (!disableNextWeek) onNextWeekClick();
+              }}
+              disabled={disableNextWeek}
             >
               <svg viewBox="0 0 24 24">
                 <path
@@ -136,7 +145,6 @@ const CalendarHeader = ({
           {weekDates.map((dayObj) => {
             const index = dates.findIndex(d => d.iso === dayObj.iso);
             const isSelected = index === selectedDayIndex;
-            // Tính động: so sánh với currentMonth (không dùng cờ tĩnh trong dates)
             const isOtherMonth = !isSameMonth(dayObj.fullDate, currentMonth);
 
             return (

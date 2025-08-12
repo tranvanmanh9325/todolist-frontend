@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './App.css';
 import CalendarHeader from './components/calendar/CalendarHeader';
 import CalendarContent from './components/calendar/CalendarContent';
-import { startOfMonth, differenceInMonths, startOfWeek as dfStartOfWeek, isBefore } from 'date-fns';
+import { startOfMonth, differenceInMonths, startOfWeek as dfStartOfWeek, isSameDay } from 'date-fns';
 import { generateDatesByMonths, toLocalISODate } from './utils/dateUtils';
 
 const App = () => {
@@ -19,7 +19,7 @@ const App = () => {
   const [startDate, setStartDate] = useState(() => startOfMonth(new Date()));
   const [dates, setDates] = useState(() => generateDatesByMonths(startDate, 24));
 
-  // Tự động cập nhật khi sang tháng mới
+  // Cập nhật khi sang tháng mới
   useEffect(() => {
     const checkMonthChange = () => {
       const now = startOfMonth(new Date());
@@ -143,11 +143,13 @@ const App = () => {
   );
   const weekDates = dates.slice(startOfWeekIndex, startOfWeekIndex + 7);
 
-  // ✅ Disable prev nếu tuần hiện tại có ngày < ngày 1 của tháng hiện tại hệ thống
-  const systemCurrentMonth = startOfMonth(new Date());
-  const disablePrevWeek = weekDates.some(d =>
-    isBefore(d.fullDate, systemCurrentMonth)
-  );
+  // ✅ Chặn lùi trước nếu tuần chứa ngày đầu dữ liệu
+  const firstDate = dates[0]?.fullDate;
+  const disablePrevWeek = weekDates.some(d => isSameDay(d.fullDate, firstDate));
+
+  // ✅ Chặn tiến tới nếu tuần chứa ngày cuối dữ liệu
+  const lastDate = dates[dates.length - 1]?.fullDate;
+  const disableNextWeek = weekDates.some(d => isSameDay(d.fullDate, lastDate));
 
   return (
     <>
@@ -163,6 +165,7 @@ const App = () => {
         onNextWeekClick={handleNextWeekClick}
         onPrevWeekClick={handlePrevWeekClick}
         disablePrevWeek={disablePrevWeek}
+        disableNextWeek={disableNextWeek} // ✅ truyền xuống header
       />
       <CalendarContent
         dates={dates}
