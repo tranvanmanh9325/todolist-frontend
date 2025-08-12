@@ -15,12 +15,18 @@ const CalendarHeader = ({
   onNextWeekClick,
   onPrevWeekClick,
   disablePrevWeek,
-  disableNextWeek // ✅ Thêm prop mới
+  disableNextWeek
 }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const monthRef = useRef(null);
-  const [selectedDateInPopup, setSelectedDateInPopup] = useState(null);
   const today = new Date();
+
+  // Hiệu ứng chuyển tuần/ngày
+  const [transitionDirection, setTransitionDirection] = useState(null);
+  const prevFirstDayRef = useRef(null);
+  const prevSelectedDayRef = useRef(selectedDayIndex);
+
+  const [selectedDateInPopup, setSelectedDateInPopup] = useState(null);
 
   // Đóng popup khi click ra ngoài
   useEffect(() => {
@@ -33,14 +39,37 @@ const CalendarHeader = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Đồng bộ khi thay đổi ngày được chọn
+  // Cập nhật tháng khi chọn ngày
   useEffect(() => {
     if (selectedDayIndex != null && selectedDayIndex >= 0 && dates[selectedDayIndex]) {
-      setSelectedDateInPopup(dates[selectedDayIndex].iso || null);
-      setCurrentMonth(startOfMonth(dates[selectedDayIndex].fullDate));
+      const dateObj = dates[selectedDayIndex];
+      setSelectedDateInPopup(dateObj.iso || null);
+      setCurrentMonth(startOfMonth(dateObj.fullDate));
     }
   }, [selectedDayIndex, dates, setCurrentMonth]);
 
+  // Xác định hướng khi đổi tuần
+  useEffect(() => {
+    const prevFirstDay = prevFirstDayRef.current;
+    const currentFirstDay = weekDates[0]?.fullDate;
+    if (prevFirstDay && currentFirstDay) {
+      if (currentFirstDay > prevFirstDay) {
+        setTransitionDirection('left');
+      } else if (currentFirstDay < prevFirstDay) {
+        setTransitionDirection('right');
+      }
+    }
+    prevFirstDayRef.current = currentFirstDay;
+  }, [weekDates]);
+
+  // Reset hiệu ứng sau khi chạy xong
+  useEffect(() => {
+    if (!transitionDirection) return;
+    const timeout = setTimeout(() => setTransitionDirection(null), 350); // đồng bộ với CSS
+    return () => clearTimeout(timeout);
+  }, [transitionDirection]);
+
+  // Scroll tới ngày
   const scrollToDate = (iso) => {
     const target = document.querySelector(`.calendar-inner [data-iso="${iso}"]`);
     if (!target) return;
@@ -52,13 +81,30 @@ const CalendarHeader = ({
     window.scrollTo({ top, behavior: 'smooth' });
   };
 
+  // Chọn ngày
+  const handleDayClick = (index, dayObj) => {
+    if (index > prevSelectedDayRef.current) {
+      setTransitionDirection('left');
+    } else if (index < prevSelectedDayRef.current) {
+      setTransitionDirection('right');
+    }
+    prevSelectedDayRef.current = index;
+    setSelectedDayIndex(index);
+    setSelectedDateInPopup(dayObj.iso);
+    setCurrentMonth(startOfMonth(dayObj.fullDate || new Date(dayObj.iso)));
+  };
+
   return (
-    <header className={headerClassName}>
+    <header
+      className={`${headerClassName} ${transitionDirection ? `week-slide-${transitionDirection}` : ''}`}
+    >
       <div className="calendar-header-inner">
+        {/* Tiêu đề */}
         <div className="header-top">
           <h1>Upcoming</h1>
         </div>
 
+        {/* Chọn tháng + điều hướng tuần */}
         <div className="month-selector">
           <div
             className="month-left"
@@ -92,13 +138,10 @@ const CalendarHeader = ({
           </div>
 
           <div className="week-nav-group">
-            {/* Nút lùi tuần */}
             <button
               className={`week-nav-btn ${disablePrevWeek ? 'disabled' : ''}`}
               aria-label="Previous week"
-              onClick={() => {
-                if (!disablePrevWeek) onPrevWeekClick();
-              }}
+              onClick={() => !disablePrevWeek && onPrevWeekClick()}
               disabled={disablePrevWeek}
             >
               <svg viewBox="0 0 24 24">
@@ -113,18 +156,14 @@ const CalendarHeader = ({
               </svg>
             </button>
 
-            {/* Nút Today */}
             <button className="week-nav-today" onClick={onTodayClick}>
               Today
             </button>
 
-            {/* Nút tiến tuần */}
             <button
               className={`week-nav-btn ${disableNextWeek ? 'disabled' : ''}`}
               aria-label="Next week"
-              onClick={() => {
-                if (!disableNextWeek) onNextWeekClick();
-              }}
+              onClick={() => !disableNextWeek && onNextWeekClick()}
               disabled={disableNextWeek}
             >
               <svg viewBox="0 0 24 24">
@@ -141,6 +180,7 @@ const CalendarHeader = ({
           </div>
         </div>
 
+        {/* Header ngày */}
         <div className="week-header" role="grid" tabIndex="-1">
           {weekDates.map((dayObj) => {
             const index = dates.findIndex(d => d.iso === dayObj.iso);
@@ -154,13 +194,12 @@ const CalendarHeader = ({
                 role="gridcell"
                 aria-label={dayObj.iso}
                 aria-selected={isSelected}
-                className={`day-cell ${isSelected ? 'selected' : ''} ${isOtherMonth ? 'other-month' : ''}`}
+                className={`day-cell ${isSelected ? 'selected fade-in' : ''} ${
+                  isOtherMonth ? 'other-month' : ''
+                }`}
                 onClick={(e) => {
                   e.preventDefault();
-                  if (isOtherMonth) return;
-                  setSelectedDayIndex(index);
-                  setSelectedDateInPopup(dayObj.iso);
-                  setCurrentMonth(startOfMonth(dayObj.fullDate || new Date(dayObj.iso)));
+                  if (!isOtherMonth) handleDayClick(index, dayObj);
                 }}
                 href="#"
               >

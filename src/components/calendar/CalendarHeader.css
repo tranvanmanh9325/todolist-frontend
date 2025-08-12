@@ -169,6 +169,7 @@
   padding: var(--space-xs) 0;
 }
 
+/* Ngày */
 .day-cell {
   text-align: center;
   text-decoration: none;
@@ -176,11 +177,12 @@
   font-weight: 500;
   color: var(--color-text-light);
   padding: var(--space-xs) 0;
-  transition: color 0.2s ease, opacity 0.2s ease;
+  transition: color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
 }
 
 .day-cell:hover {
   color: var(--color-accent);
+  transform: scale(1.05);
 }
 
 .day-cell.selected {
@@ -205,6 +207,7 @@
   padding: 1px 6px;
   border-radius: 4px;
   color: inherit;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .day-cell.selected .day-number {
@@ -221,18 +224,72 @@
 
 .day-cell.other-month:hover {
   color: var(--color-text-light);
+  transform: none;
 }
 
-/* 🔹 Giữ highlight rõ khi ngày tháng khác nhưng đang được chọn */
+/* Giữ highlight cho ngày được chọn nhưng khác tháng */
 .day-cell.other-month.selected {
   opacity: 1;
   color: var(--color-text);
-  pointer-events: auto; /* Cho phép click lại nếu muốn */
+  pointer-events: auto;
 }
 
 .day-cell.other-month.selected .day-number {
   background: var(--color-accent);
   color: white;
+}
+
+/* Hiệu ứng trượt tuần mượt hơn */
+.week-slide-left .week-header {
+  animation: slideInLeftSmooth 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.week-slide-right .week-header {
+  animation: slideInRightSmooth 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInLeftSmooth {
+  from {
+    opacity: 0;
+    transform: translateX(30px) scale(0.98);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes slideInRightSmooth {
+  from {
+    opacity: 0;
+    transform: translateX(-30px) scale(0.98);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Hiệu ứng fade khi đổi ngày */
+.day-cell.fade-in {
+  animation: fadeScaleBlur 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeScaleBlur {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+    filter: blur(1.5px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
 }
 
 /* Responsive */
