@@ -197,6 +197,17 @@
   color: white;
 }
 
+/* Ngày thuộc tháng khác */
+.day-cell.other-month {
+  color: var(--color-text-light);
+  opacity: 0.6;
+  pointer-events: none; /* không click được */
+}
+
+.day-cell.other-month:hover {
+  color: var(--color-text-light); /* không đổi màu khi hover */
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .header-top h1 {

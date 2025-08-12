@@ -34,7 +34,7 @@ const CalendarHeader = ({
   useEffect(() => {
     if (selectedDayIndex != null && selectedDayIndex >= 0 && dates[selectedDayIndex]) {
       setSelectedDateInPopup(dates[selectedDayIndex].iso || null);
-      setCurrentMonth(startOfMonth(dates[selectedDayIndex].fullDate)); // ✅ update tháng
+      setCurrentMonth(startOfMonth(dates[selectedDayIndex].fullDate)); // update tháng
     }
   }, [selectedDayIndex, dates]);
 
@@ -131,6 +131,8 @@ const CalendarHeader = ({
           {weekDates.map((dayObj) => {
             const index = dates.findIndex(d => d.iso === dayObj.iso);
             const isSelected = index === selectedDayIndex;
+            const isOtherMonth = dayObj.isCurrentMonth === false;
+
             return (
               <a
                 key={dayObj.iso}
@@ -138,12 +140,13 @@ const CalendarHeader = ({
                 role="gridcell"
                 aria-label={dayObj.iso}
                 aria-selected={isSelected}
-                className={`day-cell ${isSelected ? 'selected' : ''}`}
+                className={`day-cell ${isSelected ? 'selected' : ''} ${isOtherMonth ? 'other-month' : ''}`}
                 onClick={(e) => {
                   e.preventDefault();
+                  if (isOtherMonth) return; // ngày khác tháng -> không chọn
                   setSelectedDayIndex(index);
                   setSelectedDateInPopup(dayObj.iso);
-                  setCurrentMonth(startOfMonth(dayObj.fullDate || new Date(dayObj.iso))); // ✅ update tháng khi click tuần
+                  setCurrentMonth(startOfMonth(dayObj.fullDate || new Date(dayObj.iso)));
                 }}
                 href="#"
               >

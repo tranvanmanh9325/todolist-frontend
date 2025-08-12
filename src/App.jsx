@@ -11,6 +11,8 @@ const App = () => {
   const [isLockedScroll, setIsLockedScroll] = useState(false);
   const [headerScrolled, setHeaderScrolled] = useState(false);
 
+  const [currentMonth, setCurrentMonth] = useState(startOfMonth(new Date())); // ✅ thêm state tháng hiện tại
+
   const dayRefs = useRef([]);
   const isInitialMount = useRef(true);
   const scrollTimeout = useRef(null);
@@ -28,7 +30,7 @@ const App = () => {
         setDates(generateDatesByMonths(now, 24));
       }
     };
-    const timer = setInterval(checkMonthChange, 60 * 1000); // check mỗi phút
+    const timer = setInterval(checkMonthChange, 60 * 1000);
     return () => clearInterval(timer);
   }, [startDate]);
 
@@ -40,13 +42,13 @@ const App = () => {
       if (todayIndex !== -1) {
         setCurrentTopDay(todayIndex);
         setSelectedDayIndex(todayIndex);
+        setCurrentMonth(startOfMonth(dates[todayIndex].fullDate)); // ✅ set tháng khớp
         scrollToDay(todayIndex);
       }
       isInitialMount.current = false;
     }
   }, [dates]);
 
-  // Cuộn tới 1 ngày bất kỳ
   const scrollToDay = (index) => {
     if (dayRefs.current[index]) {
       const element = dayRefs.current[index];
@@ -59,7 +61,6 @@ const App = () => {
     }
   };
 
-  // Xác định ngày hiện tại khi cuộn
   const handleScroll = useCallback(() => {
     if (isLockedScroll) return;
     const header = document.querySelector('.calendar-header');
@@ -80,13 +81,13 @@ const App = () => {
         if (i !== selectedDayIndex) {
           setCurrentTopDay(i);
           setSelectedDayIndex(i);
+          setCurrentMonth(startOfMonth(dates[i].fullDate)); // ✅ update tháng khi cuộn
         }
         break;
       }
     }
-  }, [selectedDayIndex, isLockedScroll]);
+  }, [selectedDayIndex, isLockedScroll, dates]);
 
-  // Lắng nghe scroll
   useEffect(() => {
     const onScroll = () => {
       handleScroll();
@@ -104,15 +105,14 @@ const App = () => {
     };
   }, [handleScroll]);
 
-  // Chọn ngày
   const handleDayClick = (index) => {
     setSelectedDayIndex(index);
     setCurrentTopDay(index);
     setIsLockedScroll(true);
+    setCurrentMonth(startOfMonth(dates[index].fullDate)); // ✅ khi click ngày cũng đổi tháng
     scrollToDay(index);
   };
 
-  // Chuyển nhanh về hôm nay
   const handleTodayClick = () => {
     const todayIso = toLocalISODate(new Date());
     const todayIndex = dates.findIndex(d => d.iso === todayIso);
@@ -121,7 +121,6 @@ const App = () => {
     }
   };
 
-  // Chuyển sang tuần sau
   const handleNextWeekClick = () => {
     const nextWeekIndex = currentTopDay + 7;
     if (nextWeekIndex < dates.length) {
@@ -129,7 +128,6 @@ const App = () => {
     }
   };
 
-  // Chuyển sang tuần trước
   const handlePrevWeekClick = () => {
     const prevWeekIndex = currentTopDay - 7;
     if (prevWeekIndex >= 0) {
@@ -137,7 +135,6 @@ const App = () => {
     }
   };
 
-  // Tính tuần hiện tại (luôn bắt đầu Thứ 2 - Chủ Nhật)
   const startOfWeekDate = dfStartOfWeek(dates[currentTopDay]?.fullDate || new Date(), { weekStartsOn: 1 });
   const startOfWeekIndex = dates.findIndex(d => d.iso === toLocalISODate(startOfWeekDate));
   const weekDates = dates.slice(startOfWeekIndex, startOfWeekIndex + 7);
@@ -149,6 +146,8 @@ const App = () => {
         selectedDayIndex={selectedDayIndex}
         setSelectedDayIndex={handleDayClick}
         dates={dates}
+        currentMonth={currentMonth}               // ✅ truyền tháng hiện tại
+        setCurrentMonth={setCurrentMonth}         // ✅ cho phép header đổi tháng
         headerClassName={`calendar-header${headerScrolled ? ' scrolled' : ''}`}
         onTodayClick={handleTodayClick}
         onNextWeekClick={handleNextWeekClick}
@@ -158,6 +157,7 @@ const App = () => {
         dates={dates}
         dayRefs={dayRefs}
         scrollContainerRef={null}
+        currentMonth={currentMonth}               // ✅ truyền xuống content để lọc
       />
     </>
   );
