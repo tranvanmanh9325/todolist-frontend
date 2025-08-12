@@ -125,7 +125,7 @@
 }
 
 .date-picker-header-action.disabled:hover {
-  background-color: transparent; /* Không đổi màu khi hover */
+  background-color: transparent;
 }
 
 /* Vùng cuộn chứa nhiều tháng */
@@ -143,17 +143,17 @@
   background: var(--color-bg);
   border-radius: 6px;
   padding-bottom: 8px;
-  min-height: calc(28px * 8); /* 1 hàng tiêu đề + 7 hàng ngày */
+  min-height: calc(28px * 8);
 }
 
-/* Tiêu đề tháng trong nội dung (tĩnh, không sticky) */
+/* Tiêu đề tháng */
 .month-title {
   font-weight: 600;
   font-size: 13px;
-  padding: 6px 12px;
+  padding: 8px 12px;
   background: var(--color-bg);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  position: static;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* gạch ngay dưới tiêu đề */
+  margin-bottom: 6px; /* tạo khoảng cách với hàng thứ */
 }
 
 /* Lưới ngày */
