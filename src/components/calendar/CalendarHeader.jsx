@@ -1,6 +1,6 @@
 import './CalendarHeader.css';
 import React, { useState, useRef, useEffect } from 'react';
-import { format, startOfMonth } from 'date-fns';
+import { format, startOfMonth, isSameMonth } from 'date-fns';
 import DatePickerPopup from './DatePickerPopup';
 
 const CalendarHeader = ({
@@ -14,7 +14,7 @@ const CalendarHeader = ({
   onTodayClick,
   onNextWeekClick,
   onPrevWeekClick,
-  disablePrevWeek // ✅ nhận prop từ App.jsx
+  disablePrevWeek
 }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const monthRef = useRef(null);
@@ -136,7 +136,8 @@ const CalendarHeader = ({
           {weekDates.map((dayObj) => {
             const index = dates.findIndex(d => d.iso === dayObj.iso);
             const isSelected = index === selectedDayIndex;
-            const isOtherMonth = dayObj.isCurrentMonth === false;
+            // Tính động: so sánh với currentMonth (không dùng cờ tĩnh trong dates)
+            const isOtherMonth = !isSameMonth(dayObj.fullDate, currentMonth);
 
             return (
               <a

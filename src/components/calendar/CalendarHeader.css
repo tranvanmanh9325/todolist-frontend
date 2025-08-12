@@ -176,7 +176,7 @@
   font-weight: 500;
   color: var(--color-text-light);
   padding: var(--space-xs) 0;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, opacity 0.2s ease;
 }
 
 .day-cell:hover {
@@ -221,6 +221,18 @@
 
 .day-cell.other-month:hover {
   color: var(--color-text-light);
+}
+
+/* 🔹 Giữ highlight rõ khi ngày tháng khác nhưng đang được chọn */
+.day-cell.other-month.selected {
+  opacity: 1;
+  color: var(--color-text);
+  pointer-events: auto; /* Cho phép click lại nếu muốn */
+}
+
+.day-cell.other-month.selected .day-number {
+  background: var(--color-accent);
+  color: white;
 }
 
 /* Responsive */
