@@ -1,25 +1,22 @@
 .overlay-content {
+  background: transparent; /* ✅ không nền */
+  border-radius: 12px;
+  padding: 0; /* bỏ khoảng trống bao quanh nếu muốn */
+  width: 100%;
+  max-width: 480px;
+  box-shadow: none; /* bỏ shadow nếu không muốn khung */
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px 20px;
-  width: 100%;
-  max-width: 480px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   z-index: 3000;
-  max-height: 90vh;
-  overflow-y: auto;
 }
 
 /* Responsive cho mobile */
 @media (max-width: 600px) {
   .overlay-content {
     width: 95%;
-    padding: 20px 16px;
+    padding: 0;
     border-radius: 8px;
-    max-height: 95vh;
   }
 }
