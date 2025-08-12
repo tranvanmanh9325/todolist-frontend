@@ -136,6 +136,13 @@
   padding-top: 4px;
   padding-bottom: 4px;
   scroll-behavior: smooth;
+
+  /* Ẩn scrollbar */
+  scrollbar-width: none; /* Firefox */
+}
+
+.month-scroll-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
 }
 
 /* Mỗi tháng */

@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import {
   format,
   startOfMonth,
-  getDay,
   addMonths,
   subMonths,
   getDaysInMonth,
@@ -53,25 +52,10 @@ const DatePickerPopup = ({
     [monthsList]
   );
 
-  // Tạo mảng ngày (bao gồm cả ngày tháng trước/sau)
+  // Tạo mảng ngày (chỉ tháng hiện tại)
   const generateMonthDays = (monthDate) => {
-    const start = startOfMonth(monthDate);
     const daysInMonth = getDaysInMonth(monthDate);
-    let startOffset = getDay(start);
-    if (startOffset === 0) startOffset = 7;
-
     const daysArray = [];
-    // Ngày tháng trước
-    const prevMonth = subMonths(monthDate, 1);
-    const daysInPrevMonth = getDaysInMonth(prevMonth);
-    for (let i = startOffset - 1; i > 0; i--) {
-      daysArray.push({
-        day: daysInPrevMonth - i + 1,
-        dateObj: new Date(prevMonth.getFullYear(), prevMonth.getMonth(), daysInPrevMonth - i + 1),
-        isOtherMonth: true,
-      });
-    }
-    // Ngày tháng hiện tại
     for (let d = 1; d <= daysInMonth; d++) {
       daysArray.push({
         day: d,
@@ -79,18 +63,6 @@ const DatePickerPopup = ({
         isOtherMonth: false,
       });
     }
-    // Ngày tháng sau
-    let nextDay = 1;
-    while (daysArray.length < 42) {
-      const nextMonth = addMonths(monthDate, 1);
-      daysArray.push({
-        day: nextDay,
-        dateObj: new Date(nextMonth.getFullYear(), nextMonth.getMonth(), nextDay),
-        isOtherMonth: true,
-      });
-      nextDay++;
-    }
-
     return daysArray;
   };
 
@@ -244,9 +216,8 @@ const DatePickerPopup = ({
                   return (
                     <button
                       key={idx}
-                      className={`calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${item.isOtherMonth ? 'disabled-day' : ''}`}
+                      className={`calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}`}
                       onClick={() => {
-                        if (item.isOtherMonth) return;
                         setSelectedDateInPopup(iso);
                         setCurrentMonth(startOfMonth(item.dateObj));
                         const index = dates.findIndex((d) => d.iso === iso);
@@ -258,7 +229,6 @@ const DatePickerPopup = ({
                           setShowDatePicker(false);
                         }
                       }}
-                      disabled={item.isOtherMonth}
                     >
                       {item.day}
                     </button>
