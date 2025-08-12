@@ -35,22 +35,25 @@ const DatePickerPopup = ({
   }, []);
 
   // Cuộn tới tháng cụ thể
-  const scrollToMonth = useCallback((targetMonth) => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-    const monthIndex = monthsList.findIndex((m) => isSameMonth(m, targetMonth));
-    const targetEl = container.querySelector(
-      `[data-month-index="${monthIndex}"]`
-    );
-    if (targetEl) {
-      container.scrollTo({
-        top: targetEl.offsetTop,
-        behavior: 'smooth',
-      });
-    }
-  }, [monthsList]);
+  const scrollToMonth = useCallback(
+    (targetMonth) => {
+      const container = scrollContainerRef.current;
+      if (!container) return;
+      const monthIndex = monthsList.findIndex((m) => isSameMonth(m, targetMonth));
+      const targetEl = container.querySelector(
+        `[data-month-index="${monthIndex}"]`
+      );
+      if (targetEl) {
+        container.scrollTo({
+          top: targetEl.offsetTop,
+          behavior: 'smooth',
+        });
+      }
+    },
+    [monthsList]
+  );
 
-  // Tạo mảng ngày
+  // Tạo mảng ngày (bao gồm cả ngày tháng trước/sau)
   const generateMonthDays = (monthDate) => {
     const start = startOfMonth(monthDate);
     const daysInMonth = getDaysInMonth(monthDate);
@@ -58,9 +61,35 @@ const DatePickerPopup = ({
     if (startOffset === 0) startOffset = 7;
 
     const daysArray = [];
-    for (let i = 1; i < startOffset; i++) daysArray.push(null);
-    for (let d = 1; d <= daysInMonth; d++) daysArray.push(d);
-    while (daysArray.length < 42) daysArray.push(null);
+    // Ngày tháng trước
+    const prevMonth = subMonths(monthDate, 1);
+    const daysInPrevMonth = getDaysInMonth(prevMonth);
+    for (let i = startOffset - 1; i > 0; i--) {
+      daysArray.push({
+        day: daysInPrevMonth - i + 1,
+        dateObj: new Date(prevMonth.getFullYear(), prevMonth.getMonth(), daysInPrevMonth - i + 1),
+        isOtherMonth: true,
+      });
+    }
+    // Ngày tháng hiện tại
+    for (let d = 1; d <= daysInMonth; d++) {
+      daysArray.push({
+        day: d,
+        dateObj: new Date(monthDate.getFullYear(), monthDate.getMonth(), d),
+        isOtherMonth: false,
+      });
+    }
+    // Ngày tháng sau
+    let nextDay = 1;
+    while (daysArray.length < 42) {
+      const nextMonth = addMonths(monthDate, 1);
+      daysArray.push({
+        day: nextDay,
+        dateObj: new Date(nextMonth.getFullYear(), nextMonth.getMonth(), nextDay),
+        isOtherMonth: true,
+      });
+      nextDay++;
+    }
 
     return daysArray;
   };
@@ -208,19 +237,18 @@ const DatePickerPopup = ({
                 ))}
               </div>
               <div className="calendar-grid">
-                {monthDays.map((day, idx) => {
-                  if (!day) return <div key={idx}></div>;
-                  const dateObj = new Date(month.getFullYear(), month.getMonth(), day);
-                  const iso = format(dateObj, 'yyyy-MM-dd');
+                {monthDays.map((item, idx) => {
+                  const iso = format(item.dateObj, 'yyyy-MM-dd');
                   const isToday = iso === format(currentToday, 'yyyy-MM-dd');
                   const isSelected = iso === selectedDateInPopup;
                   return (
                     <button
                       key={idx}
-                      className={`calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}`}
+                      className={`calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${item.isOtherMonth ? 'disabled-day' : ''}`}
                       onClick={() => {
+                        if (item.isOtherMonth) return;
                         setSelectedDateInPopup(iso);
-                        setCurrentMonth(startOfMonth(dateObj));
+                        setCurrentMonth(startOfMonth(item.dateObj));
                         const index = dates.findIndex((d) => d.iso === iso);
                         if (index !== -1) {
                           setSelectedDayIndex(index);
@@ -230,8 +258,9 @@ const DatePickerPopup = ({
                           setShowDatePicker(false);
                         }
                       }}
+                      disabled={item.isOtherMonth}
                     >
-                      {day}
+                      {item.day}
                     </button>
                   );
                 })}

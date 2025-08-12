@@ -194,3 +194,14 @@
   background-color: var(--color-accent);
   color: white;
 }
+
+/* Ngày của tháng trước/sau */
+.calendar-day.disabled-day {
+  color: #bbb; /* mờ hơn */
+  font-size: 12px; /* nhỏ hơn một chút */
+  cursor: default;
+}
+
+.calendar-day.disabled-day:hover {
+  background-color: transparent; /* không đổi màu khi hover */
+}
