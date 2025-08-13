@@ -50,7 +50,7 @@
   font-size: 14px;
   font-weight: bold;
   display: flex;
-  align-items: center; /* căn giữa icon và chữ */
+  align-items: center; /* Căn giữa icon và chữ */
   gap: 8px;
 }
 
@@ -65,29 +65,31 @@
 
 /* Icon màu riêng cho từng mục */
 .quick-options .today .icon {
-  color: #2e7d32; /* xanh lá cho Today */
+  color: #2e7d32; /* Xanh lá cho Today */
 }
 
 .quick-options .tomorrow .icon {
-  color: #f57c00; /* cam cho Tomorrow */
+  color: #f57c00; /* Cam cho Tomorrow */
 }
 
 .quick-options .this-weekend .icon {
-  color: #1976d2; /* xanh dương cho This weekend */
+  color: #1976d2; /* Xanh dương cho This weekend */
 }
 
 .quick-options .next-week .icon {
-  color: #8e24aa; /* tím cho Next week */
+  color: #8e24aa; /* Tím cho Next week */
 }
 
-/* Tăng kích thước icon SVG cho This weekend & Next week */
+/* Tăng kích thước & căn chỉnh tất cả icon SVG */
+.quick-options .today .icon svg,
+.quick-options .tomorrow .icon svg,
 .quick-options .this-weekend .icon svg,
 .quick-options .next-week .icon svg {
   width: 24px;
   height: 24px;
   display: block;
   position: relative;
-  top: 1px; /* hạ xuống một chút để thẳng hàng với chữ */
+  top: 1px; /* Hạ xuống 1px để thẳng hàng với chữ */
 }
 
 /* Lịch react-day-picker */

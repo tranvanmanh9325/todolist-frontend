@@ -75,10 +75,28 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose }) => {
           <span className="icon">📅</span>
           <span className="label">Today</span>
         </div>
+
         <div className="tomorrow" onClick={() => quickSelect(1)}>
-          <span className="icon">🌞</span>
+          <span className="icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                fillRule="evenodd"
+                d="M9.704 17.544a.5.5 0 0 0-.653.27l-.957 2.31a.5.5 0 1 0 .924.383l.956-2.31a.5.5 0 0 0-.27-.653m5.932-14.32a.5.5 0 0 0-.654.27l-.957 2.31a.5.5 0 1 0 .924.383l.957-2.31a.5.5 0 0 0-.27-.653M9.704 6.457a.5.5 0 0 1-.653-.27l-.957-2.31a.5.5 0 1 1 .924-.383l.956 2.31a.5.5 0 0 1-.27.653m5.932 14.32a.5.5 0 0 1-.654-.27l-.957-2.31a.5.5 0 0 1 .924-.383l.957 2.31a.5.5 0 0 1-.27.653M7.5 12.001a4.5 4.5 0 1 0 9 0 4.5 4.5 0 0 0-9 0m8 0a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0M6.186 14.95a.5.5 0 0 0-.383-.924l-2.31.957a.5.5 0 0 0 .383.924zm14.32-5.932a.5.5 0 1 0-.383-.924l-2.31.957a.5.5 0 0 0 .383.924zm-2.692 5.932a.5.5 0 1 1 .383-.924l2.31.957a.5.5 0 0 1-.384.924zM3.494 9.018a.5.5 0 0 1 .382-.924l2.31.957a.5.5 0 1 1-.383.924z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+          </span>
           <span className="label">Tomorrow</span>
         </div>
+
         <div
           className="this-weekend"
           onClick={() => {
@@ -103,6 +121,7 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose }) => {
           </span>
           <span className="label">This weekend</span>
         </div>
+
         <div
           className="next-week"
           onClick={() => {
