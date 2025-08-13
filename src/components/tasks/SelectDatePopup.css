@@ -1,5 +1,5 @@
 .select-date-popup {
-  position: fixed; /* luôn ở giữa màn hình */
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -9,17 +9,17 @@
   padding: 8px;
   z-index: 2000;
   width: 260px;
-  font-family: sans-serif;
+  font-family: 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Ô nhập ngày */
 .date-input {
   display: block;
-  width: calc(100% + 16px); /* rộng hơn để kéo sát viền */
-  margin-left: -8px; /* đẩy sang trái sát viền popup */
-  padding: 8px; /* giữ khoảng cách chữ đẹp */
+  width: calc(100% + 16px);
+  margin-left: -8px;
+  padding: 8px;
   border: none;
-  border-bottom: 1px solid #ddd; /* chỉ viền dưới màu xám */
+  border-bottom: 1px solid #ddd;
   border-radius: 0;
   margin-bottom: 8px;
   font-size: 14px;
@@ -28,11 +28,11 @@
 }
 
 .date-input::placeholder {
-  color: #888; /* màu placeholder xám nhạt */
+  color: #888;
 }
 
 .date-input:focus {
-  border-bottom: 1px solid #ddd; /* vẫn giữ màu xám khi focus */
+  border-bottom: 1px solid #ddd;
 }
 
 /* Quick options */
@@ -47,12 +47,36 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: bold;
   display: flex;
   align-items: center;
+  gap: 8px;
 }
 
 .quick-options div:hover {
   background: #f3f4f6;
+}
+
+/* Chữ luôn xám đậm */
+.quick-options .label {
+  color: #444;
+}
+
+/* Màu icon cho từng mục */
+.quick-options .today .icon {
+  color: #2e7d32; /* xanh lá cho Today */
+}
+
+.quick-options .tomorrow .icon {
+  color: #f57c00; /* cam cho Tomorrow */
+}
+
+.quick-options .this-weekend .icon {
+  color: #1976d2; /* xanh dương cho This weekend */
+}
+
+.quick-options .next-week .icon {
+  color: #8e24aa; /* tím cho Next week */
 }
 
 /* Lịch react-day-picker */
