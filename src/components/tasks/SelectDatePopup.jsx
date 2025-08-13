@@ -3,25 +3,19 @@ import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import "./SelectDatePopup.css";
 
-const SelectDatePopup = ({ anchorRef, selectedDate, onChange, onClose }) => {
+const SelectDatePopup = ({ selectedDate, onChange, onClose }) => {
   const popupRef = useRef();
 
   // Đóng khi click ra ngoài
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (
-        popupRef.current &&
-        !popupRef.current.contains(e.target) &&
-        !anchorRef.current.contains(e.target)
-      ) {
+      if (popupRef.current && !popupRef.current.contains(e.target)) {
         onClose();
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [onClose, anchorRef]);
-
-  const anchorRect = anchorRef.current?.getBoundingClientRect();
+  }, [onClose]);
 
   // Hàm chọn nhanh ngày
   const quickSelect = (daysToAdd) => {
@@ -54,8 +48,11 @@ const SelectDatePopup = ({ anchorRef, selectedDate, onChange, onClose }) => {
       ref={popupRef}
       className="select-date-popup"
       style={{
-        top: anchorRect ? anchorRect.bottom + window.scrollY + 4 : 0,
-        left: anchorRect ? anchorRect.left + window.scrollX : 0,
+        position: "fixed", // luôn giữa màn hình
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        zIndex: 2000
       }}
     >
       {/* Ô nhập ngày */}
@@ -78,8 +75,8 @@ const SelectDatePopup = ({ anchorRef, selectedDate, onChange, onClose }) => {
       <div className="quick-options">
         <div onClick={() => quickSelect(0)}>📅 Today</div>
         <div onClick={() => quickSelect(1)}>🌞 Tomorrow</div>
-        <div onClick={() => onChange(getThisWeekend())}>🖥 This weekend</div>
-        <div onClick={() => onChange(getNextWeek())}>📅 Next week</div>
+        <div onClick={() => { onChange(getThisWeekend()); onClose(); }}>🖥 This weekend</div>
+        <div onClick={() => { onChange(getNextWeek()); onClose(); }}>📅 Next week</div>
       </div>
 
       {/* Lịch */}

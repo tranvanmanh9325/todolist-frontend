@@ -1,22 +1,38 @@
 .select-date-popup {
-  position: absolute;
+  position: fixed; /* luôn ở giữa màn hình */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   padding: 8px;
-  z-index: 1000;
+  z-index: 2000;
   width: 260px;
   font-family: sans-serif;
 }
 
 /* Ô nhập ngày */
 .date-input {
-  width: 100%;
-  padding: 6px 8px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  display: block;
+  width: calc(100% + 16px); /* rộng hơn để kéo sát viền */
+  margin-left: -8px; /* đẩy sang trái sát viền popup */
+  padding: 8px; /* giữ khoảng cách chữ đẹp */
+  border: none;
+  border-bottom: 1px solid #ddd; /* chỉ viền dưới màu xám */
+  border-radius: 0;
   margin-bottom: 8px;
   font-size: 14px;
+  outline: none;
+  background: transparent;
+}
+
+.date-input::placeholder {
+  color: #888; /* màu placeholder xám nhạt */
+}
+
+.date-input:focus {
+  border-bottom: 1px solid #ddd; /* vẫn giữ màu xám khi focus */
 }
 
 /* Quick options */
