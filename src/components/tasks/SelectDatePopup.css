@@ -1,0 +1,68 @@
+.select-date-popup {
+  position: absolute;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 8px;
+  z-index: 1000;
+  width: 260px;
+  font-family: sans-serif;
+}
+
+/* Ô nhập ngày */
+.date-input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+/* Quick options */
+.quick-options {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+.quick-options div {
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.quick-options div:hover {
+  background: #f3f4f6;
+}
+
+/* Lịch react-day-picker */
+.select-date-popup .rdp {
+  margin: 0 auto;
+  --rdp-accent-color: #2563eb;
+  --rdp-background-color: #eff6ff;
+}
+
+/* Footer */
+.date-footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.date-footer-btn {
+  flex: 1;
+  padding: 6px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.date-footer-btn:hover {
+  background: #f9fafb;
+}
