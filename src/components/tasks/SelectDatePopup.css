@@ -35,13 +35,14 @@
   border-bottom: 1px solid #ddd;
 }
 
-/* Quick options */
+/* Quick options container */
 .quick-options {
   display: flex;
   flex-direction: column;
   margin-bottom: 8px;
 }
 
+/* Quick options item */
 .quick-options div {
   padding: 6px 8px;
   border-radius: 6px;
@@ -49,7 +50,7 @@
   font-size: 14px;
   font-weight: bold;
   display: flex;
-  align-items: center;
+  align-items: center; /* căn giữa icon và chữ */
   gap: 8px;
 }
 
@@ -62,7 +63,7 @@
   color: #444;
 }
 
-/* Màu icon cho từng mục */
+/* Icon màu riêng cho từng mục */
 .quick-options .today .icon {
   color: #2e7d32; /* xanh lá cho Today */
 }
@@ -77,6 +78,15 @@
 
 .quick-options .next-week .icon {
   color: #8e24aa; /* tím cho Next week */
+}
+
+/* Tăng kích thước icon Next Week */
+.quick-options .next-week .icon svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+  position: relative;
+  top: 1px; /* hạ xuống 1px, có thể tăng nếu muốn xuống nhiều hơn */
 }
 
 /* Lịch react-day-picker */
