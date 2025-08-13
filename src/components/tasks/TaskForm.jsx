@@ -103,7 +103,6 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         <button type="button" className="task-option">📅 <span>Date</span></button>
         <button type="button" className="task-option">🚩 <span>Priority</span></button>
         <button type="button" className="task-option">⏰ <span>Reminders</span></button>
-        <button type="button" className="task-option">⋯</button>
       </div>
 
       <div className="task-bottom">
