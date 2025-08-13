@@ -73,6 +73,7 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose }) => {
       <div className="quick-options">
         <div className="today" onClick={() => quickSelect(0)}>
           <span className="icon">
+            {/* SVG Today */}
             <svg
               width="24"
               height="24"
@@ -103,6 +104,7 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose }) => {
 
         <div className="tomorrow" onClick={() => quickSelect(1)}>
           <span className="icon">
+            {/* SVG Tomorrow */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -130,6 +132,7 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose }) => {
           }}
         >
           <span className="icon">
+            {/* SVG Weekend */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -155,6 +158,7 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose }) => {
           }}
         >
           <span className="icon">
+            {/* SVG Next Week */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -174,6 +178,9 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose }) => {
           <span className="label">Next week</span>
         </div>
       </div>
+
+      {/* ✅ Thanh ngang phân cách */}
+      <div className="options-separator" aria-hidden="true" />
 
       {/* Lịch */}
       <DayPicker
