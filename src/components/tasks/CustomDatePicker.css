@@ -171,12 +171,12 @@
 }
 
 /* Ngày không thuộc tháng hiển thị */
-.calendar-day.disabled-day {
-  color: #bbb;
-  font-size: 12px;
+.calendar-day.outside {
+  background: none;
+  color: transparent; /* bỏ chữ */
   cursor: default;
 }
 
-.calendar-day.disabled-day:hover {
-  background-color: transparent;
+.calendar-day.outside:hover {
+  background-color: transparent; /* không hover */
 }
