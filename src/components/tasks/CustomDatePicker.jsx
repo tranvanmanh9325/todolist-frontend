@@ -7,6 +7,11 @@ import {
   subMonths,
   getDaysInMonth,
   isSameMonth,
+  isSameDay,
+  startOfWeek,
+  endOfWeek,
+  addDays,
+  eachDayOfInterval
 } from 'date-fns';
 
 const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
@@ -45,12 +50,24 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
     [monthsList]
   );
 
-  // Tạo mảng ngày cho 1 tháng
+  // Tiêu đề ngày: Monday → Sunday
+  const weekdays = eachDayOfInterval({
+    start: startOfWeek(new Date(), { weekStartsOn: 1 }),
+    end: addDays(startOfWeek(new Date(), { weekStartsOn: 1 }), 6),
+  });
+
+  // Tạo mảng ngày cho 1 tháng (bao gồm cả ngày ngoài tháng để đủ tuần)
   const generateMonthDays = (monthDate) => {
-    const daysInMonth = getDaysInMonth(monthDate);
+    const start = startOfWeek(startOfMonth(monthDate), { weekStartsOn: 1 });
+    const end = endOfWeek(
+      new Date(monthDate.getFullYear(), monthDate.getMonth(), getDaysInMonth(monthDate)),
+      { weekStartsOn: 1 }
+    );
     const daysArray = [];
-    for (let d = 1; d <= daysInMonth; d++) {
-      daysArray.push(new Date(monthDate.getFullYear(), monthDate.getMonth(), d));
+    let current = start;
+    while (current <= end) {
+      daysArray.push(current);
+      current = addDays(current, 1);
     }
     return daysArray;
   };
@@ -107,8 +124,7 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
   const isAtLastMonth = isSameMonth(visibleMonth, lastAllowedMonth);
 
   // Kiểm tra nút Today
-  const isOnToday =
-    selectedDate && format(selectedDate, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd');
+  const isOnToday = selectedDate && isSameDay(selectedDate, today);
   const disableTodayButton = isOnToday && isAtFirstMonth;
 
   const handlePrevMonth = () => {
@@ -194,27 +210,30 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
         {monthsList.map((month, mi) => (
           <div key={mi} className="month-block" data-month-index={mi}>
             <div className="month-title">{format(month, 'MMM yyyy')}</div>
+            {/* Tiêu đề ngày: Monday → Sunday */}
             <div className="calendar-grid weekdays">
-              {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
-                <div key={i} style={{ textAlign: 'center' }}>{d}</div>
+              {weekdays.map((day, i) => (
+                <div key={i} style={{ textAlign: 'center' }}>
+                  {format(day, 'EEEEE')}
+                </div>
               ))}
             </div>
             <div className="calendar-grid">
               {generateMonthDays(month).map((dayDate, idx) => {
-                const iso = format(dayDate, 'yyyy-MM-dd');
-                const isToday = iso === format(today, 'yyyy-MM-dd');
-                const isSelected =
-                  selectedDate && iso === format(selectedDate, 'yyyy-MM-dd');
+                const isToday = isSameDay(dayDate, today);
+                const isSelected = selectedDate && isSameDay(dayDate, selectedDate);
+                const isCurrentMonth = isSameMonth(dayDate, month);
                 return (
                   <button
                     key={idx}
-                    className={`calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}`}
+                    className={`calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${!isCurrentMonth ? 'outside' : ''}`}
                     onClick={() => {
+                      if (!isCurrentMonth) return; // ngày ngoài tháng không click
                       onChange(dayDate);
                       onClose();
                     }}
                   >
-                    {dayDate.getDate()}
+                    {isCurrentMonth ? dayDate.getDate() : ''}
                   </button>
                 );
               })}
