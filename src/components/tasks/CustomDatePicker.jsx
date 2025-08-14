@@ -106,6 +106,11 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
   const isAtFirstMonth = isSameMonth(visibleMonth, firstAllowedMonth);
   const isAtLastMonth = isSameMonth(visibleMonth, lastAllowedMonth);
 
+  // Kiểm tra nút Today
+  const isOnToday =
+    selectedDate && format(selectedDate, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd');
+  const disableTodayButton = isOnToday && isAtFirstMonth;
+
   const handlePrevMonth = () => {
     if (isAtFirstMonth) return;
     const newMonth = subMonths(visibleMonth, 1);
@@ -121,9 +126,12 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
   };
 
   const handleTodayClick = () => {
+    if (disableTodayButton) return;
     const monthStart = startOfMonth(today);
     setVisibleMonth(monthStart);
     scrollToMonth(monthStart);
+    onChange(today);
+    onClose();
   };
 
   return (
@@ -140,22 +148,38 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
             disabled={isAtFirstMonth}
           >
             <svg viewBox="0 0 24 24">
-              <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" fill="none" />
+              <path
+                d="M15 18l-6-6 6-6"
+                stroke="currentColor"
+                strokeWidth="2"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
+
           <button
-            className="date-picker-header-action outline-circle"
+            className={`date-picker-header-action outline-circle ${disableTodayButton ? 'disabled' : ''}`}
             onClick={handleTodayClick}
-          >
-            Today
-          </button>
+            disabled={disableTodayButton}
+            aria-label="Today"
+          />
+
           <button
             className={`date-picker-header-action ${isAtLastMonth ? 'disabled' : ''}`}
             onClick={handleNextMonth}
             disabled={isAtLastMonth}
           >
             <svg viewBox="0 0 24 24">
-              <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" fill="none" />
+              <path
+                d="M9 6l6 6-6 6"
+                stroke="currentColor"
+                strokeWidth="2"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
         </div>
@@ -179,7 +203,8 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
               {generateMonthDays(month).map((dayDate, idx) => {
                 const iso = format(dayDate, 'yyyy-MM-dd');
                 const isToday = iso === format(today, 'yyyy-MM-dd');
-                const isSelected = selectedDate && iso === format(selectedDate, 'yyyy-MM-dd');
+                const isSelected =
+                  selectedDate && iso === format(selectedDate, 'yyyy-MM-dd');
                 return (
                   <button
                     key={idx}
