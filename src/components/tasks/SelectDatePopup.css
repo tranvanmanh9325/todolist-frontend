@@ -10,18 +10,16 @@
   z-index: 2000;
   width: 260px;
   font-family: 'Segoe UI', Roboto, sans-serif;
+  box-sizing: border-box;
 }
 
 /* Ô nhập ngày */
 .date-input {
   display: block;
-  width: calc(100% + 16px);
-  margin-left: -8px;
+  width: 100%;
   padding: 8px;
   border: none;
   border-bottom: 1px solid #ddd;
-  border-radius: 0;
-  margin-bottom: 8px;
   font-size: 14px;
   outline: none;
   background: transparent;
@@ -32,14 +30,14 @@
 }
 
 .date-input:focus {
-  border-bottom: 1px solid #ddd;
+  border-bottom-color: #aaa;
 }
 
 /* Quick options container */
 .quick-options {
   display: flex;
   flex-direction: column;
-  margin-bottom: 8px;
+  margin: 8px 0;
 }
 
 /* Quick options item */
@@ -52,8 +50,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-left: -8px; /* Icon + text thẳng hàng với input */
-  width: calc(100% + 8px);
 }
 
 .quick-options div:hover {
@@ -71,29 +67,19 @@
 .quick-options .this-weekend .icon { color: #1976d2; }
 .quick-options .next-week .icon { color: #8e24aa; }
 
-/* Tăng kích thước & căn chỉnh icon SVG */
+/* SVG icon */
 .quick-options .icon svg {
   width: 24px;
   height: 24px;
   display: block;
-  position: relative;
-  top: 1px;
 }
 
-/* ✅ Thanh ngang dưới "Next week" */
+/* ✅ Thanh ngang phân cách */
 .options-separator {
   height: 1px;
   background: #e5e7eb;
-  width: calc(100% + 16px);
+  width: 100%;
   margin: 4px 0 8px;
-  margin-left: -8px;
-}
-
-/* Lịch react-day-picker */
-.select-date-popup .rdp {
-  margin: 0 auto;
-  --rdp-accent-color: #2563eb;
-  --rdp-background-color: #eff6ff;
 }
 
 /* Footer */
@@ -115,4 +101,12 @@
 
 .date-footer-btn:hover {
   background: #f9fafb;
+}
+
+/* Responsive */
+@media (max-width: 400px) {
+  .select-date-popup {
+    width: 90%;
+    max-width: 320px;
+  }
 }

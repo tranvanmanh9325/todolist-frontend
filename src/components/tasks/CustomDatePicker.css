@@ -1,0 +1,26 @@
+/* Container bao lịch */
+.custom-date-picker {
+  margin: 0 auto;
+  --rdp-accent-color: #2563eb;
+  --rdp-background-color: #eff6ff;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Ngày được chọn */
+.custom-date-picker .rdp-day_selected {
+  background-color: var(--rdp-accent-color);
+  color: white;
+  border-radius: 6px;
+}
+
+/* Ngày hôm nay */
+.custom-date-picker .rdp-day_today {
+  font-weight: bold;
+  color: #dc2626;
+}
+
+/* Hiệu ứng hover */
+.custom-date-picker .rdp-day:hover {
+  background-color: #e5e7eb;
+  border-radius: 6px;
+}
