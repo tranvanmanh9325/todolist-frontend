@@ -74,7 +74,7 @@
   display: block;
 }
 
-/* ✅ Thanh ngang phân cách */
+/* Thanh ngang phân cách */
 .options-separator {
   height: 1px;
   background: #e5e7eb;
@@ -97,6 +97,16 @@
   font-size: 14px;
   background: #fff;
   cursor: pointer;
+  display: flex;              /* Đảm bảo icon và chữ nằm ngang */
+  align-items: center;        /* Căn giữa icon theo chiều dọc */
+  justify-content: center;    /* Căn giữa cả icon + chữ */
+  gap: 4px;                   /* Khoảng cách icon - chữ */
+}
+
+.date-footer-btn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
 }
 
 .date-footer-btn:hover {

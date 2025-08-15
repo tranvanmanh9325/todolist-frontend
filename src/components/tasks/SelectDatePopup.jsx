@@ -128,7 +128,12 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose }) => {
 
       {/* Footer */}
       <div className="date-footer">
-        <button className="date-footer-btn">⏰ Time</button>
+        <button className="date-footer-btn" style={{ display: "flex", alignItems: "center" }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" fill="none" viewBox="0 0 17 16">
+            <path fill="currentColor" fillRule="evenodd" d="M13.5 8a5 5 0 1 1-10 0 5 5 0 0 1 10 0m1 0a6 6 0 1 1-12 0 6 6 0 0 1 12 0m-6-2.5a.5.5 0 0 0-1 0v3A.5.5 0 0 0 8 9h3a.5.5 0 0 0 0-1H8.5z" clipRule="evenodd"></path>
+          </svg>
+          <span style={{ marginLeft: "4px" }}>Time</span>
+        </button>
         <button className="date-footer-btn">🔁 Repeat</button>
       </div>
     </div>
