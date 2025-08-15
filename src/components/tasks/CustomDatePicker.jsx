@@ -52,57 +52,48 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
     [monthsList]
   );
 
-  const computeVisibleMonth = useCallback(() => {
+  // Cập nhật tháng dựa trên tiêu đề tháng (.month-title)
+  const updateVisibleMonthFromTitles = useCallback(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
     const viewTop = container.scrollTop;
-    const viewBottom = viewTop + container.clientHeight;
 
-    const monthEls = container.querySelectorAll('.month-block');
-    let bestIdx = -1;
-    let bestVisible = -1;
+    const titles = container.querySelectorAll('.month-title');
+    let currentMonthIdx = 0;
 
-    monthEls.forEach((el) => {
-      const idx = Number(el.getAttribute('data-month-index')) || 0;
-      const elTop = el.offsetTop;
-      const elBottom = elTop + el.offsetHeight;
-
-      const visible = Math.max(0, Math.min(elBottom, viewBottom) - Math.max(elTop, viewTop));
-
-      if (visible > bestVisible || (visible === bestVisible && (bestIdx === -1 || idx < bestIdx))) {
-        bestVisible = visible;
-        bestIdx = idx;
+    titles.forEach((titleEl, idx) => {
+      if (titleEl.offsetTop <= viewTop + 1) { // +1 tránh sai số
+        currentMonthIdx = idx;
       }
     });
 
-    if (bestIdx >= 0) {
-      const month = monthsList[bestIdx];
-      if (month && !isSameMonth(month, visibleMonth)) {
-        setVisibleMonth(month);
-      }
+    const month = monthsList[currentMonthIdx];
+    if (month && !isSameMonth(month, visibleMonth)) {
+      setVisibleMonth(month);
     }
   }, [monthsList, visibleMonth]);
 
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
+
     let ticking = false;
 
     const onScroll = () => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        computeVisibleMonth();
+        updateVisibleMonthFromTitles();
         ticking = false;
       });
     };
 
     container.addEventListener('scroll', onScroll, { passive: true });
-    computeVisibleMonth();
+    updateVisibleMonthFromTitles();
 
     return () => container.removeEventListener('scroll', onScroll);
-  }, [computeVisibleMonth]);
+  }, [updateVisibleMonthFromTitles]);
 
   useEffect(() => {
     const targetMonth = startOfMonth(selectedDate || new Date());
