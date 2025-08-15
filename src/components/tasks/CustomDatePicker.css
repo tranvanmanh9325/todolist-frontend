@@ -153,15 +153,23 @@
   background-color: var(--color-bg-hover);
 }
 
+/* Ngày được chọn */
 .calendar-day.selected {
-  background-color: var(--color-accent);
-  color: white;
+  background-color: #db4c3f; /* Đỏ Todoist */
+  color: #fff;
 }
 
 /* Ngày hôm nay */
 .calendar-day.today {
   font-weight: bold;
   color: red;
+}
+
+/* Ngày hôm nay và được chọn */
+.calendar-day.today.selected {
+  background-color: #db4c3f;
+  color: #fff !important;
+  font-weight: bold;
 }
 
 /* Ngày không thuộc tháng hiện tại */
