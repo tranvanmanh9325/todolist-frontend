@@ -4,7 +4,6 @@ import {
   format,
   startOfMonth,
   addMonths,
-  subMonths,
   getDaysInMonth,
   isSameMonth,
   isSameDay,
@@ -16,6 +15,7 @@ import {
 
 const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
   const scrollContainerRef = useRef(null);
+  const isNavigatingRef = useRef(false); // ✅ Chặn scroll listener khi bấm nút
 
   const [visibleMonth, setVisibleMonth] = useState(
     selectedDate ? startOfMonth(selectedDate) : startOfMonth(new Date())
@@ -46,14 +46,14 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
       const el = container.querySelector(`[data-month-index="${idx}"]`);
       if (!el) return;
 
-      const top = el.offsetTop;
-      container.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' });
+      container.scrollTo({ top: el.offsetTop, behavior: smooth ? 'smooth' : 'auto' });
     },
     [monthsList]
   );
 
-  // Cập nhật tháng dựa trên vị trí .month-title so với đỉnh vùng cuộn
   const updateVisibleMonthFromTitles = useCallback(() => {
+    if (isNavigatingRef.current) return; // ✅ Bỏ qua khi điều hướng bằng nút
+
     const container = scrollContainerRef.current;
     if (!container) return;
 
@@ -62,8 +62,7 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
 
     const titles = container.querySelectorAll('.month-title');
     titles.forEach((titleEl, idx) => {
-      const titleTop = titleEl.getBoundingClientRect().top;
-      if (titleTop <= containerTop + 1) { // +1 để tránh sai số hiển thị
+      if (titleEl.getBoundingClientRect().top <= containerTop + 1) {
         currentMonthIdx = idx;
       }
     });
@@ -79,7 +78,6 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
     if (!container) return;
 
     let ticking = false;
-
     const onScroll = () => {
       if (ticking) return;
       ticking = true;
@@ -128,29 +126,47 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
   const isAtFirstMonth = isSameMonth(visibleMonth, firstAllowedMonth);
   const isAtLastMonth = isSameMonth(visibleMonth, lastAllowedMonth);
 
+  // ✅ Dùng requestAnimationFrame để cuộn sau khi DOM render xong
   const handlePrevMonth = () => {
     if (isAtFirstMonth) return;
-    const newM = subMonths(visibleMonth, 1);
-    setVisibleMonth(newM);
-    scrollToMonth(newM, true);
+    const currentIndex = monthsList.findIndex(m => isSameMonth(m, visibleMonth));
+    if (currentIndex > 0) {
+      const newM = monthsList[currentIndex - 1];
+      isNavigatingRef.current = true;
+      setVisibleMonth(newM);
+      requestAnimationFrame(() => {
+        scrollToMonth(newM, true);
+        setTimeout(() => { isNavigatingRef.current = false; }, 500);
+      });
+    }
   };
 
   const handleNextMonth = () => {
     if (isAtLastMonth) return;
-    const newM = addMonths(visibleMonth, 1);
-    setVisibleMonth(newM);
-    scrollToMonth(newM, true);
+    const currentIndex = monthsList.findIndex(m => isSameMonth(m, visibleMonth));
+    if (currentIndex < monthsList.length - 1) {
+      const newM = monthsList[currentIndex + 1];
+      isNavigatingRef.current = true;
+      setVisibleMonth(newM);
+      requestAnimationFrame(() => {
+        scrollToMonth(newM, true);
+        setTimeout(() => { isNavigatingRef.current = false; }, 500);
+      });
+    }
   };
 
   const handleTodayClick = () => {
     const monthStart = startOfMonth(new Date());
+    isNavigatingRef.current = true;
     setVisibleMonth(monthStart);
-    scrollToMonth(monthStart, true);
+    requestAnimationFrame(() => {
+      scrollToMonth(monthStart, true);
+      setTimeout(() => { isNavigatingRef.current = false; }, 500);
+    });
   };
 
   return (
     <div className="custom-date-picker">
-      {/* Header nằm ngoài vùng cuộn */}
       <div className="date-picker-header">
         <span className="date-picker-header-month">{format(visibleMonth, 'MMM yyyy')}</span>
         <div className="date-picker-header-actions">
@@ -184,7 +200,6 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
         </div>
       </div>
 
-      {/* Vùng cuộn */}
       <div
         className="month-scroll-container"
         ref={scrollContainerRef}
