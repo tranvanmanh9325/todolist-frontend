@@ -52,18 +52,18 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
     [monthsList]
   );
 
-  // Cập nhật tháng dựa trên tiêu đề tháng (.month-title)
+  // Cập nhật tháng dựa trên vị trí .month-title so với đỉnh vùng cuộn
   const updateVisibleMonthFromTitles = useCallback(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    const viewTop = container.scrollTop;
-
-    const titles = container.querySelectorAll('.month-title');
+    const containerTop = container.getBoundingClientRect().top;
     let currentMonthIdx = 0;
 
+    const titles = container.querySelectorAll('.month-title');
     titles.forEach((titleEl, idx) => {
-      if (titleEl.offsetTop <= viewTop + 1) { // +1 tránh sai số
+      const titleTop = titleEl.getBoundingClientRect().top;
+      if (titleTop <= containerTop + 1) { // +1 để tránh sai số hiển thị
         currentMonthIdx = idx;
       }
     });
