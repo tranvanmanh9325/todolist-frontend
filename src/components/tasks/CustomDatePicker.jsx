@@ -16,15 +16,12 @@ import {
 
 const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
   const scrollContainerRef = useRef(null);
-  const headerRef = useRef(null);
 
   const [visibleMonth, setVisibleMonth] = useState(
     selectedDate ? startOfMonth(selectedDate) : startOfMonth(new Date())
   );
   const [today, setToday] = useState(new Date());
-  const [headerHeight, setHeaderHeight] = useState(0);
 
-  // baseMonth cố định theo thời điểm mở component (tránh rebuild monthsList khi today thay đổi)
   const baseMonthRef = useRef(startOfMonth(new Date()));
 
   const monthsList = useMemo(() => {
@@ -33,60 +30,49 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
     return arr;
   }, []);
 
-  // cập nhật chiều cao header (dùng khi cần bù offset)
-  useEffect(() => {
-    const updateHeader = () => {
-      if (headerRef.current) {
-        setHeaderHeight(headerRef.current.offsetHeight || 0);
-      }
-    };
-    updateHeader();
-    window.addEventListener('resize', updateHeader);
-    return () => window.removeEventListener('resize', updateHeader);
-  }, []);
-
-  // cập nhật "today" mỗi giờ (để highlight)
   useEffect(() => {
     const t = setInterval(() => setToday(new Date()), 1000 * 60 * 60);
     return () => clearInterval(t);
   }, []);
 
-  // Scroll đến tháng cụ thể (bù headerHeight). smooth = true/false
   const scrollToMonth = useCallback(
     (targetMonth, smooth = true) => {
       const container = scrollContainerRef.current;
       if (!container) return;
+
       const idx = monthsList.findIndex((m) => isSameMonth(m, targetMonth));
       if (idx < 0) return;
+
       const el = container.querySelector(`[data-month-index="${idx}"]`);
       if (!el) return;
 
-      const top = Math.max(0, el.offsetTop - headerHeight);
+      const top = el.offsetTop;
       container.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' });
     },
-    [monthsList, headerHeight]
+    [monthsList]
   );
 
-  // computeVisibleMonth: tính tháng có phần hiển thị lớn nhất trong container (đã trừ header)
   const computeVisibleMonth = useCallback(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    const containerRect = container.getBoundingClientRect();
-    const viewTop = containerRect.top + headerHeight;
-    const viewBottom = containerRect.bottom;
+    const viewTop = container.scrollTop;
+    const viewBottom = viewTop + container.clientHeight;
 
     const monthEls = container.querySelectorAll('.month-block');
     let bestIdx = -1;
     let bestVisible = -1;
 
     monthEls.forEach((el) => {
-      const rect = el.getBoundingClientRect();
-      const visible = Math.min(rect.bottom, viewBottom) - Math.max(rect.top, viewTop);
-      const vis = Math.max(0, visible);
-      if (vis > bestVisible) {
-        bestVisible = vis;
-        bestIdx = Number(el.getAttribute('data-month-index')) || 0;
+      const idx = Number(el.getAttribute('data-month-index')) || 0;
+      const elTop = el.offsetTop;
+      const elBottom = elTop + el.offsetHeight;
+
+      const visible = Math.max(0, Math.min(elBottom, viewBottom) - Math.max(elTop, viewTop));
+
+      if (visible > bestVisible || (visible === bestVisible && (bestIdx === -1 || idx < bestIdx))) {
+        bestVisible = visible;
+        bestIdx = idx;
       }
     });
 
@@ -96,9 +82,8 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
         setVisibleMonth(month);
       }
     }
-  }, [monthsList, headerHeight, visibleMonth]);
+  }, [monthsList, visibleMonth]);
 
-  // scroll listener nhẹ (throttle bằng rAF) để cập nhật header khi user scroll
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -119,24 +104,19 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
     return () => container.removeEventListener('scroll', onScroll);
   }, [computeVisibleMonth]);
 
-  // Khi mở popup: cuộn ngay lập tức (không smooth) tới selectedDate hoặc today
   useEffect(() => {
     const targetMonth = startOfMonth(selectedDate || new Date());
     setVisibleMonth(targetMonth);
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        scrollToMonth(targetMonth, false);
-      });
+      scrollToMonth(targetMonth, false);
     });
   }, [selectedDate, scrollToMonth]);
 
-  // Weekdays
   const weekdays = eachDayOfInterval({
     start: startOfWeek(new Date(), { weekStartsOn: 1 }),
     end: addDays(startOfWeek(new Date(), { weekStartsOn: 1 }), 6),
   });
 
-  // Tạo ngày cho tháng
   const generateMonthDays = (monthDate) => {
     const start = startOfWeek(startOfMonth(monthDate), { weekStartsOn: 1 });
     const end = endOfWeek(
@@ -152,7 +132,6 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
     return days;
   };
 
-  // Prev/Next/Today handlers
   const firstAllowedMonth = monthsList[0];
   const lastAllowedMonth = monthsList[monthsList.length - 1];
   const isAtFirstMonth = isSameMonth(visibleMonth, firstAllowedMonth);
@@ -180,44 +159,46 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
 
   return (
     <div className="custom-date-picker">
+      {/* Header nằm ngoài vùng cuộn */}
+      <div className="date-picker-header">
+        <span className="date-picker-header-month">{format(visibleMonth, 'MMM yyyy')}</span>
+        <div className="date-picker-header-actions">
+          <button
+            className={`date-picker-header-action ${isAtFirstMonth ? 'disabled' : ''}`}
+            onClick={handlePrevMonth}
+            disabled={isAtFirstMonth}
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" fill="none"
+                strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+
+          <button
+            className="date-picker-header-action outline-circle"
+            onClick={handleTodayClick}
+            aria-label="Today"
+          />
+
+          <button
+            className={`date-picker-header-action ${isAtLastMonth ? 'disabled' : ''}`}
+            onClick={handleNextMonth}
+            disabled={isAtLastMonth}
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" fill="none"
+                strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Vùng cuộn */}
       <div
         className="month-scroll-container"
         ref={scrollContainerRef}
-        style={{ overscrollBehavior: 'contain' }}
+        style={{ overscrollBehavior: 'contain', maxHeight: '300px', overflowY: 'auto' }}
       >
-        {/* Header sticky bên trong vùng cuộn */}
-        <div className="date-picker-header sticky-header" ref={headerRef}>
-          <span className="date-picker-header-month">{format(visibleMonth, 'MMM yyyy')}</span>
-          <div className="date-picker-header-actions">
-            <button
-              className={`date-picker-header-action ${isAtFirstMonth ? 'disabled' : ''}`}
-              onClick={handlePrevMonth}
-              disabled={isAtFirstMonth}
-            >
-              <svg viewBox="0 0 24 24">
-                <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-
-            <button
-              className="date-picker-header-action outline-circle"
-              onClick={handleTodayClick}
-              aria-label="Today"
-            />
-
-            <button
-              className={`date-picker-header-action ${isAtLastMonth ? 'disabled' : ''}`}
-              onClick={handleNextMonth}
-              disabled={isAtLastMonth}
-            >
-              <svg viewBox="0 0 24 24">
-                <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Danh sách tháng */}
         {monthsList.map((month, mi) => (
           <div key={mi} className="month-block" data-month-index={mi}>
             <div className="month-title">{format(month, 'MMM yyyy')}</div>

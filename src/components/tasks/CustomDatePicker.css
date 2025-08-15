@@ -11,18 +11,7 @@
   max-height: 300px;
 }
 
-/* Header cố định khi cuộn */
-.sticky-header {
-  position: sticky;
-  top: 0;
-  /* Đảm bảo nền đặc để che nội dung phía sau */
-  background-color: var(--color-bg-solid, #fff);
-  z-index: 5;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-/* Header container */
+/* Header (nằm ngoài vùng cuộn) */
 .date-picker-header {
   display: flex;
   align-items: center;
@@ -30,6 +19,10 @@
   padding: 6px 12px;
   font-weight: 600;
   font-size: 13px;
+  background-color: var(--color-bg-solid, #fff);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  z-index: 5;
 }
 
 .date-picker-header-month {
@@ -84,7 +77,6 @@
   background-color: var(--color-bg-hover);
 }
 
-/* Trạng thái disabled cho nút điều hướng */
 .date-picker-header-action.disabled {
   opacity: 0.4;
   cursor: not-allowed;
@@ -99,7 +91,6 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-top: 0;
   padding-bottom: 4px;
   scroll-behavior: smooth;
   scrollbar-width: none; /* Firefox */
@@ -167,13 +158,13 @@
   color: white;
 }
 
-/* Ngày hôm nay - đổi màu chữ sang đỏ */
+/* Ngày hôm nay */
 .calendar-day.today {
   font-weight: bold;
   color: red;
 }
 
-/* Ngày không thuộc tháng hiển thị */
+/* Ngày không thuộc tháng hiện tại */
 .calendar-day.outside {
   background: none;
   color: transparent;
