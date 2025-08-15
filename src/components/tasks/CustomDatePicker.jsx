@@ -15,12 +15,13 @@ import {
 
 const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
   const scrollContainerRef = useRef(null);
-  const isNavigatingRef = useRef(false); // ✅ Chặn scroll listener khi bấm nút
+  const isNavigatingRef = useRef(false);
 
   const [visibleMonth, setVisibleMonth] = useState(
     selectedDate ? startOfMonth(selectedDate) : startOfMonth(new Date())
   );
   const [today, setToday] = useState(new Date());
+  const [isFirstOpen, setIsFirstOpen] = useState(true); // ✅ để biết lần mở đầu tiên
 
   const baseMonthRef = useRef(startOfMonth(new Date()));
 
@@ -35,6 +36,7 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
     return () => clearInterval(t);
   }, []);
 
+  // ✅ scrollToMonth tính offset đúng trong container
   const scrollToMonth = useCallback(
     (targetMonth, smooth = true) => {
       const container = scrollContainerRef.current;
@@ -46,13 +48,14 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
       const el = container.querySelector(`[data-month-index="${idx}"]`);
       if (!el) return;
 
-      container.scrollTo({ top: el.offsetTop, behavior: smooth ? 'smooth' : 'auto' });
+      const targetTop = el.offsetTop - container.offsetTop;
+      container.scrollTo({ top: targetTop, behavior: smooth ? 'smooth' : 'auto' });
     },
     [monthsList]
   );
 
   const updateVisibleMonthFromTitles = useCallback(() => {
-    if (isNavigatingRef.current) return; // ✅ Bỏ qua khi điều hướng bằng nút
+    if (isNavigatingRef.current) return;
 
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -93,13 +96,24 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
     return () => container.removeEventListener('scroll', onScroll);
   }, [updateVisibleMonthFromTitles]);
 
+  // ✅ Điều chỉnh để không nhảy tháng
   useEffect(() => {
-    const targetMonth = startOfMonth(selectedDate || new Date());
+    if (!scrollContainerRef.current) return;
+
+    const targetMonth = isFirstOpen
+      ? startOfMonth(new Date()) // lần đầu mở → tháng hiện tại
+      : startOfMonth(selectedDate || new Date()); // các lần sau → tháng chứa ngày chọn
+
     setVisibleMonth(targetMonth);
+
     requestAnimationFrame(() => {
       scrollToMonth(targetMonth, false);
     });
-  }, [selectedDate, scrollToMonth]);
+
+    if (isFirstOpen) {
+      setIsFirstOpen(false);
+    }
+  }, [selectedDate, scrollToMonth, isFirstOpen]);
 
   const weekdays = eachDayOfInterval({
     start: startOfWeek(new Date(), { weekStartsOn: 1 }),
@@ -126,7 +140,6 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
   const isAtFirstMonth = isSameMonth(visibleMonth, firstAllowedMonth);
   const isAtLastMonth = isSameMonth(visibleMonth, lastAllowedMonth);
 
-  // ✅ Dùng requestAnimationFrame để cuộn sau khi DOM render xong
   const handlePrevMonth = () => {
     if (isAtFirstMonth) return;
     const currentIndex = monthsList.findIndex(m => isSameMonth(m, visibleMonth));
