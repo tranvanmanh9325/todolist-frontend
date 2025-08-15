@@ -15,11 +15,14 @@
 .sticky-header {
   position: sticky;
   top: 0;
-  background: var(--color-bg);
+  /* Đảm bảo nền đặc để che nội dung phía sau */
+  background-color: var(--color-bg-solid, #fff);
   z-index: 5;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+/* Header container */
 .date-picker-header {
   display: flex;
   align-items: center;
@@ -96,7 +99,7 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-top: 4px;
+  padding-top: 0;
   padding-bottom: 4px;
   scroll-behavior: smooth;
   scrollbar-width: none; /* Firefox */
@@ -152,7 +155,7 @@
   width: 28px;
   margin: auto;
   color: #202020;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .calendar-day:hover {
@@ -164,7 +167,7 @@
   color: white;
 }
 
-/* Ngày hôm nay - chỉ đổi màu chữ sang đỏ */
+/* Ngày hôm nay - đổi màu chữ sang đỏ */
 .calendar-day.today {
   font-weight: bold;
   color: red;
@@ -173,10 +176,10 @@
 /* Ngày không thuộc tháng hiển thị */
 .calendar-day.outside {
   background: none;
-  color: transparent; /* bỏ chữ */
+  color: transparent;
   cursor: default;
 }
 
 .calendar-day.outside:hover {
-  background-color: transparent; /* không hover */
+  background-color: transparent;
 }

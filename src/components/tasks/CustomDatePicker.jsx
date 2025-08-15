@@ -61,7 +61,6 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
       const el = container.querySelector(`[data-month-index="${idx}"]`);
       if (!el) return;
 
-      // top position trừ headerHeight để phần tử không bị header che
       const top = Math.max(0, el.offsetTop - headerHeight);
       container.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' });
     },
@@ -74,7 +73,7 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
     if (!container) return;
 
     const containerRect = container.getBoundingClientRect();
-    const viewTop = containerRect.top + headerHeight; // trừ header
+    const viewTop = containerRect.top + headerHeight;
     const viewBottom = containerRect.bottom;
 
     const monthEls = container.querySelectorAll('.month-block');
@@ -115,25 +114,21 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
     };
 
     container.addEventListener('scroll', onScroll, { passive: true });
-
-    // tính một lần ban đầu (nếu user đã cuộn sẵn)
     computeVisibleMonth();
 
     return () => container.removeEventListener('scroll', onScroll);
   }, [computeVisibleMonth]);
 
-  // Khi mở popup: cuộn ngay lập tức (không smooth) tới selectedDate hoặc today, để tránh animation khiến view lách
+  // Khi mở popup: cuộn ngay lập tức (không smooth) tới selectedDate hoặc today
   useEffect(() => {
     const targetMonth = startOfMonth(selectedDate || new Date());
     setVisibleMonth(targetMonth);
-    // đảm bảo DOM render xong -> dùng double rAF
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         scrollToMonth(targetMonth, false);
       });
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDate]); // scrollToMonth ở deps có headerHeight; nhưng để tránh gọi quá sớm dùng selectedDate trigger
+  }, [selectedDate, scrollToMonth]);
 
   // Weekdays
   const weekdays = eachDayOfInterval({
@@ -185,40 +180,44 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
 
   return (
     <div className="custom-date-picker">
-      {/* Header */}
-      <div className="date-picker-header sticky-header" ref={headerRef}>
-        <span className="date-picker-header-month">{format(visibleMonth, 'MMM yyyy')}</span>
-        <div className="date-picker-header-actions">
-          <button
-            className={`date-picker-header-action ${isAtFirstMonth ? 'disabled' : ''}`}
-            onClick={handlePrevMonth}
-            disabled={isAtFirstMonth}
-          >
-            <svg viewBox="0 0 24 24">
-              <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
+      <div
+        className="month-scroll-container"
+        ref={scrollContainerRef}
+        style={{ overscrollBehavior: 'contain' }}
+      >
+        {/* Header sticky bên trong vùng cuộn */}
+        <div className="date-picker-header sticky-header" ref={headerRef}>
+          <span className="date-picker-header-month">{format(visibleMonth, 'MMM yyyy')}</span>
+          <div className="date-picker-header-actions">
+            <button
+              className={`date-picker-header-action ${isAtFirstMonth ? 'disabled' : ''}`}
+              onClick={handlePrevMonth}
+              disabled={isAtFirstMonth}
+            >
+              <svg viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
 
-          <button
-            className="date-picker-header-action outline-circle"
-            onClick={handleTodayClick}
-            aria-label="Today"
-          />
+            <button
+              className="date-picker-header-action outline-circle"
+              onClick={handleTodayClick}
+              aria-label="Today"
+            />
 
-          <button
-            className={`date-picker-header-action ${isAtLastMonth ? 'disabled' : ''}`}
-            onClick={handleNextMonth}
-            disabled={isAtLastMonth}
-          >
-            <svg viewBox="0 0 24 24">
-              <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
+            <button
+              className={`date-picker-header-action ${isAtLastMonth ? 'disabled' : ''}`}
+              onClick={handleNextMonth}
+              disabled={isAtLastMonth}
+            >
+              <svg viewBox="0 0 24 24">
+                <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* Nội dung cuộn */}
-      <div className="month-scroll-container" ref={scrollContainerRef} style={{ overscrollBehavior: 'contain' }}>
+        {/* Danh sách tháng */}
         {monthsList.map((month, mi) => (
           <div key={mi} className="month-block" data-month-index={mi}>
             <div className="month-title">{format(month, 'MMM yyyy')}</div>
