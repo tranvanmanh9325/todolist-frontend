@@ -1,0 +1,50 @@
+/* Quick options container */
+.quick-options {
+  display: flex;
+  flex-direction: column;
+  margin: 8px 0;
+  gap: 4px;
+}
+
+/* Quick options item */
+.quick-options div {
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s ease;
+}
+
+.quick-options div:hover {
+  background: #f5f6f7;
+}
+
+/* Chữ luôn xám đậm */
+.quick-options .label {
+  color: #444;
+}
+
+/* Icon màu riêng cho từng mục */
+.quick-options .today .icon { color: #2e7d32; }
+.quick-options .tomorrow .icon { color: #f57c00; }
+.quick-options .this-weekend .icon { color: #1976d2; }
+.quick-options .next-week .icon { color: #8e24aa; }
+
+/* SVG icon */
+.quick-options .icon svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+/* Thanh ngang phân cách */
+.options-separator {
+  height: 1px;
+  background: #e5e7eb;
+  width: 100%;
+  margin: 4px 0 8px;
+}
