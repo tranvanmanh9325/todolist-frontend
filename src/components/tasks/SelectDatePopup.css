@@ -4,13 +4,20 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  padding: 8px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  padding: 10px;
   z-index: 2000;
   width: 260px;
   font-family: 'Segoe UI', Roboto, sans-serif;
   box-sizing: border-box;
+  animation: fadeIn 0.15s ease-in-out;
+}
+
+/* Animation mở popup */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -48%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
 }
 
 /* Ô nhập ngày */
@@ -23,14 +30,15 @@
   font-size: 14px;
   outline: none;
   background: transparent;
+  transition: border-color 0.2s ease;
 }
 
 .date-input::placeholder {
-  color: #888;
+  color: #999;
 }
 
 .date-input:focus {
-  border-bottom-color: #aaa;
+  border-bottom-color: #1976d2;
 }
 
 /* Quick options container */
@@ -38,6 +46,7 @@
   display: flex;
   flex-direction: column;
   margin: 8px 0;
+  gap: 4px;
 }
 
 /* Quick options item */
@@ -46,14 +55,15 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: background 0.2s ease;
 }
 
 .quick-options div:hover {
-  background: #f3f4f6;
+  background: #f5f6f7;
 }
 
 /* Chữ luôn xám đậm */
@@ -97,10 +107,11 @@
   font-size: 14px;
   background: #fff;
   cursor: pointer;
-  display: flex;              /* Đảm bảo icon và chữ nằm ngang */
-  align-items: center;        /* Căn giữa icon theo chiều dọc */
-  justify-content: center;    /* Căn giữa cả icon + chữ */
-  gap: 4px;                   /* Khoảng cách icon - chữ */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .date-footer-btn svg {
@@ -111,6 +122,7 @@
 
 .date-footer-btn:hover {
   background: #f9fafb;
+  border-color: #ccc;
 }
 
 /* Responsive */
