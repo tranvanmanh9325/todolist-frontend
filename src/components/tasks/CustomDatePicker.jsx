@@ -1,5 +1,5 @@
 import './CustomDatePicker.css';
-import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   format,
   startOfMonth,
@@ -23,20 +23,19 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
   const [today, setToday] = useState(new Date());
   const [isFirstOpen, setIsFirstOpen] = useState(true);
 
-  const baseMonthRef = useRef(startOfMonth(new Date()));
+  // monthsList dùng state
+  const [monthsList, setMonthsList] = useState(() => {
+    const startMonth = startOfMonth(new Date());
+    return Array.from({ length: 24 }, (_, i) => addMonths(startMonth, i));
+  });
 
-  const monthsList = useMemo(() => {
-    const arr = [];
-    for (let i = 0; i < 24; i++) arr.push(addMonths(baseMonthRef.current, i));
-    return arr;
-  }, []);
-
+  // cập nhật today mỗi giờ
   useEffect(() => {
     const t = setInterval(() => setToday(new Date()), 1000 * 60 * 60);
     return () => clearInterval(t);
   }, []);
 
-  // ✅ scrollToMonth căn theo divider / dưới tiêu đề
+  // ===== scrollToMonth đưa lên trước để tránh undefined =====
   const scrollToMonth = useCallback(
     (targetMonth, smooth = true) => {
       const container = scrollContainerRef.current;
@@ -48,13 +47,11 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
       const monthEl = container.querySelector(`[data-month-index="${idx}"]`);
       if (!monthEl) return;
 
-      // tìm thanh kẻ xám hoặc grid weekdays ngay sau tiêu đề
       const divider = monthEl.querySelector('.calendar-grid.weekdays');
       let targetTop;
       if (divider) {
         targetTop = divider.offsetTop - container.offsetTop;
       } else {
-        // fallback: cuộn ngay sau tiêu đề tháng
         const title = monthEl.querySelector('.month-title');
         targetTop = monthEl.offsetTop + (title?.offsetHeight || 0) - container.offsetTop;
       }
@@ -63,6 +60,29 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
     },
     [monthsList]
   );
+
+  // ✅ khi sang tháng mới, cập nhật monthsList và cuộn về tháng hiện tại
+  useEffect(() => {
+    const checkMonthChange = () => {
+      const currentStart = startOfMonth(new Date());
+      const firstMonth = monthsList[0];
+
+      if (!isSameMonth(currentStart, firstMonth)) {
+        setMonthsList((prev) => {
+          const newList = [...prev.slice(1), addMonths(prev[prev.length - 1], 1)];
+          return newList;
+        });
+
+        requestAnimationFrame(() => {
+          setVisibleMonth(currentStart);
+          scrollToMonth(currentStart, true);
+        });
+      }
+    };
+
+    const timer = setInterval(checkMonthChange, 1000 * 60 * 60); // mỗi giờ
+    return () => clearInterval(timer);
+  }, [monthsList, scrollToMonth]);
 
   const updateVisibleMonthFromTitles = useCallback(() => {
     if (isNavigatingRef.current) return;
@@ -231,7 +251,6 @@ const CustomDatePicker = ({ selectedDate, onChange, onClose }) => {
           <div key={mi} className="month-block" data-month-index={mi}>
             <div className="month-title">{format(month, 'MMM yyyy')}</div>
 
-            {/* Đây chính là thanh divider / grid weekdays */}
             <div className="calendar-grid weekdays">
               {weekdays.map((d, i) => (
                 <div key={i} style={{ textAlign: 'center' }}>{format(d, 'EEEEE')}</div>
