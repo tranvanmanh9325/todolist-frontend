@@ -13,7 +13,7 @@
     "@tailwindcss/typography": "^0.5.16",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
-    "framer-motion": "^12.23.6",
+    "framer-motion": "^12.23.12",
     "react": "^19.1.0",
     "react-datepicker": "^8.4.0",
     "react-day-picker": "^9.8.1",
