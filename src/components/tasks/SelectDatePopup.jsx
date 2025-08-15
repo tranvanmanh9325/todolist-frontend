@@ -145,7 +145,7 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
                   ></path>
                 </svg>
               </span>
-              <span className="label">This weekend</span>
+              <span className="label">Next week</span>
             </div>
 
             <div
@@ -165,7 +165,7 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
                   ></path>
                 </svg>
               </span>
-              <span className="label">Next week</span>
+              <span className="label">Next weekend</span>
             </div>
           </div>
 
