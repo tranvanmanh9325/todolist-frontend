@@ -29,10 +29,10 @@
 }
 
 /* Icon màu riêng cho từng mục */
-.quick-options .today .icon { color: #2e7d32; }
-.quick-options .tomorrow .icon { color: #f57c00; }
-.quick-options .this-weekend .icon { color: #1976d2; }
-.quick-options .next-week .icon { color: #8e24aa; }
+.quick-options .today .icon { color: #2e7d32; }        /* xanh lá */
+.quick-options .tomorrow .icon { color: #f57c00; }     /* cam */
+.quick-options .next-week .icon { color: #8e24aa; }    /* tím */
+.quick-options .next-weekend .icon { color: #1976d2; } /* xanh dương */
 
 /* SVG icon */
 .quick-options .icon svg {
@@ -41,7 +41,7 @@
   display: block;
 }
 
-/* Thanh ngang phân cách */
+/* Thanh ngang phân cách (nếu cần) */
 .options-separator {
   height: 1px;
   background: #e5e7eb;

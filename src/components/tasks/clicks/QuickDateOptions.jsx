@@ -9,21 +9,22 @@ const QuickDateOptions = ({ onChange, onClose }) => {
     handleSelect(date);
   };
 
-  // Lấy ngày thứ 7 tuần này
-  const getThisWeekend = () => {
-    const date = new Date();
-    const day = date.getDay(); // 0 = Chủ nhật, 6 = Thứ bảy
-    const daysUntilSaturday = (6 - day + 7) % 7;
-    date.setDate(date.getDate() + daysUntilSaturday);
-    return date;
-  };
-
-  // Lấy thứ 2 tuần sau
+  // Lấy thứ 2 sắp tới (upcoming Monday)
   const getNextWeek = () => {
     const date = new Date();
     const day = date.getDay();
-    const daysUntilNextMonday = ((1 - day + 7) % 7) + 7;
+    let daysUntilNextMonday = (1 - day + 7) % 7;
+    if (daysUntilNextMonday === 0) daysUntilNextMonday = 7; // Nếu hôm nay là Monday -> tuần sau
     date.setDate(date.getDate() + daysUntilNextMonday);
+    return date;
+  };
+
+  // Lấy thứ 7 tuần sau
+  const getNextWeekend = () => {
+    const date = new Date();
+    const day = date.getDay();
+    const daysUntilNextSaturday = ((6 - day + 7) % 7) + 7;
+    date.setDate(date.getDate() + daysUntilNextSaturday);
     return date;
   };
 
@@ -71,21 +72,7 @@ const QuickDateOptions = ({ onChange, onClose }) => {
         <span className="label">Tomorrow</span>
       </div>
 
-      {/* This Weekend */}
-      <div className="this-weekend" onClick={() => handleSelect(getThisWeekend())}>
-        <span className="icon">
-          {/* SVG Weekend */}
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-            <path
-              fill="currentColor"
-              d="M16 6a3 3 0 0 1 3 3v1h.1c1 0 1.9 1 1.9 2v4c0 1-.8 2-1.9 2H18v.5a.5.5 0 0 1-1 0V18H7v.5a.5.5 0 0 1-1 0V18H5a2 2 0 0 1-2-2v-4c0-1.1.9-2 2-2V9a3 3 0 0 1 3-3zm3 5a1 1 0 0 0-1 .9V15H6v-3a1 1 0 0 0-2-.1V16c0 .5.4 1 .9 1H19a1 1 0 0 0 1-.9V12c0-.6-.4-1-1-1m-3-4H8c-1 0-2 .8-2 1.9v1.4c.6.3 1 1 1 1.7v2h10v-2a2 2 0 0 1 1-1.7V9c0-1-.8-2-1.9-2z"
-            />
-          </svg>
-        </span>
-        <span className="label">This weekend</span>
-      </div>
-
-      {/* Next Week */}
+      {/* Next week */}
       <div className="next-week" onClick={() => handleSelect(getNextWeek())}>
         <span className="icon">
           {/* SVG Next Week */}
@@ -98,6 +85,20 @@ const QuickDateOptions = ({ onChange, onClose }) => {
           </svg>
         </span>
         <span className="label">Next week</span>
+      </div>
+
+      {/* Next weekend */}
+      <div className="next-weekend" onClick={() => handleSelect(getNextWeekend())}>
+        <span className="icon">
+          {/* SVG Weekend */}
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+            <path
+              fill="currentColor"
+              d="M16 6a3 3 0 0 1 3 3v1h.1c1 0 1.9 1 1.9 2v4c0 1-.8 2-1.9 2H18v.5a.5.5 0 0 1-1 0V18H7v.5a.5.5 0 0 1-1 0V18H5a2 2 0 0 1-2-2v-4c0-1.1.9-2 2-2V9a3 3 0 0 1 3-3zm3 5a1 1 0 0 0-1 .9V15H6v-3a1 1 0 0 0-2-.1V16c0 .5.4 1 .9 1H19a1 1 0 0 0 1-.9V12c0-.6-.4-1-1-1m-3-4H8c-1 0-2 .8-2 1.9v1.4c.6.3 1 1 1 1.7v2h10v-2a2 2 0 0 1 1-1.7V9c0-1-.8-2-1.9-2z"
+            />
+          </svg>
+        </span>
+        <span className="label">Next weekend</span>
       </div>
     </div>
   );
