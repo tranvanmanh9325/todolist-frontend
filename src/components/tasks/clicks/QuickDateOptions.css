@@ -15,7 +15,7 @@
   font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between; /* Đẩy label và ngày ra 2 bên */
   transition: background 0.2s ease;
 }
 
@@ -23,9 +23,22 @@
   background: #f5f6f7;
 }
 
-/* Chữ luôn xám đậm */
+/* Bên trái: icon + label */
+.quick-options .left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Chữ label */
 .quick-options .label {
   color: #444;
+}
+
+/* Ngày bên phải */
+.quick-options .date {
+  color: #666;
+  font-size: 13px;
 }
 
 /* Icon màu riêng cho từng mục */
