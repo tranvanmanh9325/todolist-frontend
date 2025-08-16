@@ -30,15 +30,60 @@ const formatShortDate = (date) => {
   });
 };
 
+// ✅ Hàm parse input thành Date
+const parseDateFromInput = (value) => {
+  if (!value) return null;
+  const today = new Date();
+  const lower = value.toLowerCase();
+
+  // Bắt đầu bằng chữ
+  if (/^[a-zA-Z]/.test(value)) {
+    if (lower === "today") return today;
+    if (lower === "tomorrow") {
+      const d = new Date(today);
+      d.setDate(today.getDate() + 1);
+      return d;
+    }
+    if (lower.startsWith("next week")) {
+      const d = new Date(today);
+      let day = d.getDay();
+      let daysUntilNextMonday = (1 - day + 7) % 7;
+      if (daysUntilNextMonday === 0) daysUntilNextMonday = 7;
+      d.setDate(d.getDate() + daysUntilNextMonday);
+      return d;
+    }
+    if (lower.startsWith("next weekend")) {
+      const d = new Date(today);
+      let day = d.getDay();
+      let daysUntilNextSat = ((6 - day + 7) % 7) + 7;
+      d.setDate(d.getDate() + daysUntilNextSat);
+      return d;
+    }
+    return null;
+  }
+
+  // Bắt đầu bằng số
+  if (/^\d/.test(value)) {
+    const hasYear = /\b\d{4}\b/.test(value);
+    const valueWithYear = hasYear ? value : `${value} ${today.getFullYear()}`;
+    const d = new Date(valueWithYear);
+    return !isNaN(d) ? d : null;
+  }
+
+  return null;
+};
+
 const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => {
   const popupRef = useRef();
   const [inputValue, setInputValue] = useState("");
   const [noResults, setNoResults] = useState(false);
+  const [previewDate, setPreviewDate] = useState(null);
 
   // đồng bộ input với selectedDate
   useEffect(() => {
     setInputValue(selectedDate ? formatShortDate(selectedDate) : "");
     setNoResults(false);
+    setPreviewDate(null);
   }, [selectedDate]);
 
   // đóng popup khi click ra ngoài
@@ -52,74 +97,31 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
 
-  // xử lý Enter trong input
+  // xử lý Enter
   const handleInputKeyDown = (e) => {
     if (e.key !== "Enter") return;
-
-    const value = e.target.value.trim();
-
-    // Nếu input trống -> bỏ chọn ngày
-    if (!value) {
-      onChange(null);
-      setInputValue("");
+    if (previewDate) {
+      onChange(previewDate);
+      setInputValue(formatShortDate(previewDate));
       setNoResults(false);
+      setPreviewDate(null);
       onClose();
-      return;
-    }
-
-    const today = new Date();
-    let parsed = null;
-    const lower = value.toLowerCase();
-
-    // ✅ Nếu bắt đầu bằng chữ
-    if (/^[a-zA-Z]/.test(value)) {
-      if (lower === "today") {
-        parsed = today;
-      } else if (lower === "tomorrow") {
-        parsed = new Date(today);
-        parsed.setDate(today.getDate() + 1);
-      } else if (lower.startsWith("next week")) {
-        parsed = new Date(today);
-        let day = parsed.getDay();
-        let daysUntilNextMonday = (1 - day + 7) % 7;
-        if (daysUntilNextMonday === 0) daysUntilNextMonday = 7;
-        parsed.setDate(parsed.getDate() + daysUntilNextMonday);
-      } else if (lower.startsWith("next weekend")) {
-        parsed = new Date(today);
-        let day = parsed.getDay();
-        let daysUntilNextSat = ((6 - day + 7) % 7) + 7;
-        parsed.setDate(parsed.getDate() + daysUntilNextSat);
-      } else {
-        // bất kỳ chữ nào khác đều báo No results
-        setNoResults(true);
-        return;
-      }
-    }
-    // ✅ Nếu bắt đầu bằng số -> giữ logic parse date
-    else if (/^\d/.test(value)) {
-      const hasYear = /\b\d{4}\b/.test(value);
-      const valueWithYear = hasYear ? value : `${value} ${today.getFullYear()}`;
-      const tempDate = new Date(valueWithYear);
-
-      if (tempDate instanceof Date && !isNaN(tempDate.getTime())) {
-        parsed = tempDate;
-      } else {
-        setNoResults(true);
-        return;
-      }
-    }
-    // không phải chữ cũng không phải số -> báo lỗi
-    else {
+    } else {
       setNoResults(true);
-      return;
     }
+  };
 
-    // ✅ kiểm tra valid
-    if (parsed && parsed instanceof Date && !isNaN(parsed.getTime())) {
-      onChange(parsed);
-      setInputValue(formatShortDate(parsed));
-      setNoResults(false);
-      onClose();
+  // xử lý thay đổi input
+  const handleInputChange = (value) => {
+    setInputValue(value);
+    setNoResults(false);
+    setPreviewDate(null);
+
+    if (!value.trim()) return;
+
+    const parsed = parseDateFromInput(value);
+    if (parsed) {
+      setPreviewDate(parsed);
     } else {
       setNoResults(true);
     }
@@ -142,17 +144,46 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
             className="date-input"
             placeholder="Type a date"
             value={inputValue}
-            onChange={(e) => {
-              setInputValue(e.target.value);
-              setNoResults(false); // reset khi đang gõ
-            }}
+            onChange={(e) => handleInputChange(e.target.value)}
             onKeyDown={handleInputKeyDown}
           />
 
-          {/* Hiện No results nếu nhập sai */}
+          {/* Preview suggestion */}
+          {previewDate && !noResults && (
+            <div
+              className="date-suggestion"
+              onClick={() => {
+                onChange(previewDate);
+                setInputValue(formatShortDate(previewDate));
+                setPreviewDate(null);
+                onClose();
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24">
+                <path
+                  fill="currentColor"
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M18 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2M5 6a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1zm12 10a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 8a.5.5 0 0 0 0 1h10a.5.5 0 0 0 0-1z"
+                />
+              </svg>
+              <div className="date-suggestion-text">
+                <strong>
+                  {previewDate.toLocaleDateString("en-GB", {
+                    weekday: "short",
+                    day: "numeric",
+                    month: "short"
+                  })}
+                </strong>
+                <span>No tasks</span>
+              </div>
+            </div>
+          )}
+
+          {/* No results */}
           {noResults && (
             <div className="no-results">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+              <svg width="16" height="16" viewBox="0 0 24 24">
                 <path
                   fill="currentColor"
                   fillRule="evenodd"
