@@ -6,7 +6,7 @@ const QuickDateOptions = ({ selectedDate, onChange, onClose }) => {
     return date.toLocaleDateString("en-GB", {
       weekday: "short",
       day: "numeric",
-      month: "short"
+      month: "short",
     });
   };
 
@@ -19,12 +19,9 @@ const QuickDateOptions = ({ selectedDate, onChange, onClose }) => {
     );
   };
 
+  // chọn ngày (không toggle), bỏ chọn dùng nút No Date
   const handleSelect = (date) => {
-    if (isSameDay(selectedDate, date)) {
-      onChange(null); // bỏ chọn
-    } else {
-      onChange(date);
-    }
+    onChange(date);
     onClose();
   };
 
@@ -53,9 +50,9 @@ const QuickDateOptions = ({ selectedDate, onChange, onClose }) => {
   const nextWeekDate = getNextWeek();
   const nextWeekendDate = getNextWeekend();
 
-  // Icon "No Date"
+  // Icon No Date
   const NoDateIcon = (
-    <svg width="24" height="24" viewBox="0 0 24 24">
+    <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path
         fill="currentColor"
         d="M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18m0 1a8 8 0 1 0 0 16 8 8 0 0 0 0-16m3.854 4.146a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708-.708l7-7a.5.5 0 0 1 .708 0"
@@ -63,13 +60,13 @@ const QuickDateOptions = ({ selectedDate, onChange, onClose }) => {
     </svg>
   );
 
-  // Danh sách option
-  const options = [
+  // 4 option cố định
+  const baseOptions = [
     {
       key: "today",
       date: todayDate,
       label: "Today",
-      defaultIcon: (
+      icon: (
         <svg width="24" height="24" viewBox="0 0 24 24">
           <g fill="currentColor" fillRule="evenodd">
             <path
@@ -84,13 +81,13 @@ const QuickDateOptions = ({ selectedDate, onChange, onClose }) => {
           </g>
         </svg>
       ),
-      dateLabel: todayDate.toLocaleDateString("en-GB", { weekday: "short" })
+      dateLabel: todayDate.toLocaleDateString("en-GB", { weekday: "short" }),
     },
     {
       key: "tomorrow",
       date: tomorrowDate,
       label: "Tomorrow",
-      defaultIcon: (
+      icon: (
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
           <path
             fillRule="evenodd"
@@ -99,13 +96,13 @@ const QuickDateOptions = ({ selectedDate, onChange, onClose }) => {
           />
         </svg>
       ),
-      dateLabel: tomorrowDate.toLocaleDateString("en-GB", { weekday: "short" })
+      dateLabel: tomorrowDate.toLocaleDateString("en-GB", { weekday: "short" }),
     },
     {
       key: "next-week",
       date: nextWeekDate,
       label: "Next week",
-      defaultIcon: (
+      icon: (
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor">
           <path
             fillRule="evenodd"
@@ -114,13 +111,13 @@ const QuickDateOptions = ({ selectedDate, onChange, onClose }) => {
           />
         </svg>
       ),
-      dateLabel: formatDateShort(nextWeekDate)
+      dateLabel: formatDateShort(nextWeekDate),
     },
     {
       key: "next-weekend",
       date: nextWeekendDate,
       label: "Next weekend",
-      defaultIcon: (
+      icon: (
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
           <path
             fill="currentColor"
@@ -128,14 +125,47 @@ const QuickDateOptions = ({ selectedDate, onChange, onClose }) => {
           />
         </svg>
       ),
-      dateLabel: formatDateShort(nextWeekendDate)
-    }
+      dateLabel: formatDateShort(nextWeekendDate),
+    },
   ];
+
+  // Nếu đang có selectedDate -> thêm nút No Date ở cuối
+  const options = selectedDate
+    ? [
+        ...baseOptions,
+        {
+          key: "no-date",
+          date: null,
+          label: "No Date",
+          icon: NoDateIcon,
+          dateLabel: "",
+        },
+      ]
+    : baseOptions;
 
   return (
     <div className="quick-options">
       {options.map((opt) => {
+        if (opt.key === "no-date") {
+          return (
+            <div
+              key="no-date"
+              className="no-date"
+              onClick={() => {
+                onChange(null);
+                onClose();
+              }}
+            >
+              <span className="left">
+                <span className="icon">{opt.icon}</span>
+                <span className="label">{opt.label}</span>
+              </span>
+            </div>
+          );
+        }
+
         const isSelected = isSameDay(selectedDate, opt.date);
+
         return (
           <div
             key={opt.key}
@@ -143,10 +173,10 @@ const QuickDateOptions = ({ selectedDate, onChange, onClose }) => {
             onClick={() => handleSelect(opt.date)}
           >
             <span className="left">
-              <span className="icon">{isSelected ? NoDateIcon : opt.defaultIcon}</span>
-              <span className="label">{isSelected ? "No Date" : opt.label}</span>
+              <span className="icon">{opt.icon}</span>
+              <span className="label">{opt.label}</span>
             </span>
-            {!isSelected && <span className="date">{opt.dateLabel}</span>}
+            <span className="date">{opt.dateLabel}</span>
           </div>
         );
       })}
