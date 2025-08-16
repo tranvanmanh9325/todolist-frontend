@@ -47,6 +47,19 @@
 .quick-options .next-week .icon { color: #8e24aa; }    /* tím */
 .quick-options .next-weekend .icon { color: #1976d2; } /* xanh dương */
 
+/* Trạng thái No Date */
+.quick-options .selected .icon {
+  color: #888; /* xám */
+}
+
+.quick-options .selected .label {
+  color: #666; /* xám chữ */
+}
+
+.quick-options .selected .date {
+  display: none; /* Ẩn ngày */
+}
+
 /* SVG icon */
 .quick-options .icon svg {
   width: 24px;

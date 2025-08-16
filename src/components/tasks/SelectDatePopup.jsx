@@ -7,8 +7,18 @@ import QuickDateOptions from "./clicks/QuickDateOptions";
 
 const popupVariants = {
   hidden: { opacity: 0, scale: 0.9, y: -8 },
-  visible: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } },
-  exit: { opacity: 0, scale: 0.9, y: -8, transition: { duration: 0.15 } }
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 300, damping: 20 }
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.9,
+    y: -8,
+    transition: { duration: 0.15 }
+  }
 };
 
 const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => {
@@ -50,15 +60,26 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
             }}
           />
 
-          {/* Tách riêng ra file */}
-          <QuickDateOptions onChange={onChange} onClose={onClose} />
+          {/* Truyền selectedDate xuống QuickDateOptions */}
+          <QuickDateOptions
+            selectedDate={selectedDate}
+            onChange={onChange}
+            onClose={onClose}
+          />
 
           <div className="options-separator" aria-hidden="true" />
 
-          <CustomDatePicker selectedDate={selectedDate} onChange={onChange} onClose={onClose} />
+          <CustomDatePicker
+            selectedDate={selectedDate}
+            onChange={onChange}
+            onClose={onClose}
+          />
 
           <div className="date-footer">
-            <button className="date-footer-btn" style={{ display: "flex", alignItems: "center" }}>
+            <button
+              className="date-footer-btn"
+              style={{ display: "flex", alignItems: "center" }}
+            >
               <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16">
                 <path
                   fill="currentColor"
@@ -69,7 +90,10 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
               </svg>
               <span style={{ marginLeft: "4px" }}>Time</span>
             </button>
-            <button className="date-footer-btn" style={{ display: "flex", alignItems: "center" }}>
+            <button
+              className="date-footer-btn"
+              style={{ display: "flex", alignItems: "center" }}
+            >
               <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16">
                 <path
                   fill="currentColor"
