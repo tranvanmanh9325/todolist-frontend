@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import "./SelectDatePopup.css";
@@ -21,8 +21,27 @@ const popupVariants = {
   }
 };
 
+// format ngày: 16 Aug
+const formatShortDate = (date) => {
+  if (!date) return "";
+  return date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short"
+  });
+};
+
 const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => {
   const popupRef = useRef();
+  const [inputValue, setInputValue] = useState("");
+
+  // cập nhật inputValue khi selectedDate thay đổi
+  useEffect(() => {
+    if (selectedDate) {
+      setInputValue(formatShortDate(selectedDate));
+    } else {
+      setInputValue("");
+    }
+  }, [selectedDate]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -49,6 +68,8 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
             type="text"
             className="date-input"
             placeholder="Type a date"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && e.target.value) {
                 const parsed = new Date(e.target.value);
@@ -60,7 +81,7 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
             }}
           />
 
-          {/* Truyền selectedDate xuống QuickDateOptions */}
+          {/* Quick options */}
           <QuickDateOptions
             selectedDate={selectedDate}
             onChange={onChange}
@@ -69,12 +90,14 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
 
           <div className="options-separator" aria-hidden="true" />
 
+          {/* Date picker */}
           <CustomDatePicker
             selectedDate={selectedDate}
             onChange={onChange}
             onClose={onClose}
           />
 
+          {/* Footer */}
           <div className="date-footer">
             <button
               className="date-footer-btn"
