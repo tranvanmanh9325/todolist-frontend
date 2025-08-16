@@ -71,56 +71,47 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
     let parsed = null;
     const lower = value.toLowerCase();
 
-    // keyword đặc biệt
-    if (lower === "today") {
-      parsed = today;
-    } else if (lower === "tomorrow") {
-      parsed = new Date(today);
-      parsed.setDate(today.getDate() + 1);
-    } else if (lower.startsWith("next week")) {
-      parsed = new Date(today);
-      let day = parsed.getDay();
-      let daysUntilNextMonday = (1 - day + 7) % 7;
-      if (daysUntilNextMonday === 0) daysUntilNextMonday = 7;
-      parsed.setDate(parsed.getDate() + daysUntilNextMonday);
-    } else if (lower.startsWith("next weekend")) {
-      parsed = new Date(today);
-      let day = parsed.getDay();
-      let daysUntilNextSat = ((6 - day + 7) % 7) + 7;
-      parsed.setDate(parsed.getDate() + daysUntilNextSat);
-    } else if (
-      ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"].some(
-        (d) => lower.includes(d)
-      )
-    ) {
-      const daysOfWeek = {
-        sunday: 0,
-        monday: 1,
-        tuesday: 2,
-        wednesday: 3,
-        thursday: 4,
-        friday: 5,
-        saturday: 6,
-      };
-      const targetDay = Object.entries(daysOfWeek).find(([k]) =>
-        lower.includes(k)
-      )[1];
-      parsed = new Date(today);
-      let diff = (targetDay - today.getDay() + 7) % 7;
-      if (diff === 0) diff = 7;
-      parsed.setDate(parsed.getDate() + diff);
-    } else {
-      // nếu user chỉ nhập "25 Aug" thì thêm năm hiện tại
+    // ✅ Nếu bắt đầu bằng chữ
+    if (/^[a-zA-Z]/.test(value)) {
+      if (lower === "today") {
+        parsed = today;
+      } else if (lower === "tomorrow") {
+        parsed = new Date(today);
+        parsed.setDate(today.getDate() + 1);
+      } else if (lower.startsWith("next week")) {
+        parsed = new Date(today);
+        let day = parsed.getDay();
+        let daysUntilNextMonday = (1 - day + 7) % 7;
+        if (daysUntilNextMonday === 0) daysUntilNextMonday = 7;
+        parsed.setDate(parsed.getDate() + daysUntilNextMonday);
+      } else if (lower.startsWith("next weekend")) {
+        parsed = new Date(today);
+        let day = parsed.getDay();
+        let daysUntilNextSat = ((6 - day + 7) % 7) + 7;
+        parsed.setDate(parsed.getDate() + daysUntilNextSat);
+      } else {
+        // bất kỳ chữ nào khác đều báo No results
+        setNoResults(true);
+        return;
+      }
+    }
+    // ✅ Nếu bắt đầu bằng số -> giữ logic parse date
+    else if (/^\d/.test(value)) {
       const hasYear = /\b\d{4}\b/.test(value);
       const valueWithYear = hasYear ? value : `${value} ${today.getFullYear()}`;
       const tempDate = new Date(valueWithYear);
 
-      // ✅ chỉ gán parsed nếu thực sự hợp lệ
       if (tempDate instanceof Date && !isNaN(tempDate.getTime())) {
         parsed = tempDate;
       } else {
-        parsed = null;
+        setNoResults(true);
+        return;
       }
+    }
+    // không phải chữ cũng không phải số -> báo lỗi
+    else {
+      setNoResults(true);
+      return;
     }
 
     // ✅ kiểm tra valid
@@ -130,7 +121,7 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
       setNoResults(false);
       onClose();
     } else {
-      setNoResults(true); // hiện No results nếu không parse được
+      setNoResults(true);
     }
   };
 
@@ -161,10 +152,12 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
           {/* Hiện No results nếu nhập sai */}
           {noResults && (
             <div className="no-results">
-              <svg width="16" height="16" viewBox="0 0 24 24">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
                 <path
                   fill="currentColor"
-                  d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm-.75-5.5h1.5v1.5h-1.5zm0-8h1.5v6h-1.5z"
+                  fillRule="evenodd"
+                  d="M18 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2M5 6a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1zm12 10a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 8a.5.5 0 0 0 0 1h10a.5.5 0 0 0 0-1z"
+                  clipRule="evenodd"
                 />
               </svg>
               <span>No results</span>
