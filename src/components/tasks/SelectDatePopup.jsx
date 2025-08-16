@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import "./SelectDatePopup.css";
 import CustomDatePicker from "./clicks/CustomDatePicker";
 import QuickDateOptions from "./clicks/QuickDateOptions";
+import FooterButtons from "./clicks/FooterButtons"; // ⬅️ import mới
 
 const popupVariants = {
   hidden: { opacity: 0, scale: 0.9, y: -8 },
@@ -212,30 +213,10 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
           />
 
           {/* Footer */}
-          <div className="date-footer">
-            <button className="date-footer-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16">
-                <path
-                  fill="currentColor"
-                  fillRule="evenodd"
-                  d="M13.5 8a5 5 0 1 1-10 0 5 5 0 0 1 10 0m1 0a6 6 0 1 1-12 0 6 6 0 0 1 12 0m-6-2.5a.5.5 0 0 0-1 0v3A.5.5 0 0 0 8 9h3a.5.5 0 0 0 0-1H8.5z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span>Time</span>
-            </button>
-            <button className="date-footer-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16">
-                <path
-                  fill="currentColor"
-                  fillRule="evenodd"
-                  d="M9.5 4H6a.5.5 0 0 1 0-1h3.5a3 3 0 0 1 3 3v1.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L11.5 7.793V6a2 2 0 0 0-2-2M7.354 9.354a.5.5 0 0 1-.708 0L5.5 8.207V10a2 2 0 0 0 2 2H11a.5.5 0 0 1 0 1H7.5a3 3 0 0 1-3-3V8.207L3.354 9.354a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1 0 .708"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span>Repeat</span>
-            </button>
-          </div>
+          <FooterButtons
+            onTimeClick={() => console.log("Time clicked")}
+            onRepeatClick={() => console.log("Repeat clicked")}
+          />
         </motion.div>
       )}
     </AnimatePresence>

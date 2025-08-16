@@ -1,7 +1,7 @@
 .select-date-popup {
   position: fixed;
-  top: 11%;
-  left: 50%;
+  top: 50%;
+  left: 55%;
   transform: translate(-50%, -50%);
   background: #fff;
   border-radius: 10px;
@@ -11,6 +11,22 @@
   width: 260px;
   font-family: 'Segoe UI', Roboto, sans-serif;
   box-sizing: border-box;
+
+  /* ✨ Hiệu ứng fade-in như cũ */
+  opacity: 0;
+  transform: translate(-50%, -46%);
+  animation: popup-fade-in 0.25s ease-out forwards;
+}
+
+@keyframes popup-fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
 }
 
 /* Ô nhập ngày */
@@ -103,37 +119,11 @@
   margin: 8px 0;
 }
 
-/* Footer */
+/* Footer container */
 .date-footer {
   display: flex;
   gap: 8px;
   margin-top: 8px;
-}
-
-.date-footer-btn {
-  flex: 1;
-  padding: 6px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-  background: #fff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.date-footer-btn svg {
-  width: 16px;
-  height: 16px;
-  display: block;
-}
-
-.date-footer-btn:hover {
-  background: #f9fafb;
-  border-color: #ccc;
 }
 
 /* Responsive */
