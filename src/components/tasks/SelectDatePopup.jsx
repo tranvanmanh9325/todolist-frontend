@@ -100,7 +100,7 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
   const handleInputKeyDown = (e) => {
     if (e.key !== "Enter") return;
     if (previewDate) {
-      onChange(previewDate);
+      onChange({ date: previewDate }); // ✅ luôn trả object
       setInputValue(formatShortDate(previewDate));
       setNoResults(false);
       setPreviewDate(null);
@@ -152,7 +152,7 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
             <div
               className="date-suggestion"
               onClick={() => {
-                onChange(previewDate);
+                onChange({ date: previewDate }); // ✅ luôn trả object
                 setInputValue(formatShortDate(previewDate));
                 setPreviewDate(null);
                 onClose();
@@ -197,7 +197,7 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
           {/* Quick options */}
           <QuickDateOptions
             selectedDate={selectedDate}
-            onChange={onChange}
+            onChange={(date) => onChange({ date })} // ✅ wrap thành object
             onClose={onClose}
           />
 
@@ -206,7 +206,7 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
           {/* Date picker */}
           <CustomDatePicker
             selectedDate={selectedDate}
-            onChange={onChange}
+            onChange={(date) => onChange({ date })} // ✅ wrap thành object
             onClose={onClose}
           />
 
@@ -214,7 +214,7 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
           <FooterButtons
             onRepeatClick={() => console.log("Repeat clicked")}
             onSave={({ time, duration }) => {
-              // Gửi trực tiếp ra ngoài, không cần lưu state local
+              // ✅ gửi đủ thông tin
               onChange && onChange({ date: selectedDate, time, duration });
             }}
           />

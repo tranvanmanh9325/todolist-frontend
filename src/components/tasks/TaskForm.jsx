@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
-import SelectDatePopup from './SelectDatePopup'; // ✅ import popup chọn ngày
+import SelectDatePopup from './SelectDatePopup';
 import './TaskForm.css';
 
 const TaskForm = ({ onCancel, onSubmit, task }) => {
@@ -14,23 +14,27 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
 
   // State cho Date picker
   const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedDuration, setSelectedDuration] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const typeRef = useRef();
   const titleRef = useRef();
-  const dateButtonRef = useRef(); // ✅ để định vị popup
+  const dateButtonRef = useRef();
 
+  // Load dữ liệu khi edit
   useEffect(() => {
     if (task) {
       setTitle(task.title || '');
       setNote(task.note || '');
       setType(task.project || 'Type');
-      if (task.dueDate) {
-        setSelectedDate(new Date(task.dueDate));
-      }
+      setSelectedDate(task.dueDate ? new Date(task.dueDate) : null);
+      setSelectedTime(task.time || null);
+      setSelectedDuration(task.duration || null);
     }
   }, [task]);
 
+  // Đóng dropdown khi click ngoài
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (typeRef.current && !typeRef.current.contains(e.target)) {
@@ -50,14 +54,20 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       title,
       note,
       project: type,
-      dueDate: selectedDate ? selectedDate.toISOString() : null, // ✅ lưu ngày
+      dueDate: selectedDate ? selectedDate.toISOString() : null,
+      time: selectedTime,
+      duration: selectedDuration,
     };
 
     onSubmit(taskData);
+
+    // Reset form
     setTitle('');
     setNote('');
     setType('Type');
     setSelectedDate(null);
+    setSelectedTime(null);
+    setSelectedDuration(null);
   };
 
   const handleCancelClick = () => {
@@ -120,7 +130,12 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           ref={dateButtonRef}
           onClick={() => setShowDatePicker(!showDatePicker)}
         >
-          📅 <span>{selectedDate ? selectedDate.toLocaleDateString() : 'Date'}</span>
+          📅 <span>
+            {selectedDate
+              ? selectedDate.toLocaleDateString() +
+                (selectedTime ? ` ${selectedTime}` : '')
+              : 'Date'}
+          </span>
         </button>
 
         <button type="button" className="task-option">🚩 <span>Priority</span></button>
@@ -132,7 +147,12 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         <SelectDatePopup
           anchorRef={dateButtonRef}
           selectedDate={selectedDate}
-          onChange={(date) => setSelectedDate(date)}
+          onChange={({ date, time, duration }) => {
+            // ✅ date có thể null => phải update luôn
+            if (date !== undefined) setSelectedDate(date);
+            if (time !== undefined) setSelectedTime(time);
+            if (duration !== undefined) setSelectedDuration(duration);
+          }}
           onClose={() => setShowDatePicker(false)}
         />
       )}
