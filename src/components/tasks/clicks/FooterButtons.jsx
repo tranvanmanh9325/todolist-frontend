@@ -1,11 +1,16 @@
-import React from "react";
-import "./FooterButton.css"; // bạn có thể tạo file này để style chung cho footer
+import React, { useState } from "react";
+import "./FooterButton.css";
 
-const FooterButtons = ({ onTimeClick, onRepeatClick }) => {
+const FooterButtons = ({ onRepeatClick }) => {
+  const [showTimePopup, setShowTimePopup] = useState(false);
+
   return (
-    <div className="date-footer">
+    <div className="date-footer" style={{ position: "relative" }}>
       {/* Time button */}
-      <button className="date-footer-btn" onClick={onTimeClick}>
+      <button
+        className="date-footer-btn"
+        onClick={() => setShowTimePopup((prev) => !prev)}
+      >
         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16">
           <path
             fill="currentColor"
@@ -16,6 +21,53 @@ const FooterButtons = ({ onTimeClick, onRepeatClick }) => {
         </svg>
         <span>Time</span>
       </button>
+
+      {/* Popup hiển thị khi bấm Time */}
+      {showTimePopup && (
+        <div className="time-popup">
+          <div className="time-popup-row">
+            <label>Time</label>
+            <input type="time" defaultValue="23:00" />
+          </div>
+
+          <div className="time-popup-row">
+            <label>Duration</label>
+            <select defaultValue="none">
+              <option value="none">No duration</option>
+              <option value="30m">30 minutes</option>
+              <option value="1h">1 hour</option>
+              <option value="2h">2 hours</option>
+            </select>
+          </div>
+
+          <div className="time-popup-row">
+            <label>Time zone</label>
+            <select defaultValue="floating">
+              <option value="floating">Floating time</option>
+              <option value="utc">UTC</option>
+              <option value="gmt+7">GMT+7</option>
+            </select>
+          </div>
+
+          <div className="time-popup-footer">
+            <button
+              className="cancel-btn"
+              onClick={() => setShowTimePopup(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="save-btn"
+              onClick={() => {
+                console.log("Saved time!");
+                setShowTimePopup(false);
+              }}
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Repeat button */}
       <button className="date-footer-btn" onClick={onRepeatClick}>

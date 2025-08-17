@@ -1,6 +1,15 @@
+/* Container của các nút */
+.date-footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  position: relative; /* để popup định vị theo */
+}
+
+/* Nút Time + Repeat */
 .date-footer-btn {
   flex: 1;
-  padding: 6px;
+  padding: 6px 10px;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 14px;
@@ -22,12 +31,113 @@
 .date-footer-btn:hover {
   background: #f9fafb;
   border-color: #ccc;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
+/* Popup thời gian */
+.time-popup {
+  position: absolute;
+  left: -270px; /* popup nằm bên trái nút */
+  bottom: 40px; /* nổi lên trên 1 chút */
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 12px;
+  width: 260px;
+  font-family: Arial, sans-serif;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+/* Hàng trong popup */
+.time-popup-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.time-popup-row label {
+  font-size: 14px;
+  color: #333;
+  flex-shrink: 0;
+}
+
+.time-popup-row input,
+.time-popup-row select {
+  flex: 1;
+  margin-left: 10px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+/* Footer của popup */
+.time-popup-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancel-btn {
+  background: #f5f5f5;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background: #e9e9e9;
+}
+
+.save-btn {
+  background: #e44232; /* đỏ Todoist */
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s ease;
+}
+
+.save-btn:hover {
+  background: #c72f23;
+}
+
+/* Hiệu ứng mở popup */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile */
 @media (max-width: 480px) {
+  .date-footer {
+    flex-direction: column;
+    gap: 6px;
+  }
+
   .date-footer-btn {
     font-size: 13px;
     padding: 6px;
+  }
+
+  .time-popup {
+    left: 0; /* trên mobile thì mở ngay bên dưới */
+    bottom: 50px;
+    width: 100%;
+    max-width: 280px;
   }
 }
