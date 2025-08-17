@@ -89,6 +89,14 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
 
   const isTitleEmpty = !title.trim();
 
+  // ✅ Hàm format dd/mm/yyyy
+  const formatDate = (date) => {
+    if (!date) return '';
+    return `${String(date.getDate()).padStart(2, '0')}/${String(
+      date.getMonth() + 1
+    ).padStart(2, '0')}/${date.getFullYear()}`;
+  };
+
   return (
     <Motion.form
       className="task-form"
@@ -131,10 +139,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           onClick={() => setShowDatePicker(!showDatePicker)}
         >
           📅 <span>
-            {selectedDate
-              ? selectedDate.toLocaleDateString() +
-                (selectedTime ? ` ${selectedTime}` : '')
-              : 'Date'}
+            {selectedDate ? formatDate(selectedDate) : 'Date'}
           </span>
         </button>
 
@@ -148,8 +153,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           anchorRef={dateButtonRef}
           selectedDate={selectedDate}
           onChange={({ date, time, duration }) => {
-            // ✅ date có thể null => phải update luôn
-            if (date !== undefined) setSelectedDate(date);
+            if (date !== undefined) setSelectedDate(date); // nhận cả null
             if (time !== undefined) setSelectedTime(time);
             if (duration !== undefined) setSelectedDuration(duration);
           }}
