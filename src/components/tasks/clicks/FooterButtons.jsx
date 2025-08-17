@@ -1,12 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./FooterButton.css";
+
+// Hàm tạo danh sách giờ theo bước 15 phút
+const generateTimeOptions = () => {
+  const times = [];
+  for (let h = 0; h < 24; h++) {
+    for (let m = 0; m < 60; m += 15) {
+      const hour = h.toString().padStart(2, "0");
+      const minute = m.toString().padStart(2, "0");
+      times.push(`${hour}:${minute}`);
+    }
+  }
+  return times;
+};
 
 const FooterButtons = ({ onRepeatClick }) => {
   const [showTimePopup, setShowTimePopup] = useState(false);
+  const [showTimeDropdown, setShowTimeDropdown] = useState(false);
+  const [selectedTime, setSelectedTime] = useState("23:00");
+
+  const timeOptions = generateTimeOptions();
+  const dropdownRef = useRef(null);
+
+  // Tự scroll đến giờ đang chọn khi mở dropdown
+  useEffect(() => {
+    if (showTimeDropdown && dropdownRef.current) {
+      const active = dropdownRef.current.querySelector(".active-time");
+      if (active) {
+        active.scrollIntoView({ block: "center" });
+      }
+    }
+  }, [showTimeDropdown]);
 
   return (
     <div className="date-footer" style={{ position: "relative" }}>
-      {/* Time button (đã bỏ icon đồng hồ) */}
+      {/* Nút Time */}
       <button
         className="date-footer-btn"
         onClick={() => setShowTimePopup((prev) => !prev)}
@@ -14,20 +42,40 @@ const FooterButtons = ({ onRepeatClick }) => {
         <span>Time</span>
       </button>
 
-      {/* Popup hiển thị khi bấm Time */}
+      {/* Popup */}
       {showTimePopup && (
         <div className="time-popup">
-          {/* Time input */}
+          {/* Time select custom */}
           <div className="time-popup-row">
             <label>Time</label>
-            <input
-              type="time"
-              defaultValue="23:00"
-              className="time-input"
-            />
+            <div
+              className="custom-time-select"
+              onClick={() => setShowTimeDropdown((prev) => !prev)}
+            >
+              {selectedTime}
+            </div>
+
+            {showTimeDropdown && (
+              <div className="time-dropdown" ref={dropdownRef}>
+                {timeOptions.map((time) => (
+                  <div
+                    key={time}
+                    className={`time-dropdown-item ${
+                      time === selectedTime ? "active-time" : ""
+                    }`}
+                    onClick={() => {
+                      setSelectedTime(time);
+                      setShowTimeDropdown(false);
+                    }}
+                  >
+                    {time}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Duration select */}
+          {/* Duration */}
           <div className="time-popup-row">
             <label>Duration</label>
             <select defaultValue="none" className="duration-select">
@@ -38,7 +86,7 @@ const FooterButtons = ({ onRepeatClick }) => {
             </select>
           </div>
 
-          {/* Footer buttons */}
+          {/* Footer */}
           <div className="time-popup-footer">
             <button
               className="cancel-btn"
@@ -49,7 +97,7 @@ const FooterButtons = ({ onRepeatClick }) => {
             <button
               className="save-btn"
               onClick={() => {
-                console.log("Saved time!");
+                console.log("Saved time:", selectedTime);
                 setShowTimePopup(false);
               }}
             >
@@ -59,7 +107,7 @@ const FooterButtons = ({ onRepeatClick }) => {
         </div>
       )}
 
-      {/* Repeat button (vẫn giữ nguyên icon) */}
+      {/* Nút Repeat */}
       <button className="date-footer-btn" onClick={onRepeatClick}>
         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16">
           <path

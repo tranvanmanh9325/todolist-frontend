@@ -37,14 +37,14 @@
 /* Popup thời gian */
 .time-popup {
   position: absolute;
-  left: -270px; /* popup nằm bên trái nút */
-  bottom: 40px; /* nổi lên trên 1 chút */
+  left: -15px;
+  bottom: 90px; /* nổi lên trên 1 chút */
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   padding: 12px;
-  width: 260px;
+  width: 270px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   z-index: 1000;
   animation: fadeIn 0.2s ease;
@@ -64,58 +64,89 @@
   flex-shrink: 0;
 }
 
-/* Input & Select trong popup */
-.time-popup-row input,
-.time-popup-row select {
+/* ---- CUSTOM TIME SELECT ---- */
+.custom-time-select {
+  flex: 1;
+  margin-left: 33px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #333;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.custom-time-select:hover {
+  background: #f9f9f9;
+}
+
+.custom-time-select:focus {
+  background: #fff;
+  border-color: #bbb;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  outline: none;
+}
+
+/* Dropdown list */
+.time-dropdown {
+  position: absolute;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 150px;
+  z-index: 2000;
+  margin-left: 65px;
+  margin-top: 250px;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.time-dropdown-item {
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.time-dropdown-item:hover {
+  background: #f2f2f2;
+}
+
+.active-time {
+  background: #e6f3ff;
+  font-weight: bold;
+}
+
+/* Select Duration */
+.duration-select {
   flex: 1;
   margin-left: 10px;
   padding: 6px 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 13px;
-  font-family: inherit; /* ✅ đồng bộ font giữa input & select */
+  font-family: inherit;
   color: #333;
   background: #fff;
-
-  /* ✅ Fix warning: chuẩn + prefix */
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-
   transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* ✅ Xóa icon đồng hồ mặc định */
-.time-popup-row input[type="time"]::-webkit-calendar-picker-indicator {
-  display: none;
-  -webkit-appearance: none;
-}
-.time-popup-row input[type="time"]::-moz-focus-inner {
-  border: 0;
-}
-.time-popup-row input[type="time"] {
-  padding-right: 8px; /* bỏ khoảng trống icon */
-}
-
-/* Hover: nền sáng nhẹ */
-.time-popup-row input:hover,
-.time-popup-row select:hover {
+.duration-select:hover {
   background: #f9f9f9;
 }
 
-/* Focus: nổi nhẹ */
-.time-popup-row input:focus,
-.time-popup-row select:focus {
+.duration-select:focus {
   background: #fff;
-  border-color: #bbb; /* viền xám nhạt hơn một chút */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08); /* hiệu ứng nổi */
+  border-color: #bbb;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   outline: none;
-}
-
-/* Placeholder của input time */
-.time-popup-row input::placeholder {
-  color: #aaa;
-  font-size: 13px;
 }
 
 /* Footer của popup */
