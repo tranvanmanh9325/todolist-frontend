@@ -14,10 +14,11 @@ const generateTimeOptions = () => {
   return times;
 };
 
-const FooterButtons = ({ onRepeatClick }) => {
+const FooterButtons = ({ onRepeatClick, onSave }) => {
   const [showTimePopup, setShowTimePopup] = useState(false);
   const [showTimeDropdown, setShowTimeDropdown] = useState(false);
   const [selectedTime, setSelectedTime] = useState("23:00");
+  const [selectedDuration, setSelectedDuration] = useState("none");
 
   const timeOptions = generateTimeOptions();
   const dropdownRef = useRef(null);
@@ -31,6 +32,11 @@ const FooterButtons = ({ onRepeatClick }) => {
       }
     }
   }, [showTimeDropdown]);
+
+  const handleSave = () => {
+    onSave && onSave({ time: selectedTime, duration: selectedDuration });
+    setShowTimePopup(false);
+  };
 
   return (
     <div className="date-footer" style={{ position: "relative" }}>
@@ -78,7 +84,11 @@ const FooterButtons = ({ onRepeatClick }) => {
           {/* Duration */}
           <div className="time-popup-row">
             <label>Duration</label>
-            <select defaultValue="none" className="duration-select">
+            <select
+              value={selectedDuration}
+              className="duration-select"
+              onChange={(e) => setSelectedDuration(e.target.value)}
+            >
               <option value="none">No duration</option>
               <option value="30m">30 minutes</option>
               <option value="1h">1 hour</option>
@@ -88,19 +98,10 @@ const FooterButtons = ({ onRepeatClick }) => {
 
           {/* Footer */}
           <div className="time-popup-footer">
-            <button
-              className="cancel-btn"
-              onClick={() => setShowTimePopup(false)}
-            >
+            <button className="cancel-btn" onClick={() => setShowTimePopup(false)}>
               Cancel
             </button>
-            <button
-              className="save-btn"
-              onClick={() => {
-                console.log("Saved time:", selectedTime);
-                setShowTimePopup(false);
-              }}
-            >
+            <button className="save-btn" onClick={handleSave}>
               Save
             </button>
           </div>

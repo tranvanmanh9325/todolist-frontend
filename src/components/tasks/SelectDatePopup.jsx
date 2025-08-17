@@ -37,7 +37,6 @@ const parseDateFromInput = (value) => {
   const today = new Date();
   const lower = value.toLowerCase();
 
-  // Bắt đầu bằng chữ
   if (/^[a-zA-Z]/.test(value)) {
     if (lower === "today") return today;
     if (lower === "tomorrow") {
@@ -63,7 +62,6 @@ const parseDateFromInput = (value) => {
     return null;
   }
 
-  // Bắt đầu bằng số
   if (/^\d/.test(value)) {
     const hasYear = /\b\d{4}\b/.test(value);
     const valueWithYear = hasYear ? value : `${value} ${today.getFullYear()}`;
@@ -214,8 +212,11 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
 
           {/* Footer */}
           <FooterButtons
-            onTimeClick={() => console.log("Time clicked")}
             onRepeatClick={() => console.log("Repeat clicked")}
+            onSave={({ time, duration }) => {
+              // Gửi trực tiếp ra ngoài, không cần lưu state local
+              onChange && onChange({ date: selectedDate, time, duration });
+            }}
           />
         </motion.div>
       )}
