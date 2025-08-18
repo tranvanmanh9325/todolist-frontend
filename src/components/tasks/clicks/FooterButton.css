@@ -56,15 +56,17 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+  position: relative; /* để dropdown bám theo */
 }
 
 .time-popup-row label {
   font-size: 14px;
   color: #333;
+    width: 60px; 
   flex-shrink: 0;
 }
 
-/* ---- CUSTOM TIME SELECT ---- */
+/* ---- CUSTOM SELECT chung cho Time + Duration ---- */
 .custom-time-select {
   flex: 1;
   margin-left: 33px;
@@ -90,9 +92,11 @@
   outline: none;
 }
 
-/* Dropdown list */
+/* Dropdown list chung */
 .time-dropdown {
   position: absolute;
+  right: 0;
+  top: 36px; /* ngay dưới input */
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -100,8 +104,6 @@
   overflow-y: auto;
   width: 150px;
   z-index: 2000;
-  margin-left: 65px;
-  margin-top: 250px;
   font-size: 13px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
@@ -116,37 +118,11 @@
   background: #f2f2f2;
 }
 
-.active-time {
+/* Active item */
+.active-time,
+.active-duration {
   background: #e6f3ff;
   font-weight: bold;
-}
-
-/* Select Duration */
-.duration-select {
-  flex: 1;
-  margin-left: 10px;
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 13px;
-  font-family: inherit;
-  color: #333;
-  background: #fff;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.duration-select:hover {
-  background: #f9f9f9;
-}
-
-.duration-select:focus {
-  background: #fff;
-  border-color: #bbb;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  outline: none;
 }
 
 /* Footer của popup */

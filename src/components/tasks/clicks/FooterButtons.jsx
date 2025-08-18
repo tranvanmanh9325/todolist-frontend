@@ -31,40 +31,62 @@ const getNearestQuarterHour = () => {
   return setHours(setMinutes(new Date(), minutes), hours);
 };
 
+const durationOptions = [
+  { value: "none", label: "No duration" },
+  { value: "30m", label: "30 minutes" },
+  { value: "1h", label: "1 hour" },
+  { value: "2h", label: "2 hours" },
+];
+
 const FooterButtons = ({ onRepeatClick, onSave }) => {
   const [showTimePopup, setShowTimePopup] = useState(false);
   const [showTimeDropdown, setShowTimeDropdown] = useState(false);
+  const [showDurationDropdown, setShowDurationDropdown] = useState(false);
+
   const [selectedTime, setSelectedTime] = useState(getNearestQuarterHour());
   const [selectedDuration, setSelectedDuration] = useState("none");
 
   const timeOptions = generateTimeOptions();
-  const dropdownRef = useRef(null);
+  const timeDropdownRef = useRef(null);
+  const durationDropdownRef = useRef(null);
 
   // Mỗi lần mở popup thì reset lại giờ mặc định
   useEffect(() => {
     if (showTimePopup) {
       setSelectedTime(getNearestQuarterHour());
-      setShowTimeDropdown(false); // reset dropdown khi mở popup mới
+      setShowTimeDropdown(false);
+      setShowDurationDropdown(false);
     }
   }, [showTimePopup]);
 
   // Tự scroll đến giờ đang chọn khi mở dropdown
   useEffect(() => {
-    if (showTimeDropdown && dropdownRef.current) {
-      const active = dropdownRef.current.querySelector(".active-time");
+    if (showTimeDropdown && timeDropdownRef.current) {
+      const active = timeDropdownRef.current.querySelector(".active-time");
       if (active) {
         active.scrollIntoView({ block: "center", behavior: "smooth" });
       }
     }
   }, [showTimeDropdown, selectedTime]);
 
+  // Tự scroll đến duration đang chọn
+  useEffect(() => {
+    if (showDurationDropdown && durationDropdownRef.current) {
+      const active = durationDropdownRef.current.querySelector(".active-duration");
+      if (active) {
+        active.scrollIntoView({ block: "center", behavior: "smooth" });
+      }
+    }
+  }, [showDurationDropdown, selectedDuration]);
+
   const handleSave = () => {
     onSave &&
       onSave({
-        time: selectedTime || null, // ✅ giữ nguyên Date object
+        time: selectedTime || null,
         duration: selectedDuration,
       });
     setShowTimeDropdown(false);
+    setShowDurationDropdown(false);
     setShowTimePopup(false);
   };
 
@@ -87,13 +109,16 @@ const FooterButtons = ({ onRepeatClick, onSave }) => {
             <label>Time</label>
             <div
               className="custom-time-select"
-              onClick={() => setShowTimeDropdown((prev) => !prev)}
+              onClick={() => {
+                setShowTimeDropdown((prev) => !prev);
+                setShowDurationDropdown(false);
+              }}
             >
               {selectedTime ? format(selectedTime, "HH:mm") : "Time"}
             </div>
 
             {showTimeDropdown && (
-              <div className="time-dropdown" ref={dropdownRef}>
+              <div className="time-dropdown" ref={timeDropdownRef}>
                 {timeOptions.map((time) => (
                   <div
                     key={time.getTime()}
@@ -114,19 +139,39 @@ const FooterButtons = ({ onRepeatClick, onSave }) => {
             )}
           </div>
 
-          {/* Duration */}
+          {/* Duration select custom */}
           <div className="time-popup-row">
             <label>Duration</label>
-            <select
-              value={selectedDuration}
-              className="duration-select"
-              onChange={(e) => setSelectedDuration(e.target.value)}
+            <div
+              className="custom-time-select"
+              onClick={() => {
+                setShowDurationDropdown((prev) => !prev);
+                setShowTimeDropdown(false);
+              }}
             >
-              <option value="none">No duration</option>
-              <option value="30m">30 minutes</option>
-              <option value="1h">1 hour</option>
-              <option value="2h">2 hours</option>
-            </select>
+              {
+                durationOptions.find((d) => d.value === selectedDuration)?.label
+              }
+            </div>
+
+            {showDurationDropdown && (
+              <div className="time-dropdown" ref={durationDropdownRef}>
+                {durationOptions.map((d) => (
+                  <div
+                    key={d.value}
+                    className={`time-dropdown-item ${
+                      d.value === selectedDuration ? "active-duration" : ""
+                    }`}
+                    onClick={() => {
+                      setSelectedDuration(d.value);
+                      setShowDurationDropdown(false);
+                    }}
+                  >
+                    {d.label}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Footer */}
@@ -136,6 +181,7 @@ const FooterButtons = ({ onRepeatClick, onSave }) => {
               className="cancel-btn"
               onClick={() => {
                 setShowTimeDropdown(false);
+                setShowDurationDropdown(false);
                 setShowTimePopup(false);
               }}
             >
