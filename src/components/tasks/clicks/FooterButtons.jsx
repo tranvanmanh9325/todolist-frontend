@@ -38,26 +38,28 @@ const durationOptions = [
   { value: "2h", label: "2 hours" },
 ];
 
-const FooterButtons = ({ onRepeatClick, onSave }) => {
+const FooterButtons = ({ onRepeatClick, onSave, initialTime, initialDuration }) => {
   const [showTimePopup, setShowTimePopup] = useState(false);
   const [showTimeDropdown, setShowTimeDropdown] = useState(false);
   const [showDurationDropdown, setShowDurationDropdown] = useState(false);
 
-  const [selectedTime, setSelectedTime] = useState(getNearestQuarterHour());
-  const [selectedDuration, setSelectedDuration] = useState("none");
+  // ✅ Khởi tạo state từ props
+  const [selectedTime, setSelectedTime] = useState(initialTime || getNearestQuarterHour());
+  const [selectedDuration, setSelectedDuration] = useState(initialDuration || "none");
 
   const timeOptions = generateTimeOptions();
   const timeDropdownRef = useRef(null);
   const durationDropdownRef = useRef(null);
 
-  // Mỗi lần mở popup thì reset lại giờ mặc định
+  // ✅ Khi mở popup thì load lại từ props thay vì reset cứng
   useEffect(() => {
     if (showTimePopup) {
-      setSelectedTime(getNearestQuarterHour());
+      setSelectedTime(initialTime || getNearestQuarterHour());
+      setSelectedDuration(initialDuration || "none");
       setShowTimeDropdown(false);
       setShowDurationDropdown(false);
     }
-  }, [showTimePopup]);
+  }, [showTimePopup, initialTime, initialDuration]);
 
   // Tự scroll đến giờ đang chọn khi mở dropdown
   useEffect(() => {
@@ -149,9 +151,7 @@ const FooterButtons = ({ onRepeatClick, onSave }) => {
                 setShowTimeDropdown(false);
               }}
             >
-              {
-                durationOptions.find((d) => d.value === selectedDuration)?.label
-              }
+              {durationOptions.find((d) => d.value === selectedDuration)?.label}
             </div>
 
             {showDurationDropdown && (
