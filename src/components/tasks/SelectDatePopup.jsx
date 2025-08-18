@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import "./SelectDatePopup.css";
 import CustomDatePicker from "./clicks/CustomDatePicker";
 import QuickDateOptions from "./clicks/QuickDateOptions";
-import FooterButtons from "./clicks/FooterButtons"; // ⬅️ import mới
+import FooterButtons from "./clicks/FooterButtons";
 
 const popupVariants = {
   hidden: { opacity: 0, scale: 0.9, y: -8 },
@@ -22,16 +22,18 @@ const popupVariants = {
   }
 };
 
-// format ngày ngắn: "16 Aug"
-const formatShortDate = (date) => {
+// ✅ format dd/mm/yyyy + hh:mm (nếu có)
+const formatFullDateTime = (date, time) => {
   if (!date) return "";
-  return date.toLocaleDateString("en-GB", {
+  const d = date.toLocaleDateString("en-GB", {
     day: "2-digit",
-    month: "short"
+    month: "2-digit",
+    year: "numeric"
   });
+  return time ? `${d} ${time}` : d;
 };
 
-// ✅ Hàm parse input thành Date
+// ✅ parse input text thành Date
 const parseDateFromInput = (value) => {
   if (!value) return null;
   const today = new Date();
@@ -78,14 +80,18 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
   const [noResults, setNoResults] = useState(false);
   const [previewDate, setPreviewDate] = useState(null);
 
-  // đồng bộ input với selectedDate
+  // state cho time + duration
+  const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedDuration, setSelectedDuration] = useState(null);
+
+  // đồng bộ input với selectedDate + selectedTime
   useEffect(() => {
-    setInputValue(selectedDate ? formatShortDate(selectedDate) : "");
+    setInputValue(formatFullDateTime(selectedDate, selectedTime));
     setNoResults(false);
     setPreviewDate(null);
-  }, [selectedDate]);
+  }, [selectedDate, selectedTime]);
 
-  // đóng popup khi click ra ngoài
+  // đóng popup khi click ngoài
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (popupRef.current && !popupRef.current.contains(e.target)) {
@@ -100,8 +106,8 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
   const handleInputKeyDown = (e) => {
     if (e.key !== "Enter") return;
     if (previewDate) {
-      onChange({ date: previewDate }); // ✅ luôn trả object
-      setInputValue(formatShortDate(previewDate));
+      onChange({ date: previewDate, time: selectedTime, duration: selectedDuration });
+      setInputValue(formatFullDateTime(previewDate, selectedTime));
       setNoResults(false);
       setPreviewDate(null);
       onClose();
@@ -152,8 +158,8 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
             <div
               className="date-suggestion"
               onClick={() => {
-                onChange({ date: previewDate }); // ✅ luôn trả object
-                setInputValue(formatShortDate(previewDate));
+                onChange({ date: previewDate, time: selectedTime, duration: selectedDuration });
+                setInputValue(formatFullDateTime(previewDate, selectedTime));
                 setPreviewDate(null);
                 onClose();
               }}
@@ -197,7 +203,9 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
           {/* Quick options */}
           <QuickDateOptions
             selectedDate={selectedDate}
-            onChange={(date) => onChange({ date })} // ✅ wrap thành object
+            onChange={(date) =>
+              onChange({ date, time: selectedTime, duration: selectedDuration })
+            }
             onClose={onClose}
           />
 
@@ -206,7 +214,9 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
           {/* Date picker */}
           <CustomDatePicker
             selectedDate={selectedDate}
-            onChange={(date) => onChange({ date })} // ✅ wrap thành object
+            onChange={(date) =>
+              onChange({ date, time: selectedTime, duration: selectedDuration })
+            }
             onClose={onClose}
           />
 
@@ -214,8 +224,10 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
           <FooterButtons
             onRepeatClick={() => console.log("Repeat clicked")}
             onSave={({ time, duration }) => {
-              // ✅ gửi đủ thông tin
+              setSelectedTime(time);
+              setSelectedDuration(duration);
               onChange && onChange({ date: selectedDate, time, duration });
+              setInputValue(formatFullDateTime(selectedDate, time));
             }}
           />
         </motion.div>
