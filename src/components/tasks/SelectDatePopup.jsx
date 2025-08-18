@@ -31,7 +31,9 @@ const formatFullDateTime = (date, time) => {
     month: "2-digit",
     year: "numeric",
   });
-  return time instanceof Date ? `${d} ${format(time, "HH:mm")}` : d;
+  return time instanceof Date && !isNaN(time)
+    ? `${d} ${format(time, "HH:mm")}`
+    : d;
 };
 
 // ✅ parse input text thành Date
@@ -75,24 +77,39 @@ const parseDateFromInput = (value) => {
   return null;
 };
 
-const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => {
+const SelectDatePopup = ({
+  selectedDate,
+  selectedTime: propTime,
+  selectedDuration: propDuration,
+  onChange,
+  onClose,
+  isOpen = true,
+}) => {
   const popupRef = useRef();
   const [inputValue, setInputValue] = useState("");
   const [noResults, setNoResults] = useState(false);
   const [previewDate, setPreviewDate] = useState(null);
 
-  // state cho time + duration
+  // state local cho time + duration
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedDuration, setSelectedDuration] = useState(null);
 
-  // đồng bộ input với selectedDate + selectedTime
+  // ⏺ Đồng bộ props -> state khi mở popup
+  useEffect(() => {
+    setSelectedTime(
+      propTime instanceof Date && !isNaN(propTime) ? propTime : null
+    );
+    setSelectedDuration(propDuration || null);
+  }, [propTime, propDuration, isOpen]);
+
+  // ⏺ Đồng bộ input hiển thị
   useEffect(() => {
     setInputValue(formatFullDateTime(selectedDate, selectedTime));
     setNoResults(false);
     setPreviewDate(null);
   }, [selectedDate, selectedTime]);
 
-  // đóng popup khi click ngoài
+  // ⏺ đóng popup khi click ngoài
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (popupRef.current && !popupRef.current.contains(e.target)) {

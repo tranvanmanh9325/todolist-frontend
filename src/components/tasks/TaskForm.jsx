@@ -61,7 +61,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     let finalDate = selectedDate ? new Date(selectedDate) : null;
 
     // Nếu có time thì merge vào date
-    if (finalDate && selectedTime instanceof Date) {
+    if (finalDate && selectedTime instanceof Date && !isNaN(selectedTime)) {
       finalDate = setHours(
         setMinutes(finalDate, selectedTime.getMinutes()),
         selectedTime.getHours()
@@ -74,7 +74,10 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       note,
       project: type,
       dueDate: finalDate ? finalDate.toISOString() : null,
-      time: selectedTime ? selectedTime.toISOString() : null, // luôn lưu ISO
+      time:
+        selectedTime instanceof Date && !isNaN(selectedTime)
+          ? selectedTime.toISOString()
+          : null, // ✅ luôn lưu time riêng biệt
       duration: selectedDuration,
     };
 
@@ -187,6 +190,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         <SelectDatePopup
           anchorRef={dateButtonRef}
           selectedDate={selectedDate}
+          selectedTime={selectedTime}           // ✅ truyền thêm
+          selectedDuration={selectedDuration}   // ✅ truyền thêm
           onChange={({ date, time, duration }) => {
             if (date !== undefined) setSelectedDate(date);
             if (time !== undefined) setSelectedTime(time);
