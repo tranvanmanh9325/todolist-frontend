@@ -229,9 +229,20 @@ const SelectDatePopup = ({
           {/* Quick options */}
           <QuickDateOptions
             selectedDate={selectedDate}
-            onChange={(date) =>
-              onChange({ date, time: selectedTime, duration: selectedDuration })
-            }
+            onChange={(date) => {
+              if (date === null) {
+                // ✅ Khi chọn No Date → reset time & duration
+                setSelectedTime(null);
+                setSelectedDuration("none");
+                onChange({ date: null, time: null, duration: "none" });
+              } else {
+                onChange({
+                  date,
+                  time: selectedTime,
+                  duration: selectedDuration || "none",
+                });
+              }
+            }}
             onClose={onClose}
           />
 

@@ -194,6 +194,13 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           selectedDuration={selectedDuration}   // ✅ truyền thêm
           onChange={({ date, time, duration }) => {
             if (date !== undefined) setSelectedDate(date);
+
+            // ✅ Khi chọn No Date thì reset luôn
+            if (date === null) {
+              setSelectedTime(null);
+              setSelectedDuration('none');
+            }
+
             if (time !== undefined) setSelectedTime(time);
             if (duration !== undefined) setSelectedDuration(duration);
           }}
