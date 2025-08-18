@@ -14,28 +14,57 @@ const generateTimeOptions = () => {
   return times;
 };
 
+// Hàm lấy giờ mặc định sát với hiện tại (làm tròn lên 15 phút)
+const getNearestQuarterHour = () => {
+  const now = new Date();
+  let minutes = now.getMinutes();
+  let hours = now.getHours();
+
+  const roundedMinutes = Math.ceil(minutes / 15) * 15;
+
+  if (roundedMinutes === 60) {
+    minutes = 0;
+    hours = (hours + 1) % 24;
+  } else {
+    minutes = roundedMinutes;
+  }
+
+  const hourStr = hours.toString().padStart(2, "0");
+  const minuteStr = minutes.toString().padStart(2, "0");
+  return `${hourStr}:${minuteStr}`;
+};
+
 const FooterButtons = ({ onRepeatClick, onSave }) => {
   const [showTimePopup, setShowTimePopup] = useState(false);
   const [showTimeDropdown, setShowTimeDropdown] = useState(false);
-  const [selectedTime, setSelectedTime] = useState("23:00");
+  const [selectedTime, setSelectedTime] = useState(getNearestQuarterHour());
   const [selectedDuration, setSelectedDuration] = useState("none");
 
   const timeOptions = generateTimeOptions();
   const dropdownRef = useRef(null);
+
+  // Mỗi lần mở popup thì reset lại giờ mặc định
+  useEffect(() => {
+    if (showTimePopup) {
+      setSelectedTime(getNearestQuarterHour());
+      setShowTimeDropdown(false); // reset dropdown khi mở popup mới
+    }
+  }, [showTimePopup]);
 
   // Tự scroll đến giờ đang chọn khi mở dropdown
   useEffect(() => {
     if (showTimeDropdown && dropdownRef.current) {
       const active = dropdownRef.current.querySelector(".active-time");
       if (active) {
-        active.scrollIntoView({ block: "center" });
+        active.scrollIntoView({ block: "center", behavior: "smooth" });
       }
     }
-  }, [showTimeDropdown]);
+  }, [showTimeDropdown, selectedTime]);
 
   const handleSave = () => {
     onSave && onSave({ time: selectedTime, duration: selectedDuration });
-    setShowTimePopup(false);
+    setShowTimeDropdown(false); // reset dropdown khi Save
+    setShowTimePopup(false); // đóng popup
   };
 
   return (
@@ -98,7 +127,13 @@ const FooterButtons = ({ onRepeatClick, onSave }) => {
 
           {/* Footer */}
           <div className="time-popup-footer">
-            <button className="cancel-btn" onClick={() => setShowTimePopup(false)}>
+            <button
+              className="cancel-btn"
+              onClick={() => {
+                setShowTimeDropdown(false);
+                setShowTimePopup(false);
+              }}
+            >
               Cancel
             </button>
             <button className="save-btn" onClick={handleSave}>

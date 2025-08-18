@@ -97,6 +97,18 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     ).padStart(2, '0')}/${date.getFullYear()}`;
   };
 
+  // ✅ Hàm hiển thị ngày + giờ + duration
+  const getDateTimeLabel = () => {
+    if (!selectedDate) return 'Date';
+
+    let label = formatDate(selectedDate);
+    if (selectedTime) label += ` ${selectedTime}`;
+    if (selectedDuration && selectedDuration !== 'none') {
+      label += ` (${selectedDuration})`;
+    }
+    return label;
+  };
+
   return (
     <Motion.form
       className="task-form"
@@ -138,13 +150,15 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           ref={dateButtonRef}
           onClick={() => setShowDatePicker(!showDatePicker)}
         >
-          📅 <span>
-            {selectedDate ? formatDate(selectedDate) : 'Date'}
-          </span>
+          📅 <span>{getDateTimeLabel()}</span>
         </button>
 
-        <button type="button" className="task-option">🚩 <span>Priority</span></button>
-        <button type="button" className="task-option">⏰ <span>Reminders</span></button>
+        <button type="button" className="task-option">
+          🚩 <span>Priority</span>
+        </button>
+        <button type="button" className="task-option">
+          ⏰ <span>Reminders</span>
+        </button>
       </div>
 
       {/* Popup chọn ngày */}
