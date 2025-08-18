@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
+import { format, setHours, setMinutes } from "date-fns";
 import "./SelectDatePopup.css";
 import CustomDatePicker from "./clicks/CustomDatePicker";
 import QuickDateOptions from "./clicks/QuickDateOptions";
@@ -12,25 +13,25 @@ const popupVariants = {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { type: "spring", stiffness: 300, damping: 20 }
+    transition: { type: "spring", stiffness: 300, damping: 20 },
   },
   exit: {
     opacity: 0,
     scale: 0.9,
     y: -8,
-    transition: { duration: 0.15 }
-  }
+    transition: { duration: 0.15 },
+  },
 };
 
-// ✅ format dd/mm/yyyy + hh:mm (nếu có)
+// ✅ format dd/mm/yyyy + HH:mm (nếu có)
 const formatFullDateTime = (date, time) => {
   if (!date) return "";
   const d = date.toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "2-digit",
-    year: "numeric"
+    year: "numeric",
   });
-  return time ? `${d} ${time}` : d;
+  return time instanceof Date ? `${d} ${format(time, "HH:mm")}` : d;
 };
 
 // ✅ parse input text thành Date
@@ -102,11 +103,15 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
 
-  // xử lý Enter
+  // Xử lý Enter
   const handleInputKeyDown = (e) => {
     if (e.key !== "Enter") return;
     if (previewDate) {
-      onChange({ date: previewDate, time: selectedTime, duration: selectedDuration });
+      onChange({
+        date: previewDate,
+        time: selectedTime,
+        duration: selectedDuration,
+      });
       setInputValue(formatFullDateTime(previewDate, selectedTime));
       setNoResults(false);
       setPreviewDate(null);
@@ -158,7 +163,11 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
             <div
               className="date-suggestion"
               onClick={() => {
-                onChange({ date: previewDate, time: selectedTime, duration: selectedDuration });
+                onChange({
+                  date: previewDate,
+                  time: selectedTime,
+                  duration: selectedDuration,
+                });
                 setInputValue(formatFullDateTime(previewDate, selectedTime));
                 setPreviewDate(null);
                 onClose();
@@ -177,7 +186,7 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
                   {previewDate.toLocaleDateString("en-GB", {
                     weekday: "short",
                     day: "numeric",
-                    month: "short"
+                    month: "short",
                   })}
                 </strong>
                 <span>No tasks</span>
@@ -226,8 +235,24 @@ const SelectDatePopup = ({ selectedDate, onChange, onClose, isOpen = true }) => 
             onSave={({ time, duration }) => {
               setSelectedTime(time);
               setSelectedDuration(duration);
-              onChange && onChange({ date: selectedDate, time, duration });
-              setInputValue(formatFullDateTime(selectedDate, time));
+
+              // Nếu có cả date + time thì hợp nhất thành 1 Date object
+              let finalDate = selectedDate;
+              if (selectedDate && time instanceof Date) {
+                finalDate = setHours(
+                  setMinutes(new Date(selectedDate), time.getMinutes()),
+                  time.getHours()
+                );
+              }
+
+              onChange &&
+                onChange({
+                  date: finalDate,
+                  time: time instanceof Date ? time : null,
+                  duration,
+                });
+
+              setInputValue(formatFullDateTime(finalDate, time));
             }}
           />
         </motion.div>

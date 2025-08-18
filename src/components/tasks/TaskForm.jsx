@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
+import { format, setHours, setMinutes } from 'date-fns';
 import SelectDatePopup from './SelectDatePopup';
 import './TaskForm.css';
 
@@ -13,8 +14,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const [isExiting, setIsExiting] = useState(false);
 
   // State cho Date picker
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null); // Date object
+  const [selectedTime, setSelectedTime] = useState(null); // Date object (giờ phút)
   const [selectedDuration, setSelectedDuration] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -29,7 +30,15 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       setNote(task.note || '');
       setType(task.project || 'Type');
       setSelectedDate(task.dueDate ? new Date(task.dueDate) : null);
-      setSelectedTime(task.time || null);
+
+      // luôn convert time thành Date nếu có
+      let parsedTime = null;
+      if (task.time) {
+        parsedTime = task.time instanceof Date ? task.time : new Date(task.time);
+        if (isNaN(parsedTime)) parsedTime = null;
+      }
+      setSelectedTime(parsedTime);
+
       setSelectedDuration(task.duration || null);
     }
   }, [task]);
@@ -49,13 +58,23 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     e.preventDefault();
     if (!title.trim()) return;
 
+    let finalDate = selectedDate ? new Date(selectedDate) : null;
+
+    // Nếu có time thì merge vào date
+    if (finalDate && selectedTime instanceof Date) {
+      finalDate = setHours(
+        setMinutes(finalDate, selectedTime.getMinutes()),
+        selectedTime.getHours()
+      );
+    }
+
     const taskData = {
       ...task,
       title,
       note,
       project: type,
-      dueDate: selectedDate ? selectedDate.toISOString() : null,
-      time: selectedTime,
+      dueDate: finalDate ? finalDate.toISOString() : null,
+      time: selectedTime ? selectedTime.toISOString() : null, // luôn lưu ISO
       duration: selectedDuration,
     };
 
@@ -102,7 +121,9 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     if (!selectedDate) return 'Date';
 
     let label = formatDate(selectedDate);
-    if (selectedTime) label += ` ${selectedTime}`;
+    if (selectedTime instanceof Date && !isNaN(selectedTime)) {
+      label += ` ${format(selectedTime, 'HH:mm')}`;
+    }
     if (selectedDuration && selectedDuration !== 'none') {
       label += ` (${selectedDuration})`;
     }
@@ -167,7 +188,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           anchorRef={dateButtonRef}
           selectedDate={selectedDate}
           onChange={({ date, time, duration }) => {
-            if (date !== undefined) setSelectedDate(date); // nhận cả null
+            if (date !== undefined) setSelectedDate(date);
             if (time !== undefined) setSelectedTime(time);
             if (duration !== undefined) setSelectedDuration(duration);
           }}

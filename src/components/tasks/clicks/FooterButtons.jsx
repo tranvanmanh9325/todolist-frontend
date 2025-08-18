@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
+import { format, setHours, setMinutes } from "date-fns";
 import "./FooterButton.css";
 
-// Hàm tạo danh sách giờ theo bước 15 phút
+// Hàm tạo danh sách giờ theo bước 15 phút (dạng Date object)
 const generateTimeOptions = () => {
   const times = [];
   for (let h = 0; h < 24; h++) {
     for (let m = 0; m < 60; m += 15) {
-      const hour = h.toString().padStart(2, "0");
-      const minute = m.toString().padStart(2, "0");
-      times.push(`${hour}:${minute}`);
+      times.push(setHours(setMinutes(new Date(), m), h));
     }
   }
   return times;
@@ -29,9 +28,7 @@ const getNearestQuarterHour = () => {
     minutes = roundedMinutes;
   }
 
-  const hourStr = hours.toString().padStart(2, "0");
-  const minuteStr = minutes.toString().padStart(2, "0");
-  return `${hourStr}:${minuteStr}`;
+  return setHours(setMinutes(new Date(), minutes), hours);
 };
 
 const FooterButtons = ({ onRepeatClick, onSave }) => {
@@ -62,15 +59,20 @@ const FooterButtons = ({ onRepeatClick, onSave }) => {
   }, [showTimeDropdown, selectedTime]);
 
   const handleSave = () => {
-    onSave && onSave({ time: selectedTime, duration: selectedDuration });
-    setShowTimeDropdown(false); // reset dropdown khi Save
-    setShowTimePopup(false); // đóng popup
+    onSave &&
+      onSave({
+        time: selectedTime || null, // ✅ giữ nguyên Date object
+        duration: selectedDuration,
+      });
+    setShowTimeDropdown(false);
+    setShowTimePopup(false);
   };
 
   return (
     <div className="date-footer" style={{ position: "relative" }}>
       {/* Nút Time */}
       <button
+        type="button"
         className="date-footer-btn"
         onClick={() => setShowTimePopup((prev) => !prev)}
       >
@@ -87,23 +89,25 @@ const FooterButtons = ({ onRepeatClick, onSave }) => {
               className="custom-time-select"
               onClick={() => setShowTimeDropdown((prev) => !prev)}
             >
-              {selectedTime}
+              {selectedTime ? format(selectedTime, "HH:mm") : "Time"}
             </div>
 
             {showTimeDropdown && (
               <div className="time-dropdown" ref={dropdownRef}>
                 {timeOptions.map((time) => (
                   <div
-                    key={time}
+                    key={time.getTime()}
                     className={`time-dropdown-item ${
-                      time === selectedTime ? "active-time" : ""
+                      format(time, "HH:mm") === format(selectedTime, "HH:mm")
+                        ? "active-time"
+                        : ""
                     }`}
                     onClick={() => {
                       setSelectedTime(time);
                       setShowTimeDropdown(false);
                     }}
                   >
-                    {time}
+                    {format(time, "HH:mm")}
                   </div>
                 ))}
               </div>
@@ -128,6 +132,7 @@ const FooterButtons = ({ onRepeatClick, onSave }) => {
           {/* Footer */}
           <div className="time-popup-footer">
             <button
+              type="button"
               className="cancel-btn"
               onClick={() => {
                 setShowTimeDropdown(false);
@@ -136,7 +141,7 @@ const FooterButtons = ({ onRepeatClick, onSave }) => {
             >
               Cancel
             </button>
-            <button className="save-btn" onClick={handleSave}>
+            <button type="button" className="save-btn" onClick={handleSave}>
               Save
             </button>
           </div>
@@ -144,7 +149,7 @@ const FooterButtons = ({ onRepeatClick, onSave }) => {
       )}
 
       {/* Nút Repeat */}
-      <button className="date-footer-btn" onClick={onRepeatClick}>
+      <button type="button" className="date-footer-btn" onClick={onRepeatClick}>
         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16">
           <path
             fill="currentColor"
