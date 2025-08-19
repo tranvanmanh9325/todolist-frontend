@@ -50,6 +50,7 @@ const FooterButtons = ({
   const [showTimePopup, setShowTimePopup] = useState(false);
   const [showTimeDropdown, setShowTimeDropdown] = useState(false);
   const [showDurationDropdown, setShowDurationDropdown] = useState(false);
+  const [showRepeatPopup, setShowRepeatPopup] = useState(false);
 
   // ✅ State nội bộ khi mở popup
   const [selectedTime, setSelectedTime] = useState(
@@ -65,6 +66,7 @@ const FooterButtons = ({
 
   const timeDropdownRef = useRef(null);
   const durationDropdownRef = useRef(null);
+  const repeatPopupRef = useRef(null);
 
   // ✅ Cập nhật lại danh sách giờ mỗi khi mở popup
   useEffect(() => {
@@ -99,6 +101,21 @@ const FooterButtons = ({
     }
   }, [showDurationDropdown, selectedDuration]);
 
+  // ✅ Đóng popup Repeat khi click ra ngoài
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (repeatPopupRef.current && !repeatPopupRef.current.contains(e.target)) {
+        setShowRepeatPopup(false);
+      }
+    };
+    if (showRepeatPopup) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showRepeatPopup]);
+
   const handleSave = () => {
     onSave &&
       onSave({
@@ -127,6 +144,21 @@ const FooterButtons = ({
       return format(propTime, "HH:mm");
     }
     return "Time";
+  };
+
+  // ✅ Các option Repeat
+  const repeatOptions = [
+    { value: "daily", label: "Every day" },
+    { value: "weekly", label: `Every week on ${format(new Date(), "EEEE")}` },
+    { value: "weekday", label: "Every weekday (Mon – Fri)" },
+    { value: "monthly", label: `Every month on the ${format(new Date(), "do")}` },
+    { value: "yearly", label: `Every year on ${format(new Date(), "MMMM do")}` },
+    { value: "custom", label: "Custom..." },
+  ];
+
+  const handleSelectRepeat = (value) => {
+    setShowRepeatPopup(false);
+    onRepeatClick && onRepeatClick(value);
   };
 
   return (
@@ -259,7 +291,11 @@ const FooterButtons = ({
       )}
 
       {/* Nút Repeat */}
-      <button type="button" className="date-footer-btn" onClick={onRepeatClick}>
+      <button
+        type="button"
+        className="date-footer-btn"
+        onClick={() => setShowRepeatPopup((prev) => !prev)}
+      >
         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16">
           <path
             fill="currentColor"
@@ -270,6 +306,21 @@ const FooterButtons = ({
         </svg>
         <span>Repeat</span>
       </button>
+
+      {/* Popup Repeat */}
+      {showRepeatPopup && (
+        <div className="repeat-popup" ref={repeatPopupRef}>
+          {repeatOptions.map((opt) => (
+            <div
+              key={opt.value}
+              className="repeat-item"
+              onClick={() => handleSelectRepeat(opt.value)}
+            >
+              {opt.label}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
