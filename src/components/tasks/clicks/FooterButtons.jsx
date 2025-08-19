@@ -1,20 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { format, setHours, setMinutes } from "date-fns";
+import { format, setHours, setMinutes, addMinutes } from "date-fns";
 import "./FooterButton.css";
 
-// Hàm tạo danh sách giờ theo bước 15 phút (dạng Date object)
-const generateTimeOptions = () => {
-  const times = [];
-  for (let h = 0; h < 24; h++) {
-    for (let m = 0; m < 60; m += 15) {
-      times.push(setHours(setMinutes(new Date(), m), h));
-    }
-  }
-  return times;
-};
-
-// Hàm lấy giờ mặc định sát với hiện tại (làm tròn lên 15 phút)
-const getNearestQuarterHour = () => {
+// ✅ Hàm lấy mốc 15 phút kế tiếp
+const getNextQuarterHour = () => {
   const now = new Date();
   let minutes = now.getMinutes();
   let hours = now.getHours();
@@ -31,6 +20,19 @@ const getNearestQuarterHour = () => {
   return setHours(setMinutes(new Date(), minutes), hours);
 };
 
+// ✅ Hàm sinh danh sách giờ 24h (96 mốc, cách nhau 15 phút)
+const generateTimeOptions = (start) => {
+  const times = [];
+  let current = new Date(start);
+
+  for (let i = 0; i < 96; i++) {
+    times.push(new Date(current));
+    current = addMinutes(current, 15);
+  }
+
+  return times;
+};
+
 const durationOptions = [
   { value: "none", label: "No duration" },
   { value: "30m", label: "30 minutes" },
@@ -43,18 +45,21 @@ const FooterButtons = ({ onRepeatClick, onSave, initialTime, initialDuration }) 
   const [showTimeDropdown, setShowTimeDropdown] = useState(false);
   const [showDurationDropdown, setShowDurationDropdown] = useState(false);
 
-  // ✅ Khởi tạo state từ props
-  const [selectedTime, setSelectedTime] = useState(initialTime || getNearestQuarterHour());
+  // ✅ Khởi tạo state từ props hoặc lấy nearest quarter hour
+  const [selectedTime, setSelectedTime] = useState(initialTime || getNextQuarterHour());
   const [selectedDuration, setSelectedDuration] = useState(initialDuration || "none");
 
-  const timeOptions = generateTimeOptions();
+  const [timeOptions, setTimeOptions] = useState(generateTimeOptions(getNextQuarterHour()));
+
   const timeDropdownRef = useRef(null);
   const durationDropdownRef = useRef(null);
 
-  // ✅ Khi mở popup thì load lại từ props thay vì reset cứng
+  // ✅ Cập nhật lại danh sách giờ mỗi khi mở popup
   useEffect(() => {
     if (showTimePopup) {
-      setSelectedTime(initialTime || getNearestQuarterHour());
+      const start = getNextQuarterHour();
+      setTimeOptions(generateTimeOptions(start));
+      setSelectedTime(initialTime || start);
       setSelectedDuration(initialDuration || "none");
       setShowTimeDropdown(false);
       setShowDurationDropdown(false);

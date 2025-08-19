@@ -266,10 +266,25 @@ const SelectDatePopup = ({
               setSelectedTime(time);
               setSelectedDuration(duration);
 
-              // ✅ Nếu chưa có ngày thì auto chọn hôm nay
-              let finalDate = selectedDate || new Date();
+              let finalDate = selectedDate;
 
-              // Nếu có cả date + time thì hợp nhất thành 1 Date object
+              // ✅ Nếu chưa có ngày mà chọn time trước
+              if (!selectedDate && time instanceof Date) {
+                const now = new Date();
+                finalDate = new Date();
+                finalDate.setHours(0, 0, 0, 0);
+
+                // Nếu giờ chọn < giờ hiện tại => tự động sang ngày mai
+                if (
+                  time.getHours() < now.getHours() ||
+                  (time.getHours() === now.getHours() &&
+                    time.getMinutes() <= now.getMinutes())
+                ) {
+                  finalDate.setDate(finalDate.getDate() + 1);
+                }
+              }
+
+              // Nếu có cả date + time thì hợp nhất
               if (finalDate && time instanceof Date) {
                 finalDate = setHours(
                   setMinutes(new Date(finalDate), time.getMinutes()),
