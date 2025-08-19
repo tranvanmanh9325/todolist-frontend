@@ -120,8 +120,10 @@ const SelectDatePopup = ({
 
           {/* Footer */}
           <FooterButtons
-            initialTime={selectedTime}         // ✅ truyền xuống
-            initialDuration={selectedDuration} // ✅ truyền xuống
+            initialTime={selectedTime}         
+            initialDuration={selectedDuration} 
+            selectedTime={selectedTime}         // ✅ truyền thêm để nút hiển thị đúng
+            selectedDuration={selectedDuration} // ✅ truyền thêm để nút hiển thị đúng
             onRepeatClick={() => console.log("Repeat clicked")}
             onSave={({ time, duration }) => {
               setSelectedTime(time);

@@ -40,16 +40,28 @@ const durationOptions = [
   { value: "2h", label: "2 hours" },
 ];
 
-const FooterButtons = ({ onRepeatClick, onSave, initialTime, initialDuration }) => {
+const FooterButtons = ({
+  onRepeatClick,
+  onSave,
+  initialTime,
+  initialDuration,
+  selectedTime: propTime, // chỉ nhận time từ cha để hiển thị nút
+}) => {
   const [showTimePopup, setShowTimePopup] = useState(false);
   const [showTimeDropdown, setShowTimeDropdown] = useState(false);
   const [showDurationDropdown, setShowDurationDropdown] = useState(false);
 
-  // ✅ Khởi tạo state từ props hoặc lấy nearest quarter hour
-  const [selectedTime, setSelectedTime] = useState(initialTime || getNextQuarterHour());
-  const [selectedDuration, setSelectedDuration] = useState(initialDuration || "none");
+  // ✅ State nội bộ khi mở popup
+  const [selectedTime, setSelectedTime] = useState(
+    initialTime || getNextQuarterHour()
+  );
+  const [selectedDuration, setSelectedDuration] = useState(
+    initialDuration || "none"
+  );
 
-  const [timeOptions, setTimeOptions] = useState(generateTimeOptions(getNextQuarterHour()));
+  const [timeOptions, setTimeOptions] = useState(
+    generateTimeOptions(getNextQuarterHour())
+  );
 
   const timeDropdownRef = useRef(null);
   const durationDropdownRef = useRef(null);
@@ -79,7 +91,8 @@ const FooterButtons = ({ onRepeatClick, onSave, initialTime, initialDuration }) 
   // Tự scroll đến duration đang chọn
   useEffect(() => {
     if (showDurationDropdown && durationDropdownRef.current) {
-      const active = durationDropdownRef.current.querySelector(".active-duration");
+      const active =
+        durationDropdownRef.current.querySelector(".active-duration");
       if (active) {
         active.scrollIntoView({ block: "center", behavior: "smooth" });
       }
@@ -97,18 +110,63 @@ const FooterButtons = ({ onRepeatClick, onSave, initialTime, initialDuration }) 
     setShowTimePopup(false);
   };
 
+  const handleClearTime = (e) => {
+    e.stopPropagation(); // tránh mở popup khi bấm ❌
+    setSelectedTime(null);
+    setSelectedDuration("none");
+    onSave &&
+      onSave({
+        time: null,
+        duration: "none",
+      });
+  };
+
+  // ✅ Label hiển thị trên nút Time (chỉ Time)
+  const getTimeLabel = () => {
+    if (propTime instanceof Date) {
+      return format(propTime, "HH:mm");
+    }
+    return "Time";
+  };
+
   return (
     <div className="date-footer" style={{ position: "relative" }}>
       {/* Nút Time */}
       <button
         type="button"
-        className="date-footer-btn"
+        className="date-footer-btn time-btn-with-clear"
         onClick={() => setShowTimePopup((prev) => !prev)}
       >
-        <span>Time</span>
+        {/* Icon + text gói vào .time-label để căn giữa */}
+        <span className="time-label">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fillRule="evenodd"
+              d="M12 1.75a10.25 10.25 0 1 0 0 20.5 10.25 10.25 0 0 0 0-20.5m0 1.5a8.75 8.75 0 1 1 0 17.5 8.75 8.75 0 0 1 0-17.5m.75 4.5a.75.75 0 0 0-1.5 0v4.69c0 .2.08.39.22.53l3.25 3.25a.75.75 0 0 0 1.06-1.06l-3.03-3.03z"
+            />
+          </svg>
+          <span>{getTimeLabel()}</span>
+        </span>
+
+        {/* Nút ❌ clear */}
+        {propTime instanceof Date && (
+          <span
+            className="clear-time-btn"
+            onClick={handleClearTime}
+            title="Clear time"
+          >
+            ×
+          </span>
+        )}
       </button>
 
-      {/* Popup */}
+      {/* Popup chọn Time + Duration */}
       {showTimePopup && (
         <div className="time-popup">
           {/* Time select custom */}
@@ -130,6 +188,7 @@ const FooterButtons = ({ onRepeatClick, onSave, initialTime, initialDuration }) 
                   <div
                     key={time.getTime()}
                     className={`time-dropdown-item ${
+                      selectedTime &&
                       format(time, "HH:mm") === format(selectedTime, "HH:mm")
                         ? "active-time"
                         : ""
