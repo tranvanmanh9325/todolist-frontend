@@ -14,8 +14,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const [isExiting, setIsExiting] = useState(false);
 
   // State cho Date picker
-  const [selectedDate, setSelectedDate] = useState(null); // Date object
-  const [selectedTime, setSelectedTime] = useState(null); // Date object (giờ phút)
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
   const [selectedDuration, setSelectedDuration] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -31,14 +31,12 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       setType(task.project || 'Type');
       setSelectedDate(task.dueDate ? new Date(task.dueDate) : null);
 
-      // luôn convert time thành Date nếu có
       let parsedTime = null;
       if (task.time) {
         parsedTime = task.time instanceof Date ? task.time : new Date(task.time);
         if (isNaN(parsedTime)) parsedTime = null;
       }
       setSelectedTime(parsedTime);
-
       setSelectedDuration(task.duration || null);
     }
   }, [task]);
@@ -60,7 +58,6 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
 
     let finalDate = selectedDate ? new Date(selectedDate) : null;
 
-    // Nếu có time thì merge vào date
     if (finalDate && selectedTime instanceof Date && !isNaN(selectedTime)) {
       finalDate = setHours(
         setMinutes(finalDate, selectedTime.getMinutes()),
@@ -77,13 +74,12 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       time:
         selectedTime instanceof Date && !isNaN(selectedTime)
           ? selectedTime.toISOString()
-          : null, // ✅ luôn lưu time riêng biệt
+          : null,
       duration: selectedDuration,
     };
 
     onSubmit(taskData);
 
-    // Reset form
     setTitle('');
     setNote('');
     setType('Type');
@@ -111,7 +107,6 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
 
   const isTitleEmpty = !title.trim();
 
-  // ✅ Hàm format dd/mm/yyyy
   const formatDate = (date) => {
     if (!date) return '';
     return `${String(date.getDate()).padStart(2, '0')}/${String(
@@ -119,7 +114,6 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     ).padStart(2, '0')}/${date.getFullYear()}`;
   };
 
-  // ✅ Hàm hiển thị ngày + giờ + duration
   const getDateTimeLabel = () => {
     if (!selectedDate) return 'Date';
 
@@ -170,11 +164,25 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       <div className="task-options">
         <button
           type="button"
-          className="task-option"
+          className={`task-option${selectedDate ? ' has-date' : ''}`}
           ref={dateButtonRef}
           onClick={() => setShowDatePicker(!showDatePicker)}
         >
           📅 <span>{getDateTimeLabel()}</span>
+
+          {selectedDate && (
+            <span
+              className="clear-date-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedDate(null);
+                setSelectedTime(null);
+                setSelectedDuration('none');
+              }}
+            >
+              ✕
+            </span>
+          )}
         </button>
 
         <button type="button" className="task-option">
@@ -190,17 +198,14 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         <SelectDatePopup
           anchorRef={dateButtonRef}
           selectedDate={selectedDate}
-          selectedTime={selectedTime}           // ✅ truyền thêm
-          selectedDuration={selectedDuration}   // ✅ truyền thêm
+          selectedTime={selectedTime}
+          selectedDuration={selectedDuration}
           onChange={({ date, time, duration }) => {
             if (date !== undefined) setSelectedDate(date);
-
-            // ✅ Khi chọn No Date thì reset luôn
             if (date === null) {
               setSelectedTime(null);
               setSelectedDuration('none');
             }
-
             if (time !== undefined) setSelectedTime(time);
             if (duration !== undefined) setSelectedDuration(duration);
           }}
