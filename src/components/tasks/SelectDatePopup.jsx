@@ -266,11 +266,13 @@ const SelectDatePopup = ({
               setSelectedTime(time);
               setSelectedDuration(duration);
 
+              // ✅ Nếu chưa có ngày thì auto chọn hôm nay
+              let finalDate = selectedDate || new Date();
+
               // Nếu có cả date + time thì hợp nhất thành 1 Date object
-              let finalDate = selectedDate;
-              if (selectedDate && time instanceof Date) {
+              if (finalDate && time instanceof Date) {
                 finalDate = setHours(
-                  setMinutes(new Date(selectedDate), time.getMinutes()),
+                  setMinutes(new Date(finalDate), time.getMinutes()),
                   time.getHours()
                 );
               }
