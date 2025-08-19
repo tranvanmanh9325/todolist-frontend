@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
-import "./DateInput.css"; // bạn có thể copy style từ SelectDatePopup.css
+import "./DateInput.css";
 
-// ✅ format dd/mm/yyyy + HH:mm (nếu có)
-const formatFullDateTime = (date, time) => {
+// ✅ format dd/mm/yyyy + HH:mm + duration
+const formatFullDateTime = (date, time, duration) => {
   if (!date) return "";
   const d = date.toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
   });
-  return time instanceof Date && !isNaN(time)
-    ? `${d} ${format(time, "HH:mm")}`
-    : d;
+
+  let result = d;
+  if (time instanceof Date && !isNaN(time)) {
+    result += ` ${format(time, "HH:mm")}`;
+  }
+  if (duration && duration !== "none") {
+    // ví dụ: 30 minutes -> · 30m
+    const shortDuration = duration.replace("minutes", "m").replace("hours", "h");
+    result += ` · ${shortDuration}`;
+  }
+
+  return result;
 };
 
 // ✅ parse input text thành Date
@@ -56,17 +65,25 @@ const parseDateFromInput = (value) => {
   return null;
 };
 
-const DateInput = ({ selectedDate, selectedTime, onChange, onClose }) => {
+const DateInput = ({
+  selectedDate,
+  selectedTime,
+  selectedDuration,
+  onChange,
+  onClose,
+}) => {
   const [inputValue, setInputValue] = useState("");
   const [noResults, setNoResults] = useState(false);
   const [previewDate, setPreviewDate] = useState(null);
 
   // ⏺ Đồng bộ props -> input
   useEffect(() => {
-    setInputValue(formatFullDateTime(selectedDate, selectedTime));
+    setInputValue(
+      formatFullDateTime(selectedDate, selectedTime, selectedDuration)
+    );
     setNoResults(false);
     setPreviewDate(null);
-  }, [selectedDate, selectedTime]);
+  }, [selectedDate, selectedTime, selectedDuration]);
 
   const handleInputChange = (value) => {
     setInputValue(value);
@@ -82,16 +99,17 @@ const DateInput = ({ selectedDate, selectedTime, onChange, onClose }) => {
     }
   };
 
+  const commitDate = (date) => {
+    onChange({ date, time: selectedTime, duration: selectedDuration });
+    setInputValue(formatFullDateTime(date, selectedTime, selectedDuration));
+    setNoResults(false);
+    setPreviewDate(null);
+    onClose();
+  };
+
   const handleInputKeyDown = (e) => {
-    if (e.key !== "Enter") return;
-    if (previewDate) {
-      onChange({ date: previewDate, time: selectedTime });
-      setInputValue(formatFullDateTime(previewDate, selectedTime));
-      setNoResults(false);
-      setPreviewDate(null);
-      onClose();
-    } else {
-      setNoResults(true);
+    if (e.key === "Enter" && previewDate) {
+      commitDate(previewDate);
     }
   };
 
@@ -109,15 +127,7 @@ const DateInput = ({ selectedDate, selectedTime, onChange, onClose }) => {
 
       {/* Preview suggestion */}
       {previewDate && !noResults && (
-        <div
-          className="date-suggestion"
-          onClick={() => {
-            onChange({ date: previewDate, time: selectedTime });
-            setInputValue(formatFullDateTime(previewDate, selectedTime));
-            setPreviewDate(null);
-            onClose();
-          }}
-        >
+        <div className="date-suggestion" onClick={() => commitDate(previewDate)}>
           <svg width="16" height="16" viewBox="0 0 24 24">
             <path
               fill="currentColor"

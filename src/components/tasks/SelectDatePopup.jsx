@@ -72,8 +72,13 @@ const SelectDatePopup = ({
           <DateInput
             selectedDate={selectedDate}
             selectedTime={selectedTime}
-            onChange={({ date, time }) => {
-              onChange({ date, time, duration: selectedDuration });
+            selectedDuration={selectedDuration}   // ✅ truyền duration vào input
+            onChange={({ date, time, duration }) => {
+              onChange({
+                date,
+                time,
+                duration: duration ?? selectedDuration,
+              });
             }}
             onClose={onClose}
           />
@@ -104,15 +109,19 @@ const SelectDatePopup = ({
           <CustomDatePicker
             selectedDate={selectedDate}
             onChange={(date) =>
-              onChange({ date, time: selectedTime, duration: selectedDuration })
+              onChange({
+                date,
+                time: selectedTime,
+                duration: selectedDuration,
+              })
             }
             onClose={onClose}
           />
 
           {/* Footer */}
           <FooterButtons
-            initialTime={selectedTime}           // ✅ truyền xuống
-            initialDuration={selectedDuration}   // ✅ truyền xuống
+            initialTime={selectedTime}         // ✅ truyền xuống
+            initialDuration={selectedDuration} // ✅ truyền xuống
             onRepeatClick={() => console.log("Repeat clicked")}
             onSave={({ time, duration }) => {
               setSelectedTime(time);
