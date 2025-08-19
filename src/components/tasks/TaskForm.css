@@ -54,39 +54,44 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: background-color 0.2s ease;
-  position: relative; /* để chứa nút clear */
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.task-option:hover {
-  background-color: #f0f0f0;
-}
-
-.task-option svg {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-}
-
-/* ✅ Khi có ngày thì thêm style */
+/* Khi có ngày thì thêm style */
 .task-option.has-date {
-  padding-right: 28px; /* chừa khoảng trống cho nút X */
   background-color: #fdfdfd;
   border-color: #bbb;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* khoảng cách giữa ngày và nút X */
+}
+
+/* 🎨 Màu chữ theo ngày */
+.task-option.date-today span {
+  color: #dc4c3e; /* đỏ tươi hôm nay */
+}
+
+.task-option.date-tomorrow span {
+  color: #ff9800; /* cam cho ngày mai */
+}
+
+.task-option.date-overdue span {
+  color: #e53935; /* đỏ đậm cho quá hạn */
+}
+
+.task-option.date-upcoming span {
+  color: #000000; /* đen cho các ngày khác */
 }
 
 /* Nút ❌ clear date */
 .clear-date-btn {
-  position: absolute;
-  right: 6px;
-  top: 50%;
-  transform: translateY(-50%);
   font-size: 12px;
   color: #888;
   cursor: pointer;
   padding: 2px;
   border-radius: 50%;
   transition: background-color 0.2s, color 0.2s;
+  flex-shrink: 0; /* tránh bị ép nhỏ */
 }
 
 .clear-date-btn:hover {

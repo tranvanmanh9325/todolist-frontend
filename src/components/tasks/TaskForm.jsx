@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { format, setHours, setMinutes } from 'date-fns';
 import SelectDatePopup from './SelectDatePopup';
+import { getDateColorClass } from '../../utils/dateColors';   // ✅ import
 import './TaskForm.css';
 
 const TaskForm = ({ onCancel, onSubmit, task }) => {
@@ -13,7 +14,6 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
 
-  // State cho Date picker
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedDuration, setSelectedDuration] = useState(null);
@@ -57,7 +57,6 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     if (!title.trim()) return;
 
     let finalDate = selectedDate ? new Date(selectedDate) : null;
-
     if (finalDate && selectedTime instanceof Date && !isNaN(selectedTime)) {
       finalDate = setHours(
         setMinutes(finalDate, selectedTime.getMinutes()),
@@ -164,7 +163,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       <div className="task-options">
         <button
           type="button"
-          className={`task-option${selectedDate ? ' has-date' : ''}`}
+          className={`task-option ${selectedDate ? getDateColorClass(selectedDate) : ''}`}
           ref={dateButtonRef}
           onClick={() => setShowDatePicker(!showDatePicker)}
         >
