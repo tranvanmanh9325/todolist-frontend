@@ -28,9 +28,6 @@ const ReminderPopup = ({ anchorRef, onClose, onSave }) => {
       {/* Header */}
       <div className="reminder-header">
         <span className="reminder-title">Reminders</span>
-        <button className="close-btn" onClick={onClose}>
-          ✕
-        </button>
       </div>
 
       {/* Content */}

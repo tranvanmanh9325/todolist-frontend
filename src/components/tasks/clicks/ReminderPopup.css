@@ -13,30 +13,16 @@
 /* ---------------- Header ---------------- */
 .reminder-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start; /* căn trái */
   align-items: center;
   margin-bottom: 10px;
+  padding-left: 2px; /* tạo khoảng cách nhỏ với mép trái */
 }
 
 .reminder-title {
   font-weight: 600;
   font-size: 14px;
   color: #222;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 14px;
-  color: #666;
-  cursor: pointer;
-  padding: 2px;
-  border-radius: 4px;
-  transition: background 0.2s, color 0.2s;
-}
-.close-btn:hover {
-  background: #f2f2f2;
-  color: #000;
 }
 
 /* ---------------- Content ---------------- */
