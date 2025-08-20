@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
-import { format, setHours, setMinutes } from 'date-fns';
-import SelectDatePopup from './SelectDatePopup';
-import PriorityPopup from './clicks/PriorityPopup';
-import ReminderPopup from './clicks/ReminderPopup'; // ✅ popup reminders
-import { getDateColorClass } from '../../utils/dateColors';
+import { setHours, setMinutes } from 'date-fns'; // chỉ import những gì dùng
+import TaskOptions from './TaskOptions';
 import './TaskForm.css';
 
 const TaskForm = ({ onCancel, onSubmit, task }) => {
@@ -20,42 +17,20 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedDuration, setSelectedDuration] = useState(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const [priority, setPriority] = useState(null);
-  const [showPriorityPopup, setShowPriorityPopup] = useState(false);
+  const [selectedReminder, setSelectedReminder] = useState('');
 
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showPriorityPopup, setShowPriorityPopup] = useState(false);
   const [showReminderPopup, setShowReminderPopup] = useState(false);
   const [reminderPos, setReminderPos] = useState({ top: 0, left: 0 });
-  const [selectedReminder, setSelectedReminder] = useState(""); // ✅ reminder state
 
+  const typeRef = useRef();
+  const dateButtonRef = useRef();
   const priorityButtonRef = useRef();
   const reminderButtonRef = useRef();
-  const typeRef = useRef();
   const titleRef = useRef();
-  const dateButtonRef = useRef();
-
-  // ✅ map priority -> color
-  const getPriorityColor = (level) => {
-    switch (level) {
-      case 1: return 'red';
-      case 2: return 'orange';
-      case 3: return 'blue';
-      case 4: return 'gray';
-      default: return '#ccc';
-    }
-  };
-
-  // ✅ map reminder value -> text
-  const formatReminderLabel = (value) => {
-    switch (value) {
-      case "0": return "At time of event";
-      case "30": return "30 minutes before";
-      case "60": return "1 hour before";
-      case "120": return "2 hours before";
-      default: return null;
-    }
-  };
 
   // Load dữ liệu khi edit
   useEffect(() => {
@@ -64,40 +39,14 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       setNote(task.note || '');
       setType(task.project || 'Type');
       setSelectedDate(task.dueDate ? new Date(task.dueDate) : null);
-
-      let parsedTime = null;
-      if (task.time) {
-        parsedTime = task.time instanceof Date ? task.time : new Date(task.time);
-        if (isNaN(parsedTime)) parsedTime = null;
-      }
+      let parsedTime = task.time ? new Date(task.time) : null;
+      if (isNaN(parsedTime)) parsedTime = null;
       setSelectedTime(parsedTime);
       setSelectedDuration(task.duration || null);
       setPriority(task.priority || null);
-      setSelectedReminder(task.reminder || ""); // ✅ load reminder khi edit
+      setSelectedReminder(task.reminder || '');
     }
   }, [task]);
-
-  // Đóng dropdown khi click ngoài
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (
-        typeRef.current &&
-        !typeRef.current.contains(e.target) &&
-        !e.target.closest('.project-dropdown')
-      ) {
-        setShowTypeDropdown(false);
-      }
-      if (
-        reminderButtonRef.current &&
-        !reminderButtonRef.current.contains(e.target) &&
-        !e.target.closest('.reminder-popup')
-      ) {
-        setShowReminderPopup(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -122,8 +71,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           ? selectedTime.toISOString()
           : null,
       duration: selectedDuration,
-      priority: priority,
-      reminder: selectedReminder || null, // ✅ lưu reminder vào task
+      priority,
+      reminder: selectedReminder || null,
     };
 
     onSubmit(taskData);
@@ -136,14 +85,12 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     setSelectedTime(null);
     setSelectedDuration(null);
     setPriority(null);
-    setSelectedReminder("");
+    setSelectedReminder('');
   };
 
   const handleCancelClick = () => {
     setIsExiting(true);
-    setTimeout(() => {
-      onCancel();
-    }, 180);
+    setTimeout(() => onCancel(), 180);
   };
 
   const handleTypeSelect = (t) => {
@@ -159,40 +106,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     setShowTypeDropdown(!showTypeDropdown);
   };
 
-  const toggleReminderPopup = () => {
-    if (!showReminderPopup && reminderButtonRef.current) {
-      const rect = reminderButtonRef.current.getBoundingClientRect();
-      setReminderPos({ top: rect.bottom + 4, left: rect.left });
-    }
-    setShowReminderPopup(!showReminderPopup);
-  };
-
-  const handleTextareaInput = (e) => {
-    e.target.style.height = 'auto';
-    e.target.style.height = e.target.scrollHeight + 'px';
-  };
-
   const isTitleEmpty = !title.trim();
-
-  const formatDate = (date) => {
-    if (!date) return '';
-    return `${String(date.getDate()).padStart(2, '0')}/${String(
-      date.getMonth() + 1
-    ).padStart(2, '0')}/${date.getFullYear()}`;
-  };
-
-  const getDateTimeLabel = () => {
-    if (!selectedDate) return 'Date';
-
-    let label = formatDate(selectedDate);
-    if (selectedTime instanceof Date && !isNaN(selectedTime)) {
-      label += ` ${format(selectedTime, 'HH:mm')}`;
-    }
-    if (selectedDuration && selectedDuration !== 'none') {
-      label += ` (${selectedDuration})`;
-    }
-    return label;
-  };
 
   return (
     <Motion.form
@@ -202,7 +116,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       animate={isExiting ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
       transition={{ duration: 0.18, ease: 'easeOut' }}
     >
-      {/* Tiêu đề task */}
+      {/* Title */}
       <div className="task-field">
         <textarea
           ref={titleRef}
@@ -210,13 +124,12 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           className="task-title-input"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          onInput={handleTextareaInput}
           rows={1}
           autoFocus
         />
       </div>
 
-      {/* Mô tả */}
+      {/* Note */}
       <div className="task-field">
         <input
           type="text"
@@ -227,140 +140,32 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         />
       </div>
 
-      {/* Các nút tùy chọn */}
-      <div className="task-options">
-        {/* Date */}
-        <button
-          type="button"
-          className={`task-option ${selectedDate ? getDateColorClass(selectedDate) : ''}`}
-          ref={dateButtonRef}
-          onClick={() => setShowDatePicker(!showDatePicker)}
-        >
-          📅 <span>{getDateTimeLabel()}</span>
+      {/* Task Options */}
+      <TaskOptions
+        dateButtonRef={dateButtonRef}
+        priorityButtonRef={priorityButtonRef}
+        reminderButtonRef={reminderButtonRef}
+        selectedDate={selectedDate}
+        selectedTime={selectedTime}
+        selectedDuration={selectedDuration}
+        priority={priority}
+        selectedReminder={selectedReminder}
+        showDatePicker={showDatePicker}
+        setShowDatePicker={setShowDatePicker}
+        showPriorityPopup={showPriorityPopup}
+        setShowPriorityPopup={setShowPriorityPopup}
+        showReminderPopup={showReminderPopup}
+        setShowReminderPopup={setShowReminderPopup}
+        reminderPos={reminderPos}
+        setReminderPos={setReminderPos}
+        setSelectedDate={setSelectedDate}
+        setSelectedTime={setSelectedTime}
+        setSelectedDuration={setSelectedDuration}
+        setPriority={setPriority}
+        setSelectedReminder={setSelectedReminder}
+      />
 
-          {selectedDate && (
-            <span
-              className="clear-date-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedDate(null);
-                setSelectedTime(null);
-                setSelectedDuration('none');
-              }}
-            >
-              ✕
-            </span>
-          )}
-        </button>
-
-        {/* Priority */}
-        <button
-          type="button"
-          className="task-option"
-          ref={priorityButtonRef}
-          onClick={() => setShowPriorityPopup(!showPriorityPopup)}
-        >
-          <span
-            style={{ color: getPriorityColor(priority) }}
-            className="priority-flag"
-          >
-            ⚑
-          </span>
-          <span>{priority ? `Priority ${priority}` : 'Priority'}</span>
-
-          {priority && (
-            <span
-              className="clear-date-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                setPriority(null);
-              }}
-            >
-              ✕
-            </span>
-          )}
-        </button>
-
-        {/* Reminders */}
-        <button
-          type="button"
-          className="task-option"
-          ref={reminderButtonRef}
-          onClick={toggleReminderPopup}
-        >
-          ⏰ <span>{selectedReminder ? formatReminderLabel(selectedReminder) : "Reminders"}</span>
-          {selectedReminder && (
-            <span
-              className="clear-date-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedReminder("");
-              }}
-            >
-              ✕
-            </span>
-          )}
-        </button>
-      </div>
-
-      {/* Popup chọn ngày */}
-      {showDatePicker && (
-        <SelectDatePopup
-          anchorRef={dateButtonRef}
-          selectedDate={selectedDate}
-          selectedTime={selectedTime}
-          selectedDuration={selectedDuration}
-          onChange={({ date, time, duration }) => {
-            if (date !== undefined) setSelectedDate(date);
-            if (date === null) {
-              setSelectedTime(null);
-              setSelectedDuration('none');
-            }
-            if (time !== undefined) setSelectedTime(time);
-            if (duration !== undefined) setSelectedDuration(duration);
-          }}
-          onClose={() => setShowDatePicker(false)}
-        />
-      )}
-
-      {/* Popup chọn Priority */}
-      {showPriorityPopup && (
-        <PriorityPopup
-          anchorRef={priorityButtonRef}
-          selected={priority}
-          onSelect={setPriority}
-          onClose={() => setShowPriorityPopup(false)}
-        />
-      )}
-
-      {/* Popup chọn Reminders */}
-      <AnimatePresence>
-        {showReminderPopup && (
-          <Motion.div
-            style={{
-              position: "absolute",
-              top: reminderPos.top,
-              left: reminderPos.left,
-              zIndex: 4000,
-            }}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 6 }}
-            transition={{ duration: 0.2 }}
-          >
-            <ReminderPopup
-              selectedReminder={selectedReminder}
-              setSelectedReminder={setSelectedReminder}
-              selectedDate={selectedDate}
-              selectedTime={selectedTime}
-              onSave={(reminder) => setSelectedReminder(reminder)}
-              onClose={() => setShowReminderPopup(false)}
-            />
-          </Motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Phần chọn loại và nút hành động */}
+      {/* Task bottom */}
       <div className="task-bottom">
         <div className="task-type" ref={typeRef} onClick={toggleTypeDropdown}>
           📁 <span>{type}</span>
@@ -368,11 +173,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         </div>
 
         <div className="task-actions">
-          <button
-            type="button"
-            className="cancel-btn"
-            onClick={handleCancelClick}
-          >
+          <button type="button" className="cancel-btn" onClick={handleCancelClick}>
             Cancel
           </button>
           <button
@@ -385,7 +186,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         </div>
       </div>
 
-      {/* Dropdown dạng overlay */}
+      {/* Dropdown */}
       <AnimatePresence>
         {showTypeDropdown && (
           <Motion.div

@@ -37,94 +37,6 @@
   font-family: inherit;
 }
 
-/* ---------------- Options ---------------- */
-.task-options {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.task-option {
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #fafafa;
-  font-size: 13px;
-  color: #666; /* ✅ chữ mặc định màu xám nhạt */
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.task-option span {
-  color: #666; /* ✅ luôn đảm bảo chữ con cũng màu xám */
-}
-
-.task-option:hover {
-  background-color: #f2f2f2;
-}
-
-/* Khi có date hoặc priority thì nổi bật hơn */
-.task-option.has-date,
-.task-option.has-priority {
-  background-color: #fdfdfd;
-  border-color: #bbb;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* ---------------- Date colors ---------------- */
-.task-option.date-today span {
-  color: #dc4c3e;
-}
-.task-option.date-tomorrow span {
-  color: #ff9800;
-}
-.task-option.date-overdue span {
-  color: #e53935;
-}
-.task-option.date-upcoming span {
-  color: #000;
-}
-
-/* ---------------- Clear button ---------------- */
-.clear-date-btn {
-  font-size: 12px;
-  color: #888;
-  cursor: pointer;
-  padding: 2px;
-  border-radius: 50%;
-  transition: background-color 0.2s, color 0.2s;
-  flex-shrink: 0;
-}
-.clear-date-btn:hover {
-  background-color: #eee;
-  color: #333;
-}
-
-/* ---------------- Priority ---------------- */
-.priority-flag {
-  font-size: 14px;
-  transition: color 0.2s ease;
-}
-
-/* Text cũng đổi màu khi có priority */
-.task-option.priority-red span {
-  color: red;
-}
-.task-option.priority-orange span {
-  color: orange;
-}
-.task-option.priority-blue span {
-  color: blue;
-}
-.task-option.priority-gray span {
-  color: gray;
-}
-
 /* ---------------- Bottom actions ---------------- */
 .task-bottom {
   display: flex;
@@ -135,7 +47,7 @@
   gap: 12px;
 }
 
-/* ✅ Type cũng xám nhạt */
+/* Type */
 .task-type {
   font-size: 14px;
   color: #666;
@@ -179,7 +91,7 @@
   padding: 8px 16px;
   cursor: pointer;
   font-size: 14px;
-  color: #666; /* ✅ item dropdown cũng xám nhạt */
+  color: #666;
   transition: background-color 0.2s ease;
   display: flex;
   align-items: center;
