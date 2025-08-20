@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { format, setHours, setMinutes } from 'date-fns';
 import SelectDatePopup from './SelectDatePopup';
+import PriorityPopup from './clicks/PriorityPopup'; // ✅ Thêm popup Priority
 import { getDateColorClass } from '../../utils/dateColors';
 import './TaskForm.css';
 
@@ -19,6 +20,10 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedDuration, setSelectedDuration] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const [priority, setPriority] = useState(null); // ✅ Priority state
+  const [showPriorityPopup, setShowPriorityPopup] = useState(false);
+  const priorityButtonRef = useRef();
 
   const typeRef = useRef();
   const titleRef = useRef();
@@ -39,6 +44,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       }
       setSelectedTime(parsedTime);
       setSelectedDuration(task.duration || null);
+      setPriority(task.priority || null); // ✅ Load priority khi edit
     }
   }, [task]);
 
@@ -80,6 +86,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           ? selectedTime.toISOString()
           : null,
       duration: selectedDuration,
+      priority: priority, // ✅ Lưu priority vào task
     };
 
     onSubmit(taskData);
@@ -90,6 +97,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     setSelectedDate(null);
     setSelectedTime(null);
     setSelectedDuration(null);
+    setPriority(null);
   };
 
   const handleCancelClick = () => {
@@ -174,6 +182,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
 
       {/* Các nút tùy chọn */}
       <div className="task-options">
+        {/* Date */}
         <button
           type="button"
           className={`task-option ${selectedDate ? getDateColorClass(selectedDate) : ''}`}
@@ -197,9 +206,17 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           )}
         </button>
 
-        <button type="button" className="task-option">
-          🚩 <span>Priority</span>
+        {/* Priority */}
+        <button
+          type="button"
+          className="task-option"
+          ref={priorityButtonRef}
+          onClick={() => setShowPriorityPopup(!showPriorityPopup)}
+        >
+          🚩 <span>{priority ? `Priority ${priority}` : 'Priority'}</span>
         </button>
+
+        {/* Reminders */}
         <button type="button" className="task-option">
           ⏰ <span>Reminders</span>
         </button>
@@ -222,6 +239,16 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
             if (duration !== undefined) setSelectedDuration(duration);
           }}
           onClose={() => setShowDatePicker(false)}
+        />
+      )}
+
+      {/* Popup chọn Priority */}
+      {showPriorityPopup && (
+        <PriorityPopup
+          anchorRef={priorityButtonRef}
+          selected={priority}
+          onSelect={setPriority}
+          onClose={() => setShowPriorityPopup(false)}
         />
       )}
 
