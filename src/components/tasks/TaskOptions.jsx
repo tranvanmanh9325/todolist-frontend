@@ -166,7 +166,8 @@ const TaskOptions = ({
       <AnimatePresence>
         {showReminderPopup && (
           <Motion.div
-            style={{ position:"absolute", top:reminderPos.top, left:reminderPos.left, zIndex:4000 }}
+            className="task-reminder-wrapper"  // ✅ dùng class wrapper riêng
+            style={{ top:reminderPos.top, left:reminderPos.left }}
             initial={{ opacity:0, y:6 }}
             animate={{ opacity:1, y:0 }}
             exit={{ opacity:0, y:6 }}

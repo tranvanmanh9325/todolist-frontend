@@ -1,19 +1,35 @@
+/* ---------------- Popup base ---------------- */
 .reminder-popup {
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   padding: 12px 16px;
-  width: 260px;
+  min-height: 140px;
+  box-sizing: border-box;
   font-family: inherit;
   position: absolute;
   z-index: 4000;
   animation: fadeIn 0.2s ease;
+
+  display: flex;
+  flex-direction: column; /* header - content - footer */
+  justify-content: space-between;
+}
+
+/* 👇 chế độ chưa có ngày/giờ */
+.reminder-popup.info-mode {
+  width: 290px;
+}
+
+/* 👇 chế độ có options */
+.reminder-popup.option-mode {
+  width: 230px;
 }
 
 /* ---------------- Header ---------------- */
 .reminder-header {
   display: flex;
-  justify-content: flex-start; /* căn trái */
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: 10px;
   padding-left: 2px;
@@ -30,12 +46,12 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex: 1; /* chiếm khoảng giữa */
 }
 
 .reminder-option {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   font-size: 13px;
   color: #333;
   cursor: pointer;
@@ -53,12 +69,19 @@
   display: none;
 }
 
+/* Label co dãn, text không đẩy popup */
 .reminder-label {
   flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* Checkmark ✔ đỏ */
+/* Checkmark ✔ giữ chỗ cố định */
 .checkmark {
+  flex-shrink: 0;
+  width: 16px;
+  text-align: center;
   color: #dc4c3e;
   font-size: 14px;
   margin-left: 8px;
@@ -78,6 +101,7 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  margin-top: 10px;
 }
 
 .save-btn {
@@ -117,12 +141,13 @@
   padding: 6px 2px;
   line-height: 1.4;
   animation: slideIn 0.25s ease;
+  flex: 1; /* chiếm giữa */
 }
 
 .reminder-info .info-icon {
   flex-shrink: 0;
   margin-top: 2px;
-  color: inherit; /* ✅ xanh dương nổi bật */
+  color: inherit;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -136,6 +161,7 @@
 
 .reminder-info .info-text {
   flex: 1;
+  word-wrap: break-word;
 }
 
 /* ---------------- Animation ---------------- */
