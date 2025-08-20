@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { format, setHours, setMinutes } from 'date-fns';
 import SelectDatePopup from './SelectDatePopup';
-import { getDateColorClass } from '../../utils/dateColors';   // ✅ import
+import { getDateColorClass } from '../../utils/dateColors';
 import './TaskForm.css';
 
 const TaskForm = ({ onCancel, onSubmit, task }) => {
@@ -12,6 +12,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const [note, setNote] = useState('');
   const [type, setType] = useState('Type');
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const [isExiting, setIsExiting] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState(null);
@@ -44,7 +45,11 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   // Đóng dropdown khi click ngoài
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (typeRef.current && !typeRef.current.contains(e.target)) {
+      if (
+        typeRef.current &&
+        !typeRef.current.contains(e.target) &&
+        !e.target.closest('.project-dropdown')
+      ) {
         setShowTypeDropdown(false);
       }
     };
@@ -97,6 +102,14 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const handleTypeSelect = (t) => {
     setType(t);
     setShowTypeDropdown(false);
+  };
+
+  const toggleTypeDropdown = () => {
+    if (!showTypeDropdown && typeRef.current) {
+      const rect = typeRef.current.getBoundingClientRect();
+      setDropdownPos({ top: rect.bottom + 4, left: rect.left });
+    }
+    setShowTypeDropdown(!showTypeDropdown);
   };
 
   const handleTextareaInput = (e) => {
@@ -214,35 +227,9 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
 
       {/* Phần chọn loại và nút hành động */}
       <div className="task-bottom">
-        <div
-          className="task-type"
-          ref={typeRef}
-          onClick={() => setShowTypeDropdown(!showTypeDropdown)}
-        >
+        <div className="task-type" ref={typeRef} onClick={toggleTypeDropdown}>
           📁 <span>{type}</span>
           <span className="dropdown-arrow">▾</span>
-
-          <AnimatePresence>
-            {showTypeDropdown && (
-              <Motion.div
-                className="project-dropdown"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 6 }}
-                transition={{ duration: 0.2 }}
-              >
-                {['Personal', 'Study', 'Work'].map((t) => (
-                  <div
-                    key={t}
-                    className="project-dropdown-item"
-                    onClick={() => handleTypeSelect(t)}
-                  >
-                    {t}
-                  </div>
-                ))}
-              </Motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
         <div className="task-actions">
@@ -262,6 +249,30 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           </button>
         </div>
       </div>
+
+      {/* Dropdown dạng overlay */}
+      <AnimatePresence>
+        {showTypeDropdown && (
+          <Motion.div
+            className="project-dropdown"
+            style={{ top: dropdownPos.top, left: dropdownPos.left }}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.2 }}
+          >
+            {['Personal', 'Study', 'Work'].map((t) => (
+              <div
+                key={t}
+                className="project-dropdown-item"
+                onClick={() => handleTypeSelect(t)}
+              >
+                {t}
+              </div>
+            ))}
+          </Motion.div>
+        )}
+      </AnimatePresence>
     </Motion.form>
   );
 };

@@ -131,16 +131,14 @@
   color: #999;
 }
 
+/* ✅ Dropdown dạng overlay nổi trên cùng */
 .project-dropdown {
-  position: absolute;
-  top: 110%;
-  left: 0;
+  position: fixed; /* thay absolute -> fixed để không bị cuộn */
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 4px;
-  z-index: 20;
+  z-index: 4000; /* cao hơn overlay */
   width: max-content;
   min-width: 140px;
   overflow: hidden;
@@ -238,10 +236,5 @@ button:disabled {
   .task-actions {
     width: 100%;
     justify-content: flex-end;
-  }
-
-  .project-dropdown {
-    left: unset;
-    right: 0;
   }
 }

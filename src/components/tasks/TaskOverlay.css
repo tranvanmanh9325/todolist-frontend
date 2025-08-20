@@ -1,20 +1,46 @@
-.overlay-content {
+/* Nền mờ phủ toàn màn hình */
+.overlay-backdrop {
   position: fixed;
-  top: 15%;
-  left: 40%;
-  transform: translate(-50%, -50%);
-  background: transparent; /* Không nền */
-  border-radius: 12px;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.35); /* nền mờ */
+  display: flex;
+  justify-content: center;
+  align-items: center; /* căn giữa dọc */
+  z-index: 2999; /* dưới overlay-content */
+  padding: 16px; /* khoảng cách trên mobile, tránh sát mép */
+  box-sizing: border-box;
+}
+
+/* Wrapper popup (trong suốt, chỉ để căn vị trí) */
+.overlay-content {
+  background: transparent; /* ✅ không nền */
+  border-radius: 0;        /* ✅ bỏ bo góc */
   padding: 0;
   width: 100%;
   max-width: 520px;
-  box-shadow: none; /* Bỏ shadow */
+  box-shadow: none;        /* ✅ bỏ shadow */
   z-index: 3000;
+  animation: popupFadeIn 0.2s ease-out;
 }
 
+/* Hiệu ứng mở popup */
+@keyframes popupFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Responsive cho mobile */
 @media (max-width: 600px) {
   .overlay-content {
     width: 95%;
-    border-radius: 8px;
   }
 }

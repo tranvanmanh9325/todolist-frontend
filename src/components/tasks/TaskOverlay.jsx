@@ -22,21 +22,32 @@ const TaskOverlay = () => {
   };
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
       {showOverlayForm && (
+        // ✅ Nền mờ bao phủ toàn màn hình
         <Motion.div
-          key="overlay-content"
-          className="overlay-content"
-          initial={{ opacity: 0, scale: 0.98, y: -8 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.98, y: -8 }}
-          transition={{ duration: 0.18, ease: 'easeOut' }}
+          className="overlay-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={closeOverlayForm} // ✅ click ngoài thì đóng
         >
-          <TaskForm
-            task={editTask || null}
-            onCancel={handleCancel}
-            onSubmit={handleSubmit}
-          />
+          <Motion.div
+            key="overlay-content"
+            className="overlay-content"
+            initial={{ opacity: 0, scale: 0.98, y: -8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.98, y: -8 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            onClick={(e) => e.stopPropagation()} // ✅ chặn click bên trong form
+          >
+            <TaskForm
+              task={editTask || null}
+              onCancel={handleCancel}
+              onSubmit={handleSubmit}
+            />
+          </Motion.div>
         </Motion.div>
       )}
     </AnimatePresence>
