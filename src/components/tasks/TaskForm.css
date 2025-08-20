@@ -37,6 +37,7 @@
   font-family: inherit;
 }
 
+/* ---------------- Options ---------------- */
 .task-options {
   display: flex;
   gap: 10px;
@@ -61,33 +62,39 @@
   background-color: #f2f2f2;
 }
 
-/* Khi có ngày thì thêm style */
+/* Khi có date */
 .task-option.has-date {
   background-color: #fdfdfd;
   border-color: #bbb;
   display: flex;
   align-items: center;
-  gap: 8px; /* khoảng cách giữa ngày và nút X */
+  gap: 8px;
 }
 
-/* 🎨 Màu chữ theo ngày */
+/* Khi có priority */
+.task-option.has-priority {
+  background-color: #fdfdfd;
+  border-color: #bbb;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------------- Date colors ---------------- */
 .task-option.date-today span {
-  color: #dc4c3e; /* đỏ tươi hôm nay */
+  color: #dc4c3e; /* hôm nay */
 }
-
 .task-option.date-tomorrow span {
-  color: #ff9800; /* cam cho ngày mai */
+  color: #ff9800; /* ngày mai */
 }
-
 .task-option.date-overdue span {
-  color: #e53935; /* đỏ đậm cho quá hạn */
+  color: #e53935; /* quá hạn */
 }
-
 .task-option.date-upcoming span {
-  color: #000000; /* đen cho các ngày khác */
+  color: #000000; /* các ngày khác */
 }
 
-/* Nút ❌ clear date */
+/* ---------------- Clear button (Date & Priority) ---------------- */
 .clear-date-btn {
   font-size: 12px;
   color: #888;
@@ -95,7 +102,7 @@
   padding: 2px;
   border-radius: 50%;
   transition: background-color 0.2s, color 0.2s;
-  flex-shrink: 0; /* tránh bị ép nhỏ */
+  flex-shrink: 0;
 }
 
 .clear-date-btn:hover {
@@ -103,13 +110,13 @@
   color: #333;
 }
 
-/* ✅ Priority styles */
+/* ---------------- Priority ---------------- */
 .priority-flag {
   font-size: 14px;
   transition: color 0.2s ease;
 }
 
-/* Nếu muốn text cũng đổi màu theo priority */
+/* Text cũng đổi màu khi có priority */
 .task-option.priority-red span {
   color: red;
 }
@@ -123,6 +130,7 @@
   color: gray;
 }
 
+/* ---------------- Bottom actions ---------------- */
 .task-bottom {
   display: flex;
   justify-content: space-between;
@@ -155,7 +163,7 @@
   color: #999;
 }
 
-/* ✅ Dropdown dạng overlay nổi trên cùng */
+/* ---------------- Project dropdown ---------------- */
 .project-dropdown {
   position: fixed;
   background-color: #fff;
@@ -184,6 +192,7 @@
   background-color: #f5f5f5;
 }
 
+/* ---------------- Buttons ---------------- */
 .task-actions {
   display: flex;
   gap: 10px;
@@ -220,7 +229,7 @@
   background-color: #c03b2f;
 }
 
-/* ✅ Disabled state cho Add task */
+/* Disabled state */
 .submit-btn.disabled {
   background-color: #f9c7c1;
   color: white;
@@ -228,12 +237,11 @@
   cursor: not-allowed;
 }
 
-/* ✅ Đảm bảo nút bị disabled có icon chuột "cấm" */
 button:disabled {
   cursor: not-allowed !important;
 }
 
-/* Animation for dropdown */
+/* ---------------- Animation ---------------- */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -245,7 +253,7 @@ button:disabled {
   }
 }
 
-/* Responsive */
+/* ---------------- Responsive ---------------- */
 @media (max-width: 768px) {
   .task-form {
     margin: 16px;

@@ -41,7 +41,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       case 4:
         return 'gray';
       default:
-        return '#666';
+        return '#ccc'; // màu trắng/xám nhạt khi chưa chọn
     }
   };
 
@@ -55,8 +55,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
 
       let parsedTime = null;
       if (task.time) {
-        parsedTime =
-          task.time instanceof Date ? task.time : new Date(task.time);
+        parsedTime = task.time instanceof Date ? task.time : new Date(task.time);
         if (isNaN(parsedTime)) parsedTime = null;
       }
       setSelectedTime(parsedTime);
@@ -77,8 +76,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () =>
-      document.removeEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleSubmit = (e) => {
@@ -203,9 +201,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         {/* Date */}
         <button
           type="button"
-          className={`task-option ${
-            selectedDate ? getDateColorClass(selectedDate) : ''
-          }`}
+          className={`task-option ${selectedDate ? getDateColorClass(selectedDate) : ''}`}
           ref={dateButtonRef}
           onClick={() => setShowDatePicker(!showDatePicker)}
         >
@@ -240,6 +236,18 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
             ⚑
           </span>
           <span>{priority ? `Priority ${priority}` : 'Priority'}</span>
+
+          {priority && (
+            <span
+              className="clear-date-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                setPriority(null);
+              }}
+            >
+              ✕
+            </span>
+          )}
         </button>
 
         {/* Reminders */}
