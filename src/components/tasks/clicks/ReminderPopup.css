@@ -91,8 +91,20 @@
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
+
 .save-btn:hover {
   background-color: #c03b2f;
+}
+
+/* Nút Save bị disable */
+.save-btn:disabled {
+  background-color: #f4b5b0; /* hồng nhạt */
+  cursor: not-allowed;
+  opacity: 1; /* giữ màu rõ ràng */
+}
+
+.save-btn:disabled:hover {
+  background-color: #f4b5b0; /* không đổi màu khi hover */
 }
 
 /* ---------------- Animation ---------------- */

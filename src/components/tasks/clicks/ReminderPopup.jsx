@@ -3,7 +3,7 @@ import "./ReminderPopup.css";
 
 const ReminderPopup = ({ anchorRef, onSave }) => {
   const [position, setPosition] = useState({ top: 0, left: 0 });
-  const [selectedReminder, setSelectedReminder] = useState("0"); // giá trị mặc định
+  const [selectedReminder, setSelectedReminder] = useState(""); // mặc định chưa chọn gì
 
   // Tính toán vị trí popup ngay dưới nút Reminders
   useEffect(() => {
@@ -17,8 +17,17 @@ const ReminderPopup = ({ anchorRef, onSave }) => {
   }, [anchorRef]);
 
   const handleSave = () => {
-    onSave(selectedReminder);
+    if (selectedReminder) {
+      onSave(selectedReminder);
+    }
   };
+
+  const options = [
+    { value: "0", label: "0 minutes before" },
+    { value: "30", label: "30 minutes before" },
+    { value: "60", label: "1 hour before" },
+    { value: "120", label: "2 hours before" },
+  ];
 
   return (
     <div
@@ -37,60 +46,32 @@ const ReminderPopup = ({ anchorRef, onSave }) => {
 
       {/* Content */}
       <div className="reminder-content">
-        <label className="reminder-option">
-          <input
-            type="radio"
-            name="reminder"
-            value="0"
-            checked={selectedReminder === "0"}
-            onChange={(e) => setSelectedReminder(e.target.value)}
-          />
-          <span className="reminder-label">0 minutes before</span>
-          {selectedReminder === "0" && <span className="checkmark">✔</span>}
-        </label>
-
-        <label className="reminder-option">
-          <input
-            type="radio"
-            name="reminder"
-            value="30"
-            checked={selectedReminder === "30"}
-            onChange={(e) => setSelectedReminder(e.target.value)}
-          />
-          <span className="reminder-label">30 minutes before</span>
-          {selectedReminder === "30" && <span className="checkmark">✔</span>}
-        </label>
-
-        <label className="reminder-option">
-          <input
-            type="radio"
-            name="reminder"
-            value="60"
-            checked={selectedReminder === "60"}
-            onChange={(e) => setSelectedReminder(e.target.value)}
-          />
-          <span className="reminder-label">1 hour before</span>
-          {selectedReminder === "60" && <span className="checkmark">✔</span>}
-        </label>
-
-        <label className="reminder-option">
-          <input
-            type="radio"
-            name="reminder"
-            value="120"
-            checked={selectedReminder === "120"}
-            onChange={(e) => setSelectedReminder(e.target.value)}
-          />
-          <span className="reminder-label">2 hours before</span>
-          {selectedReminder === "120" && <span className="checkmark">✔</span>}
-        </label>
+        {options.map((option) => (
+          <label key={option.value} className="reminder-option">
+            <input
+              type="radio"
+              name="reminder"
+              value={option.value}
+              checked={selectedReminder === option.value}
+              onChange={(e) => setSelectedReminder(e.target.value)}
+            />
+            <span className="reminder-label">{option.label}</span>
+            {selectedReminder === option.value && (
+              <span className="checkmark">✔</span>
+            )}
+          </label>
+        ))}
       </div>
 
       <hr className="divider" />
 
       {/* Footer */}
       <div className="reminder-footer">
-        <button className="save-btn" onClick={handleSave}>
+        <button
+          className="save-btn"
+          onClick={handleSave}
+          disabled={!selectedReminder} // disable khi chưa chọn
+        >
           Save
         </button>
       </div>
