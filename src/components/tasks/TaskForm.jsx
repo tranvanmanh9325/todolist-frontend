@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { format, setHours, setMinutes } from 'date-fns';
 import SelectDatePopup from './SelectDatePopup';
-import PriorityPopup from './clicks/PriorityPopup'; // ✅ Thêm popup Priority
+import PriorityPopup from './clicks/PriorityPopup';
 import { getDateColorClass } from '../../utils/dateColors';
 import './TaskForm.css';
 
@@ -21,13 +21,29 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const [selectedDuration, setSelectedDuration] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const [priority, setPriority] = useState(null); // ✅ Priority state
+  const [priority, setPriority] = useState(null);
   const [showPriorityPopup, setShowPriorityPopup] = useState(false);
   const priorityButtonRef = useRef();
 
   const typeRef = useRef();
   const titleRef = useRef();
   const dateButtonRef = useRef();
+
+  // ✅ map priority -> color
+  const getPriorityColor = (level) => {
+    switch (level) {
+      case 1:
+        return 'red';
+      case 2:
+        return 'orange';
+      case 3:
+        return 'blue';
+      case 4:
+        return 'gray';
+      default:
+        return '#666';
+    }
+  };
 
   // Load dữ liệu khi edit
   useEffect(() => {
@@ -39,12 +55,13 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
 
       let parsedTime = null;
       if (task.time) {
-        parsedTime = task.time instanceof Date ? task.time : new Date(task.time);
+        parsedTime =
+          task.time instanceof Date ? task.time : new Date(task.time);
         if (isNaN(parsedTime)) parsedTime = null;
       }
       setSelectedTime(parsedTime);
       setSelectedDuration(task.duration || null);
-      setPriority(task.priority || null); // ✅ Load priority khi edit
+      setPriority(task.priority || null);
     }
   }, [task]);
 
@@ -60,7 +77,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () =>
+      document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleSubmit = (e) => {
@@ -86,7 +104,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           ? selectedTime.toISOString()
           : null,
       duration: selectedDuration,
-      priority: priority, // ✅ Lưu priority vào task
+      priority: priority,
     };
 
     onSubmit(taskData);
@@ -185,7 +203,9 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         {/* Date */}
         <button
           type="button"
-          className={`task-option ${selectedDate ? getDateColorClass(selectedDate) : ''}`}
+          className={`task-option ${
+            selectedDate ? getDateColorClass(selectedDate) : ''
+          }`}
           ref={dateButtonRef}
           onClick={() => setShowDatePicker(!showDatePicker)}
         >
@@ -213,7 +233,13 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           ref={priorityButtonRef}
           onClick={() => setShowPriorityPopup(!showPriorityPopup)}
         >
-          🚩 <span>{priority ? `Priority ${priority}` : 'Priority'}</span>
+          <span
+            style={{ color: getPriorityColor(priority) }}
+            className="priority-flag"
+          >
+            ⚑
+          </span>
+          <span>{priority ? `Priority ${priority}` : 'Priority'}</span>
         </button>
 
         {/* Reminders */}
