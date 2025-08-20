@@ -92,6 +92,7 @@ const TaskOptions = ({
                 setSelectedDate(null);
                 setSelectedTime(null);
                 setSelectedDuration('none');
+                setSelectedReminder(""); // ✅ reset Reminder khi clear Date
               }}
             >
               ✕
@@ -146,7 +147,11 @@ const TaskOptions = ({
           selectedDuration={selectedDuration}
           onChange={({ date, time, duration }) => {
             if (date !== undefined) setSelectedDate(date);
-            if (date === null) { setSelectedTime(null); setSelectedDuration('none'); }
+            if (date === null) {
+              setSelectedTime(null);
+              setSelectedDuration('none');
+              setSelectedReminder(""); // ✅ reset Reminder khi clear Date trong popup
+            }
             if (time !== undefined) setSelectedTime(time);
             if (duration !== undefined) setSelectedDuration(duration);
           }}
@@ -166,7 +171,7 @@ const TaskOptions = ({
       <AnimatePresence>
         {showReminderPopup && (
           <Motion.div
-            className="task-reminder-wrapper"  // ✅ dùng class wrapper riêng
+            className="task-reminder-wrapper"  // ✅ wrapper riêng
             style={{ top:reminderPos.top, left:reminderPos.left }}
             initial={{ opacity:0, y:6 }}
             animate={{ opacity:1, y:0 }}
