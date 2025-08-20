@@ -29,24 +29,40 @@
 .reminder-content {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
-.reminder-item {
+.reminder-option {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-}
-
-.reminder-icon {
-  font-size: 14px;
-}
-
-.reminder-text {
-  flex: 1;
+  justify-content: space-between; /* text bên trái, checkmark bên phải */
   font-size: 13px;
-  margin-left: 6px;
   color: #333;
+  cursor: pointer;
+  padding: 6px 4px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.reminder-option:hover {
+  background: #f9f9f9;
+}
+
+/* Ẩn radio gốc */
+.reminder-option input[type="radio"] {
+  display: none;
+}
+
+.reminder-label {
+  flex: 1;
+}
+
+/* Checkmark ✔ đỏ */
+.checkmark {
+  color: #dc4c3e;
+  font-size: 14px;
+  margin-left: 8px;
+  animation: fadeIn 0.2s ease;
 }
 
 /* ---------------- Divider ---------------- */
