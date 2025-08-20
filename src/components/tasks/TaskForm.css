@@ -10,7 +10,7 @@
   border: 1px solid #e0e0e0;
 }
 
-/* ✅ textarea có thể xuống dòng và tự tăng chiều cao */
+/* ---------------- Title & Note ---------------- */
 .task-title-input {
   font-size: 18px;
   font-weight: 600;
@@ -50,7 +50,7 @@
   border-radius: 8px;
   background-color: #fafafa;
   font-size: 13px;
-  color: #444;
+  color: #666; /* ✅ chữ mặc định màu xám nhạt */
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -58,20 +58,16 @@
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+.task-option span {
+  color: #666; /* ✅ luôn đảm bảo chữ con cũng màu xám */
+}
+
 .task-option:hover {
   background-color: #f2f2f2;
 }
 
-/* Khi có date */
-.task-option.has-date {
-  background-color: #fdfdfd;
-  border-color: #bbb;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Khi có priority */
+/* Khi có date hoặc priority thì nổi bật hơn */
+.task-option.has-date,
 .task-option.has-priority {
   background-color: #fdfdfd;
   border-color: #bbb;
@@ -82,19 +78,19 @@
 
 /* ---------------- Date colors ---------------- */
 .task-option.date-today span {
-  color: #dc4c3e; /* hôm nay */
+  color: #dc4c3e;
 }
 .task-option.date-tomorrow span {
-  color: #ff9800; /* ngày mai */
+  color: #ff9800;
 }
 .task-option.date-overdue span {
-  color: #e53935; /* quá hạn */
+  color: #e53935;
 }
 .task-option.date-upcoming span {
-  color: #000000; /* các ngày khác */
+  color: #000;
 }
 
-/* ---------------- Clear button (Date & Priority) ---------------- */
+/* ---------------- Clear button ---------------- */
 .clear-date-btn {
   font-size: 12px;
   color: #888;
@@ -104,7 +100,6 @@
   transition: background-color 0.2s, color 0.2s;
   flex-shrink: 0;
 }
-
 .clear-date-btn:hover {
   background-color: #eee;
   color: #333;
@@ -140,9 +135,10 @@
   gap: 12px;
 }
 
+/* ✅ Type cũng xám nhạt */
 .task-type {
   font-size: 14px;
-  color: #333;
+  color: #666;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -153,7 +149,9 @@
   transition: background-color 0.2s ease;
   position: relative;
 }
-
+.task-type span {
+  color: #666;
+}
 .task-type:hover {
   background-color: #f0f0f0;
 }
@@ -181,13 +179,12 @@
   padding: 8px 16px;
   cursor: pointer;
   font-size: 14px;
-  color: #333;
+  color: #666; /* ✅ item dropdown cũng xám nhạt */
   transition: background-color 0.2s ease;
   display: flex;
   align-items: center;
   gap: 8px;
 }
-
 .project-dropdown-item:hover {
   background-color: #f5f5f5;
 }
@@ -208,7 +205,6 @@
   border-radius: 6px;
   transition: background-color 0.2s ease;
 }
-
 .cancel-btn:hover {
   background-color: #f5f5f5;
 }
@@ -224,7 +220,6 @@
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
-
 .submit-btn:hover {
   background-color: #c03b2f;
 }
@@ -236,7 +231,6 @@
   opacity: 1;
   cursor: not-allowed;
 }
-
 button:disabled {
   cursor: not-allowed !important;
 }
@@ -259,12 +253,10 @@ button:disabled {
     margin: 16px;
     padding: 16px 20px;
   }
-
   .task-bottom {
     flex-direction: column;
     align-items: flex-start;
   }
-
   .task-actions {
     width: 100%;
     justify-content: flex-end;
