@@ -146,14 +146,13 @@ const FooterButtons = ({
     return "Time";
   };
 
-  // ✅ Các option Repeat
+  // ✅ Các option Repeat (main + sub)
   const repeatOptions = [
-    { value: "daily", label: "Every day" },
-    { value: "weekly", label: `Every week on ${format(new Date(), "EEEE")}` },
-    { value: "weekday", label: "Every weekday (Mon – Fri)" },
-    { value: "monthly", label: `Every month on the ${format(new Date(), "do")}` },
-    { value: "yearly", label: `Every year on ${format(new Date(), "MMMM do")}` },
-    { value: "custom", label: "Custom..." },
+    { value: "daily", main: "Every day" },
+    { value: "weekly", main: "Every week", sub: `on ${format(new Date(), "EEEE")}` },
+    { value: "weekday", main: "Every weekday", sub: "(Mon – Fri)" },
+    { value: "monthly", main: "Every month", sub: `on the ${format(new Date(), "do")}` },
+    { value: "yearly", main: "Every year", sub: `on ${format(new Date(), "MMMM do")}` },
   ];
 
   const handleSelectRepeat = (value) => {
@@ -169,7 +168,6 @@ const FooterButtons = ({
         className="date-footer-btn time-btn-with-clear"
         onClick={() => setShowTimePopup((prev) => !prev)}
       >
-        {/* Icon + text gói vào .time-label để căn giữa */}
         <span className="time-label">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -186,7 +184,6 @@ const FooterButtons = ({
           <span>{getTimeLabel()}</span>
         </span>
 
-        {/* Nút ❌ clear */}
         {propTime instanceof Date && (
           <span
             className="clear-time-btn"
@@ -201,7 +198,7 @@ const FooterButtons = ({
       {/* Popup chọn Time + Duration */}
       {showTimePopup && (
         <div className="time-popup">
-          {/* Time select custom */}
+          {/* Time select */}
           <div className="time-popup-row">
             <label>Time</label>
             <div
@@ -237,7 +234,7 @@ const FooterButtons = ({
             )}
           </div>
 
-          {/* Duration select custom */}
+          {/* Duration select */}
           <div className="time-popup-row">
             <label>Duration</label>
             <div
@@ -316,7 +313,8 @@ const FooterButtons = ({
               className="repeat-item"
               onClick={() => handleSelectRepeat(opt.value)}
             >
-              {opt.label}
+              <span>{opt.main}</span>
+              {opt.sub && <span className="repeat-subtext"> {opt.sub}</span>}
             </div>
           ))}
         </div>
