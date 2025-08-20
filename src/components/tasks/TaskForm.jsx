@@ -27,6 +27,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const [reminderPos, setReminderPos] = useState({ top: 0, left: 0 });
 
   const typeRef = useRef();
+  const dropdownRef = useRef(); // 🔹 ref cho dropdown
   const dateButtonRef = useRef();
   const priorityButtonRef = useRef();
   const reminderButtonRef = useRef();
@@ -47,6 +48,24 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       setSelectedReminder(task.reminder || '');
     }
   }, [task]);
+
+  // 🔹 Đóng dropdown khi click ra ngoài
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        showTypeDropdown &&
+        typeRef.current &&
+        !typeRef.current.contains(e.target) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target)
+      ) {
+        setShowTypeDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showTypeDropdown]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -190,6 +209,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       <AnimatePresence>
         {showTypeDropdown && (
           <Motion.div
+            ref={dropdownRef} // 🔹 gắn ref để check click outside
             className="project-dropdown"
             style={{ top: dropdownPos.top, left: dropdownPos.left }}
             initial={{ opacity: 0, y: 6 }}
