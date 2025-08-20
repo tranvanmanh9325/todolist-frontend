@@ -26,7 +26,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const [showPriorityPopup, setShowPriorityPopup] = useState(false);
 
   const [showReminderPopup, setShowReminderPopup] = useState(false);
-  const [reminderPos, setReminderPos] = useState({ top: 0, left: 0 }); // ✅ vị trí popup
+  const [reminderPos, setReminderPos] = useState({ top: 0, left: 0 });
+  const [selectedReminder, setSelectedReminder] = useState(""); // ✅ reminder state
 
   const priorityButtonRef = useRef();
   const reminderButtonRef = useRef();
@@ -37,16 +38,11 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   // ✅ map priority -> color
   const getPriorityColor = (level) => {
     switch (level) {
-      case 1:
-        return 'red';
-      case 2:
-        return 'orange';
-      case 3:
-        return 'blue';
-      case 4:
-        return 'gray';
-      default:
-        return '#ccc';
+      case 1: return 'red';
+      case 2: return 'orange';
+      case 3: return 'blue';
+      case 4: return 'gray';
+      default: return '#ccc';
     }
   };
 
@@ -66,6 +62,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       setSelectedTime(parsedTime);
       setSelectedDuration(task.duration || null);
       setPriority(task.priority || null);
+      setSelectedReminder(task.reminder || ""); // ✅ load reminder khi edit
     }
   }, [task]);
 
@@ -115,10 +112,12 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           : null,
       duration: selectedDuration,
       priority: priority,
+      reminder: selectedReminder || null, // ✅ lưu reminder vào task
     };
 
     onSubmit(taskData);
 
+    // reset state
     setTitle('');
     setNote('');
     setType('Type');
@@ -126,6 +125,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     setSelectedTime(null);
     setSelectedDuration(null);
     setPriority(null);
+    setSelectedReminder("");
   };
 
   const handleCancelClick = () => {
@@ -277,7 +277,18 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           ref={reminderButtonRef}
           onClick={toggleReminderPopup}
         >
-          ⏰ <span>Reminders</span>
+          ⏰ <span>{selectedReminder ? `${selectedReminder} min before` : "Reminders"}</span>
+          {selectedReminder && (
+            <span
+              className="clear-date-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedReminder("");
+              }}
+            >
+              ✕
+            </span>
+          )}
         </button>
       </div>
 
@@ -315,16 +326,22 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       <AnimatePresence>
         {showReminderPopup && (
           <Motion.div
-            className="reminder-popup"
-            style={{ top: reminderPos.top, left: reminderPos.left }}
+            style={{
+              position: "absolute",
+              top: reminderPos.top,
+              left: reminderPos.left,
+              zIndex: 4000,
+            }}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
             transition={{ duration: 0.2 }}
           >
             <ReminderPopup
+              selectedReminder={selectedReminder}
+              setSelectedReminder={setSelectedReminder}
+              onSave={(reminder) => setSelectedReminder(reminder)}
               onClose={() => setShowReminderPopup(false)}
-              onSave={() => setShowReminderPopup(false)}
             />
           </Motion.div>
         )}

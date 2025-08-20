@@ -1,27 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "./ReminderPopup.css";
 
-const ReminderPopup = ({ anchorRef, onSave }) => {
-  const [position, setPosition] = useState({ top: 0, left: 0 });
-  const [selectedReminder, setSelectedReminder] = useState(""); // mặc định chưa chọn gì
-
-  // Tính toán vị trí popup ngay dưới nút Reminders
-  useEffect(() => {
-    if (anchorRef?.current) {
-      const rect = anchorRef.current.getBoundingClientRect();
-      setPosition({
-        top: rect.bottom + window.scrollY + 6, // cách nút 6px
-        left: rect.left + window.scrollX,      // canh trái theo nút
-      });
-    }
-  }, [anchorRef]);
-
-  const handleSave = () => {
-    if (selectedReminder) {
-      onSave(selectedReminder);
-    }
-  };
-
+const ReminderPopup = ({ selectedReminder, setSelectedReminder, onSave, onClose }) => {
   const options = [
     { value: "0", label: "0 minutes before" },
     { value: "30", label: "30 minutes before" },
@@ -30,15 +10,7 @@ const ReminderPopup = ({ anchorRef, onSave }) => {
   ];
 
   return (
-    <div
-      className="reminder-popup"
-      style={{
-        position: "absolute",
-        top: position.top,
-        left: position.left,
-        zIndex: 4000,
-      }}
-    >
+    <div className="reminder-popup">
       {/* Header */}
       <div className="reminder-header">
         <span className="reminder-title">Reminders</span>
@@ -69,8 +41,13 @@ const ReminderPopup = ({ anchorRef, onSave }) => {
       <div className="reminder-footer">
         <button
           className="save-btn"
-          onClick={handleSave}
-          disabled={!selectedReminder} // disable khi chưa chọn
+          onClick={() => {
+            if (selectedReminder) {
+              onSave(selectedReminder);
+              onClose(); // đóng popup sau khi save
+            }
+          }}
+          disabled={!selectedReminder}
         >
           Save
         </button>
