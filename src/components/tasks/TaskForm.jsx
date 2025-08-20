@@ -46,6 +46,17 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     }
   };
 
+  // ✅ map reminder value -> text
+  const formatReminderLabel = (value) => {
+    switch (value) {
+      case "0": return "At time of event";
+      case "30": return "30 minutes before";
+      case "60": return "1 hour before";
+      case "120": return "2 hours before";
+      default: return null;
+    }
+  };
+
   // Load dữ liệu khi edit
   useEffect(() => {
     if (task) {
@@ -277,7 +288,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           ref={reminderButtonRef}
           onClick={toggleReminderPopup}
         >
-          ⏰ <span>{selectedReminder ? `${selectedReminder} min before` : "Reminders"}</span>
+          ⏰ <span>{selectedReminder ? formatReminderLabel(selectedReminder) : "Reminders"}</span>
           {selectedReminder && (
             <span
               className="clear-date-btn"
@@ -340,6 +351,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
             <ReminderPopup
               selectedReminder={selectedReminder}
               setSelectedReminder={setSelectedReminder}
+              selectedDate={selectedDate}
+              selectedTime={selectedTime}
               onSave={(reminder) => setSelectedReminder(reminder)}
               onClose={() => setShowReminderPopup(false)}
             />

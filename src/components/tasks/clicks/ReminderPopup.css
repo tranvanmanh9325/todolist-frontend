@@ -16,7 +16,7 @@
   justify-content: flex-start; /* căn trái */
   align-items: center;
   margin-bottom: 10px;
-  padding-left: 2px; /* tạo khoảng cách nhỏ với mép trái */
+  padding-left: 2px;
 }
 
 .reminder-title {
@@ -35,7 +35,7 @@
 .reminder-option {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* text bên trái, checkmark bên phải */
+  justify-content: space-between;
   font-size: 13px;
   color: #333;
   cursor: pointer;
@@ -69,14 +69,14 @@
 .divider {
   border: none;
   border-top: 1px solid #eee;
-  margin: 10px -16px;          /* kéo ra ngoài phần padding */
-  width: calc(100% + 32px);    /* 16px trái + 16px phải */
+  margin: 10px -16px;
+  width: calc(100% + 32px);
 }
 
 /* ---------------- Footer ---------------- */
 .reminder-footer {
   display: flex;
-  justify-content: flex-end; /* chỉ còn nút Save nên đẩy sang phải */
+  justify-content: flex-end;
   align-items: center;
 }
 
@@ -98,13 +98,44 @@
 
 /* Nút Save bị disable */
 .save-btn:disabled {
-  background-color: #f4b5b0; /* hồng nhạt */
+  background-color: #f4b5b0;
   cursor: not-allowed;
-  opacity: 1; /* giữ màu rõ ràng */
+  opacity: 1;
 }
 
 .save-btn:disabled:hover {
-  background-color: #f4b5b0; /* không đổi màu khi hover */
+  background-color: #f4b5b0;
+}
+
+/* ---------------- Info message ---------------- */
+.reminder-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 13px;
+  color: #666;
+  padding: 6px 2px;
+  line-height: 1.4;
+  animation: slideIn 0.25s ease;
+}
+
+.reminder-info .info-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: inherit; /* ✅ xanh dương nổi bật */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reminder-info .info-icon svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.reminder-info .info-text {
+  flex: 1;
 }
 
 /* ---------------- Animation ---------------- */
@@ -112,6 +143,17 @@
   from {
     opacity: 0;
     transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
