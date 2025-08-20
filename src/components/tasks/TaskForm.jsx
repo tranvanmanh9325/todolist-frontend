@@ -3,6 +3,7 @@ import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { format, setHours, setMinutes } from 'date-fns';
 import SelectDatePopup from './SelectDatePopup';
 import PriorityPopup from './clicks/PriorityPopup';
+import ReminderPopup from './clicks/ReminderPopup'; // ✅ popup reminders
 import { getDateColorClass } from '../../utils/dateColors';
 import './TaskForm.css';
 
@@ -23,8 +24,12 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
 
   const [priority, setPriority] = useState(null);
   const [showPriorityPopup, setShowPriorityPopup] = useState(false);
-  const priorityButtonRef = useRef();
 
+  const [showReminderPopup, setShowReminderPopup] = useState(false);
+  const [reminderPos, setReminderPos] = useState({ top: 0, left: 0 }); // ✅ vị trí popup
+
+  const priorityButtonRef = useRef();
+  const reminderButtonRef = useRef();
   const typeRef = useRef();
   const titleRef = useRef();
   const dateButtonRef = useRef();
@@ -41,7 +46,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       case 4:
         return 'gray';
       default:
-        return '#ccc'; // màu trắng/xám nhạt khi chưa chọn
+        return '#ccc';
     }
   };
 
@@ -73,6 +78,13 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         !e.target.closest('.project-dropdown')
       ) {
         setShowTypeDropdown(false);
+      }
+      if (
+        reminderButtonRef.current &&
+        !reminderButtonRef.current.contains(e.target) &&
+        !e.target.closest('.reminder-popup')
+      ) {
+        setShowReminderPopup(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -134,6 +146,14 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       setDropdownPos({ top: rect.bottom + 4, left: rect.left });
     }
     setShowTypeDropdown(!showTypeDropdown);
+  };
+
+  const toggleReminderPopup = () => {
+    if (!showReminderPopup && reminderButtonRef.current) {
+      const rect = reminderButtonRef.current.getBoundingClientRect();
+      setReminderPos({ top: rect.bottom + 4, left: rect.left });
+    }
+    setShowReminderPopup(!showReminderPopup);
   };
 
   const handleTextareaInput = (e) => {
@@ -251,7 +271,12 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         </button>
 
         {/* Reminders */}
-        <button type="button" className="task-option">
+        <button
+          type="button"
+          className="task-option"
+          ref={reminderButtonRef}
+          onClick={toggleReminderPopup}
+        >
           ⏰ <span>Reminders</span>
         </button>
       </div>
@@ -285,6 +310,25 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           onClose={() => setShowPriorityPopup(false)}
         />
       )}
+
+      {/* Popup chọn Reminders */}
+      <AnimatePresence>
+        {showReminderPopup && (
+          <Motion.div
+            className="reminder-popup"
+            style={{ top: reminderPos.top, left: reminderPos.left }}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ReminderPopup
+              onClose={() => setShowReminderPopup(false)}
+              onSave={() => setShowReminderPopup(false)}
+            />
+          </Motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Phần chọn loại và nút hành động */}
       <div className="task-bottom">
