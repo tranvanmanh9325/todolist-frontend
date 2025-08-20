@@ -49,40 +49,19 @@
   color: #333;
 }
 
-.clear-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 13px;
-  color: #888;
-  transition: color 0.2s;
-}
-.clear-btn:hover {
-  color: #000;
-}
-
 /* ---------------- Divider ---------------- */
 .divider {
   border: none;
   border-top: 1px solid #eee;
-  margin: 10px 0;
+  margin: 10px -16px;          /* kéo ra ngoài phần padding */
+  width: calc(100% + 32px);    /* 16px trái + 16px phải */
 }
 
 /* ---------------- Footer ---------------- */
 .reminder-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end; /* chỉ còn nút Save nên đẩy sang phải */
   align-items: center;
-}
-
-.help-icon {
-  font-size: 14px;
-  color: #888;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-.help-icon:hover {
-  color: #000;
 }
 
 .save-btn {

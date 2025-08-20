@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./ReminderPopup.css";
 
-const ReminderPopup = ({ anchorRef, onClose, onSave }) => {
+const ReminderPopup = ({ anchorRef, onSave }) => {
   const [position, setPosition] = useState({ top: 0, left: 0 });
 
   // Tính toán vị trí popup ngay dưới nút Reminders
@@ -35,9 +35,6 @@ const ReminderPopup = ({ anchorRef, onClose, onSave }) => {
         <div className="reminder-item">
           <span className="reminder-icon">⏰</span>
           <span className="reminder-text">0m before</span>
-          <button className="clear-btn" onClick={onClose}>
-            ✕
-          </button>
         </div>
       </div>
 
@@ -45,7 +42,6 @@ const ReminderPopup = ({ anchorRef, onClose, onSave }) => {
 
       {/* Footer */}
       <div className="reminder-footer">
-        <span className="help-icon">❓</span>
         <button className="save-btn" onClick={onSave}>
           Save
         </button>
