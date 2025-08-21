@@ -50,7 +50,7 @@ const ReminderPopup = ({
 
         <hr className="divider" />
         <div className="reminder-footer">
-          <button className="save-btn" disabled>
+          <button type="button" className="save-btn" disabled>
             Save
           </button>
         </div>
@@ -94,6 +94,7 @@ const ReminderPopup = ({
 
       <div className="reminder-footer">
         <button
+          type="button"  // ✅ tránh submit form
           className="save-btn"
           onClick={() => {
             if (tempReminder) {
