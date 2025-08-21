@@ -2,23 +2,40 @@ import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
 import "./DateInput.css";
 
-// ✅ format dd/mm/yyyy + HH:mm + duration
-const formatFullDateTime = (date, time, duration) => {
+// ✅ format dd/MM/yyyy + HH:mm + duration + repeat
+const formatFullDateTime = (date, time, duration, repeat) => {
   if (!date) return "";
-  const d = date.toLocaleDateString("en-GB", {
+
+  // ngày dạng dd/MM/yyyy
+  let result = date.toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
   });
 
-  let result = d;
+  // thêm time
   if (time instanceof Date && !isNaN(time)) {
-    result += ` ${format(time, "HH:mm")}`;
+    result += ` · ${format(time, "HH:mm")}`;
   }
+
+  // thêm duration
   if (duration && duration !== "none") {
-    // ví dụ: 30 minutes -> · 30m
-    const shortDuration = duration.replace("minutes", "m").replace("hours", "h");
+    const shortDuration = duration
+      .replace("minutes", "m")
+      .replace("hours", "h");
     result += ` · ${shortDuration}`;
+  }
+
+  // thêm repeat
+  if (repeat && repeat !== "none") {
+    const repeatLabels = {
+      daily: "Every day",
+      weekly: "Every week",
+      weekday: "Every weekday",
+      monthly: "Every month",
+      yearly: "Every year",
+    };
+    result += ` · ${repeatLabels[repeat] || repeat}`;
   }
 
   return result;
@@ -69,6 +86,7 @@ const DateInput = ({
   selectedDate,
   selectedTime,
   selectedDuration,
+  selectedRepeat, // ✅ thêm repeat
   onChange,
   onClose,
 }) => {
@@ -79,11 +97,16 @@ const DateInput = ({
   // ⏺ Đồng bộ props -> input
   useEffect(() => {
     setInputValue(
-      formatFullDateTime(selectedDate, selectedTime, selectedDuration)
+      formatFullDateTime(
+        selectedDate,
+        selectedTime,
+        selectedDuration,
+        selectedRepeat
+      )
     );
     setNoResults(false);
     setPreviewDate(null);
-  }, [selectedDate, selectedTime, selectedDuration]);
+  }, [selectedDate, selectedTime, selectedDuration, selectedRepeat]);
 
   const handleInputChange = (value) => {
     setInputValue(value);
@@ -100,8 +123,15 @@ const DateInput = ({
   };
 
   const commitDate = (date) => {
-    onChange({ date, time: selectedTime, duration: selectedDuration });
-    setInputValue(formatFullDateTime(date, selectedTime, selectedDuration));
+    onChange({
+      date,
+      time: selectedTime,
+      duration: selectedDuration,
+      repeat: selectedRepeat,
+    });
+    setInputValue(
+      formatFullDateTime(date, selectedTime, selectedDuration, selectedRepeat)
+    );
     setNoResults(false);
     setPreviewDate(null);
     onClose();

@@ -34,9 +34,10 @@ const SelectDatePopup = ({
 }) => {
   const popupRef = useRef();
 
-  // state local cho time + duration
+  // state local cho time + duration + repeat
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedDuration, setSelectedDuration] = useState(null);
+  const [selectedRepeat, setSelectedRepeat] = useState(null);
 
   // ⏺ Đồng bộ props -> state khi mở popup
   useEffect(() => {
@@ -72,12 +73,14 @@ const SelectDatePopup = ({
           <DateInput
             selectedDate={selectedDate}
             selectedTime={selectedTime}
-            selectedDuration={selectedDuration}   // ✅ truyền duration vào input
+            selectedDuration={selectedDuration}
+            selectedRepeat={selectedRepeat}   // ✅ truyền repeat vào input
             onChange={({ date, time, duration }) => {
               onChange({
                 date,
                 time,
                 duration: duration ?? selectedDuration,
+                repeat: selectedRepeat,
               });
             }}
             onClose={onClose}
@@ -88,15 +91,17 @@ const SelectDatePopup = ({
             selectedDate={selectedDate}
             onChange={(date) => {
               if (date === null) {
-                // ✅ Khi chọn No Date → reset time & duration
+                // ✅ Khi chọn No Date → reset time, duration, repeat
                 setSelectedTime(null);
                 setSelectedDuration("none");
-                onChange({ date: null, time: null, duration: "none" });
+                setSelectedRepeat(null);
+                onChange({ date: null, time: null, duration: "none", repeat: null });
               } else {
                 onChange({
                   date,
                   time: selectedTime,
                   duration: selectedDuration || "none",
+                  repeat: selectedRepeat,
                 });
               }
             }}
@@ -113,6 +118,7 @@ const SelectDatePopup = ({
                 date,
                 time: selectedTime,
                 duration: selectedDuration,
+                repeat: selectedRepeat,
               })
             }
             onClose={onClose}
@@ -120,11 +126,29 @@ const SelectDatePopup = ({
 
           {/* Footer */}
           <FooterButtons
-            initialTime={selectedTime}         
-            initialDuration={selectedDuration} 
-            selectedTime={selectedTime}         // ✅ truyền thêm để nút hiển thị đúng
-            selectedDuration={selectedDuration} // ✅ truyền thêm để nút hiển thị đúng
-            onRepeatClick={() => console.log("Repeat clicked")}
+            initialTime={selectedTime}
+            initialDuration={selectedDuration}
+            selectedTime={selectedTime}         
+            selectedDuration={selectedDuration} 
+            onRepeatClick={(repeatValue) => {
+              let finalDate = selectedDate;
+
+              // ✅ Nếu chưa có ngày nào -> mặc định hôm nay
+              if (!finalDate) {
+                finalDate = new Date();
+                finalDate.setHours(0, 0, 0, 0);
+              }
+
+              setSelectedRepeat(repeatValue);
+
+              onChange &&
+                onChange({
+                  date: finalDate,
+                  time: selectedTime,
+                  duration: selectedDuration,
+                  repeat: repeatValue,
+                });
+            }}
             onSave={({ time, duration }) => {
               setSelectedTime(time);
               setSelectedDuration(duration);
@@ -160,6 +184,7 @@ const SelectDatePopup = ({
                   date: finalDate,
                   time: time instanceof Date ? time : null,
                   duration,
+                  repeat: selectedRepeat,
                 });
             }}
           />
