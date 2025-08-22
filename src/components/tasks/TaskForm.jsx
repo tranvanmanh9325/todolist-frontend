@@ -8,8 +8,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const isEdit = !!task;
 
   const [title, setTitle] = useState('');
-  const [note, setNote] = useState('');
-  const [type, setType] = useState('Type');
+  const [description, setDescription] = useState(''); // 🔹 đổi note -> description
+  const [type, setType] = useState('Type');           // 🔹 đổi project -> type
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const [isExiting, setIsExiting] = useState(false);
@@ -27,7 +27,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const [reminderPos, setReminderPos] = useState({ top: 0, left: 0 });
 
   const typeRef = useRef();
-  const dropdownRef = useRef(); // 🔹 ref cho dropdown
+  const dropdownRef = useRef(); 
   const dateButtonRef = useRef();
   const priorityButtonRef = useRef();
   const reminderButtonRef = useRef();
@@ -37,8 +37,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   useEffect(() => {
     if (task) {
       setTitle(task.title || '');
-      setNote(task.note || '');
-      setType(task.project || 'Type');
+      setDescription(task.description || ''); // 🔹 đổi từ task.note
+      setType(task.type || 'Type');           // 🔹 đổi từ task.project
       setSelectedDate(task.dueDate ? new Date(task.dueDate) : null);
       let parsedTime = task.time ? new Date(task.time) : null;
       if (isNaN(parsedTime)) parsedTime = null;
@@ -82,8 +82,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     const taskData = {
       ...task,
       title,
-      note,
-      project: type,
+      description, // 🔹 gửi description thay cho note
+      type,        // 🔹 gửi type thay cho project
       dueDate: finalDate ? finalDate.toISOString() : null,
       time:
         selectedTime instanceof Date && !isNaN(selectedTime)
@@ -98,7 +98,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
 
     // reset state
     setTitle('');
-    setNote('');
+    setDescription('');
     setType('Type');
     setSelectedDate(null);
     setSelectedTime(null);
@@ -148,14 +148,14 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         />
       </div>
 
-      {/* Note */}
+      {/* Description */}
       <div className="task-field">
         <input
           type="text"
           placeholder="Description"
           className="task-note-input"
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
       </div>
 
@@ -209,7 +209,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       <AnimatePresence>
         {showTypeDropdown && (
           <Motion.div
-            ref={dropdownRef} // 🔹 gắn ref để check click outside
+            ref={dropdownRef}
             className="project-dropdown"
             style={{ top: dropdownPos.top, left: dropdownPos.left }}
             initial={{ opacity: 0, y: 6 }}

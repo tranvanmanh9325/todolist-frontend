@@ -23,6 +23,7 @@ const MainContent = () => {
       body: JSON.stringify({
         completed: newStatus,
         completedAt: newStatus ? new Date().toISOString() : null,
+        // description & type giữ nguyên, không bị mất vì backend merge field
       }),
     })
       .then((res) => res.json())
@@ -74,7 +75,9 @@ const MainContent = () => {
         <div className="content-area">
           {activeTasks.length > 0 && (
             <div className="task-list">
-              <p className="task-count">{activeTasks.length} task</p>
+              <p className="task-count">
+                {activeTasks.length} {activeTasks.length > 1 ? 'tasks' : 'task'}
+              </p>
               {activeTasks.map((task) => (
                 <TaskItem
                   key={task.id}
@@ -97,7 +100,7 @@ const MainContent = () => {
                 setShowForm(false);
                 setEditTask(null);
               }}
-              onSubmit={submitTask} // ✅ dùng hàm từ context
+              onSubmit={submitTask} // ✅ gửi description + type đúng chuẩn từ TaskForm
             />
           ) : (
             <button

@@ -171,7 +171,7 @@ const TaskOptions = ({
       <AnimatePresence>
         {showReminderPopup && (
           <Motion.div
-            className="task-reminder-wrapper"  // ✅ wrapper riêng
+            className="task-reminder-wrapper"
             style={{ top:reminderPos.top, left:reminderPos.left }}
             initial={{ opacity:0, y:6 }}
             animate={{ opacity:1, y:0 }}
@@ -180,7 +180,6 @@ const TaskOptions = ({
           >
             <ReminderPopup
               selectedReminder={selectedReminder}
-              setSelectedReminder={setSelectedReminder}
               selectedDate={selectedDate}
               selectedTime={selectedTime}
               onSave={(reminder)=>setSelectedReminder(reminder)}

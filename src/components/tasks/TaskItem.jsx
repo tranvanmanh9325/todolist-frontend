@@ -29,7 +29,8 @@ const TaskItem = ({ task, onEdit, onToggleComplete, onDelete }) => {
         </div>
         <div className="task-text">
           <div className="task-title">{task.title}</div>
-          {task.note && <div className="task-time">{task.note}</div>}
+          {/* 🔹 hiển thị description thay cho note */}
+          {task.description && <div className="task-time">{task.description}</div>}
         </div>
       </div>
 
@@ -46,7 +47,8 @@ const TaskItem = ({ task, onEdit, onToggleComplete, onDelete }) => {
             ⋯
           </button>
         </div>
-        <span className="project-name">{task.project || 'Inbox'}</span>
+        {/* 🔹 hiển thị type thay cho project */}
+        <span className="project-name">{task.type || 'Inbox'}</span>
         <span className="project-icon">📁</span>
 
         {showDropdown && (
