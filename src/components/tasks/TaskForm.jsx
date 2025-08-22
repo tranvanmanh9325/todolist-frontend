@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
-import { setHours, setMinutes } from 'date-fns'; // chỉ import những gì dùng
+import { setHours, setMinutes } from 'date-fns'; 
 import TaskOptions from './TaskOptions';
 import './TaskForm.css';
 
@@ -8,8 +8,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const isEdit = !!task;
 
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState(''); // 🔹 đổi note -> description
-  const [type, setType] = useState('Type');           // 🔹 đổi project -> type
+  const [description, setDescription] = useState('');
+  const [type, setType] = useState(''); // 🔹 mặc định rỗng → sẽ gửi null nếu không chọn
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const [isExiting, setIsExiting] = useState(false);
@@ -37,8 +37,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   useEffect(() => {
     if (task) {
       setTitle(task.title || '');
-      setDescription(task.description || ''); // 🔹 đổi từ task.note
-      setType(task.type || 'Type');           // 🔹 đổi từ task.project
+      setDescription(task.description || '');
+      setType(task.type || ''); // 🔹 nếu không có thì để rỗng
       setSelectedDate(task.dueDate ? new Date(task.dueDate) : null);
       let parsedTime = task.time ? new Date(task.time) : null;
       if (isNaN(parsedTime)) parsedTime = null;
@@ -82,8 +82,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     const taskData = {
       ...task,
       title,
-      description, // 🔹 gửi description thay cho note
-      type,        // 🔹 gửi type thay cho project
+      description,
+      type: type || null, // 🔹 nếu không chọn thì gửi null
       dueDate: finalDate ? finalDate.toISOString() : null,
       time:
         selectedTime instanceof Date && !isNaN(selectedTime)
@@ -99,7 +99,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     // reset state
     setTitle('');
     setDescription('');
-    setType('Type');
+    setType('');
     setSelectedDate(null);
     setSelectedTime(null);
     setSelectedDuration(null);
@@ -187,7 +187,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       {/* Task bottom */}
       <div className="task-bottom">
         <div className="task-type" ref={typeRef} onClick={toggleTypeDropdown}>
-          📁 <span>{type}</span>
+          📁 <span>{type || 'Type'}</span> {/* 🔹 Hiển thị 'Type' nếu chưa chọn */}
           <span className="dropdown-arrow">▾</span>
         </div>
 
