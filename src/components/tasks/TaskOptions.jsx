@@ -13,6 +13,7 @@ const TaskOptions = ({
   selectedDate,
   selectedTime,
   selectedDuration,
+  selectedRepeat,            // ⬅️ thêm repeat
   priority,
   selectedReminder,
   showDatePicker,
@@ -26,6 +27,7 @@ const TaskOptions = ({
   setSelectedDate,
   setSelectedTime,
   setSelectedDuration,
+  setSelectedRepeat,         // ⬅️ thêm setter repeat
   setPriority,
   setSelectedReminder,
 }) => {
@@ -38,10 +40,16 @@ const TaskOptions = ({
   const getDateTimeLabel = () => {
     if (!selectedDate) return 'Date';
     let label = formatDate(selectedDate);
+
     if (selectedTime instanceof Date && !isNaN(selectedTime)) {
       label += ` ${selectedTime.getHours().toString().padStart(2,'0')}:${selectedTime.getMinutes().toString().padStart(2,'0')}`;
     }
-    if (selectedDuration && selectedDuration !== 'none') label += ` (${selectedDuration})`;
+    if (selectedDuration && selectedDuration !== 'none') {
+      label += ` (${selectedDuration})`;
+    }
+    if (selectedRepeat) {
+      label += ` [${selectedRepeat}]`; // ⬅️ hiển thị repeat trên nút Date
+    }
     return label;
   };
 
@@ -92,7 +100,8 @@ const TaskOptions = ({
                 setSelectedDate(null);
                 setSelectedTime(null);
                 setSelectedDuration('none');
-                setSelectedReminder(""); // ✅ reset Reminder khi clear Date
+                setSelectedRepeat(null);    // ⬅️ reset repeat khi clear date
+                setSelectedReminder("");    // ⬅️ reset reminder khi clear date
               }}
             >
               ✕
@@ -145,15 +154,18 @@ const TaskOptions = ({
           selectedDate={selectedDate}
           selectedTime={selectedTime}
           selectedDuration={selectedDuration}
-          onChange={({ date, time, duration }) => {
+          selectedRepeat={selectedRepeat}              // ⬅️ truyền repeat vào popup
+          onChange={({ date, time, duration, repeat }) => {
             if (date !== undefined) setSelectedDate(date);
             if (date === null) {
               setSelectedTime(null);
               setSelectedDuration('none');
-              setSelectedReminder(""); // ✅ reset Reminder khi clear Date trong popup
+              setSelectedRepeat(null);                 // ⬅️ reset repeat nếu clear date
+              setSelectedReminder("");
             }
             if (time !== undefined) setSelectedTime(time);
             if (duration !== undefined) setSelectedDuration(duration);
+            if (repeat !== undefined) setSelectedRepeat(repeat); // ⬅️ cập nhật repeat từ popup
           }}
           onClose={() => setShowDatePicker(false)}
         />

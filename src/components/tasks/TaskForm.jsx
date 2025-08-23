@@ -17,6 +17,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedDuration, setSelectedDuration] = useState(null);
+  const [selectedRepeat, setSelectedRepeat] = useState(null); // ⬅️ thêm repeat
 
   const [priority, setPriority] = useState(null);
   const [selectedReminder, setSelectedReminder] = useState('');
@@ -38,12 +39,15 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     if (task) {
       setTitle(task.title || '');
       setDescription(task.description || '');
-      setType(task.type || ''); // 🔹 nếu không có thì để rỗng
+      setType(task.type || ''); 
       setSelectedDate(task.dueDate ? new Date(task.dueDate) : null);
+
       let parsedTime = task.time ? new Date(task.time) : null;
       if (isNaN(parsedTime)) parsedTime = null;
       setSelectedTime(parsedTime);
+
       setSelectedDuration(task.duration || null);
+      setSelectedRepeat(task.repeat || null);   // ⬅️ load repeat khi edit
       setPriority(task.priority || null);
       setSelectedReminder(task.reminder || '');
     }
@@ -83,13 +87,14 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       ...task,
       title,
       description,
-      type: type || null, // 🔹 nếu không chọn thì gửi null
+      type: type || null, 
       dueDate: finalDate ? finalDate.toISOString() : null,
       time:
         selectedTime instanceof Date && !isNaN(selectedTime)
           ? selectedTime.toISOString()
           : null,
       duration: selectedDuration,
+      repeat: selectedRepeat,          // ⬅️ thêm repeat khi submit
       priority,
       reminder: selectedReminder || null,
     };
@@ -103,6 +108,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     setSelectedDate(null);
     setSelectedTime(null);
     setSelectedDuration(null);
+    setSelectedRepeat(null);           // ⬅️ reset repeat
     setPriority(null);
     setSelectedReminder('');
   };
@@ -167,6 +173,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         selectedDate={selectedDate}
         selectedTime={selectedTime}
         selectedDuration={selectedDuration}
+        selectedRepeat={selectedRepeat}         // ⬅️ truyền repeat xuống
         priority={priority}
         selectedReminder={selectedReminder}
         showDatePicker={showDatePicker}
@@ -180,6 +187,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         setSelectedDate={setSelectedDate}
         setSelectedTime={setSelectedTime}
         setSelectedDuration={setSelectedDuration}
+        setSelectedRepeat={setSelectedRepeat}   // ⬅️ cho phép cập nhật repeat
         setPriority={setPriority}
         setSelectedReminder={setSelectedReminder}
       />
@@ -187,7 +195,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       {/* Task bottom */}
       <div className="task-bottom">
         <div className="task-type" ref={typeRef} onClick={toggleTypeDropdown}>
-          📁 <span>{type || 'Type'}</span> {/* 🔹 Hiển thị 'Type' nếu chưa chọn */}
+          📁 <span>{type || 'Type'}</span>
           <span className="dropdown-arrow">▾</span>
         </div>
 
