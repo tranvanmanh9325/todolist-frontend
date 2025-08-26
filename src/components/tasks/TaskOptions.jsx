@@ -13,7 +13,7 @@ const TaskOptions = ({
   selectedDate,
   selectedTime,
   selectedDuration,
-  selectedRepeat,            // ⬅️ thêm repeat
+  selectedRepeat,
   priority,
   selectedReminder,
   showDatePicker,
@@ -27,7 +27,7 @@ const TaskOptions = ({
   setSelectedDate,
   setSelectedTime,
   setSelectedDuration,
-  setSelectedRepeat,         // ⬅️ thêm setter repeat
+  setSelectedRepeat,
   setPriority,
   setSelectedReminder,
 }) => {
@@ -47,10 +47,7 @@ const TaskOptions = ({
     if (selectedDuration && selectedDuration !== 'none') {
       label += ` (${selectedDuration})`;
     }
-    if (selectedRepeat) {
-      label += ` [${selectedRepeat}]`; // ⬅️ hiển thị repeat trên nút Date
-    }
-    return label;
+    return label; // ⬅️ không hiển thị chữ repeat nữa
   };
 
   const getPriorityColor = (level) => {
@@ -92,6 +89,19 @@ const TaskOptions = ({
           onClick={() => setShowDatePicker(!showDatePicker)}
         >
           📅 <span>{getDateTimeLabel()}</span>
+
+          {/* Hiển thị icon Repeat nếu có repeat */}
+          {selectedRepeat && (
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style={{ marginLeft: 6 }}>
+              <path
+                fill="currentColor"
+                fillRule="evenodd"
+                d="M9.5 4H6a.5.5 0 0 1 0-1h3.5a3 3 0 0 1 3 3v1.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L11.5 7.793V6a2 2 0 0 0-2-2M7.354 9.354a.5.5 0 0 1-.708 0L5.5 8.207V10a2 2 0 0 0 2 2H11a.5.5 0 0 1 0 1H7.5a3 3 0 0 1-3-3V8.207L3.354 9.354a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1 0 .708"
+                clipRule="evenodd"
+              />
+            </svg>
+          )}
+
           {selectedDate && (
             <span
               className="clear-date-btn"
@@ -100,8 +110,8 @@ const TaskOptions = ({
                 setSelectedDate(null);
                 setSelectedTime(null);
                 setSelectedDuration('none');
-                setSelectedRepeat(null);    // ⬅️ reset repeat khi clear date
-                setSelectedReminder("");    // ⬅️ reset reminder khi clear date
+                setSelectedRepeat(null);
+                setSelectedReminder("");
               }}
             >
               ✕
@@ -154,18 +164,18 @@ const TaskOptions = ({
           selectedDate={selectedDate}
           selectedTime={selectedTime}
           selectedDuration={selectedDuration}
-          selectedRepeat={selectedRepeat}              // ⬅️ truyền repeat vào popup
+          selectedRepeat={selectedRepeat}
           onChange={({ date, time, duration, repeat }) => {
             if (date !== undefined) setSelectedDate(date);
             if (date === null) {
               setSelectedTime(null);
               setSelectedDuration('none');
-              setSelectedRepeat(null);                 // ⬅️ reset repeat nếu clear date
+              setSelectedRepeat(null);
               setSelectedReminder("");
             }
             if (time !== undefined) setSelectedTime(time);
             if (duration !== undefined) setSelectedDuration(duration);
-            if (repeat !== undefined) setSelectedRepeat(repeat); // ⬅️ cập nhật repeat từ popup
+            if (repeat !== undefined) setSelectedRepeat(repeat);
           }}
           onClose={() => setShowDatePicker(false)}
         />
