@@ -9,7 +9,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [type, setType] = useState(''); // 🔹 mặc định rỗng → sẽ gửi null nếu không chọn
+  const [type, setType] = useState(''); 
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const [isExiting, setIsExiting] = useState(false);
@@ -17,7 +17,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedDuration, setSelectedDuration] = useState(null);
-  const [selectedRepeat, setSelectedRepeat] = useState(null); // ⬅️ thêm repeat
+  const [selectedRepeat, setSelectedRepeat] = useState(null);
 
   const [priority, setPriority] = useState(null);
   const [selectedReminder, setSelectedReminder] = useState('');
@@ -47,13 +47,14 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       setSelectedTime(parsedTime);
 
       setSelectedDuration(task.duration || null);
-      setSelectedRepeat(task.repeat || null);   // ⬅️ load repeat khi edit
+      setSelectedRepeat(task.repeat || null);   
       setPriority(task.priority || null);
-      setSelectedReminder(task.reminder || '');
+      // ép reminder thành string để UI hiển thị đúng
+      setSelectedReminder(task.reminder !== null && task.reminder !== undefined ? String(task.reminder) : '');
     }
   }, [task]);
 
-  // 🔹 Đóng dropdown khi click ra ngoài
+  // Đóng dropdown khi click ra ngoài
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -94,9 +95,10 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           ? selectedTime.toISOString()
           : null,
       duration: selectedDuration,
-      repeat: selectedRepeat,          // ⬅️ thêm repeat khi submit
+      repeat: selectedRepeat,          
       priority,
-      reminder: selectedReminder || null,
+      // ép reminder thành số khi submit
+      reminder: selectedReminder ? Number(selectedReminder) : null,
     };
 
     onSubmit(taskData);
@@ -108,7 +110,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     setSelectedDate(null);
     setSelectedTime(null);
     setSelectedDuration(null);
-    setSelectedRepeat(null);           // ⬅️ reset repeat
+    setSelectedRepeat(null);         
     setPriority(null);
     setSelectedReminder('');
   };
@@ -173,7 +175,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         selectedDate={selectedDate}
         selectedTime={selectedTime}
         selectedDuration={selectedDuration}
-        selectedRepeat={selectedRepeat}         // ⬅️ truyền repeat xuống
+        selectedRepeat={selectedRepeat}         
         priority={priority}
         selectedReminder={selectedReminder}
         showDatePicker={showDatePicker}
@@ -187,7 +189,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         setSelectedDate={setSelectedDate}
         setSelectedTime={setSelectedTime}
         setSelectedDuration={setSelectedDuration}
-        setSelectedRepeat={setSelectedRepeat}   // ⬅️ cho phép cập nhật repeat
+        setSelectedRepeat={setSelectedRepeat}   
         setPriority={setPriority}
         setSelectedReminder={setSelectedReminder}
       />
