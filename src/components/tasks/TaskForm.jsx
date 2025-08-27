@@ -22,6 +22,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const [priority, setPriority] = useState(null);
   const [selectedReminder, setSelectedReminder] = useState('');
 
+  const [originalTask, setOriginalTask] = useState(null); // lưu dữ liệu gốc
+
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showPriorityPopup, setShowPriorityPopup] = useState(false);
   const [showReminderPopup, setShowReminderPopup] = useState(false);
@@ -54,6 +56,19 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           ? String(task.reminder)
           : ''
       );
+
+      // lưu bản gốc để so sánh khi update
+      setOriginalTask({
+        title: task.title || '',
+        description: task.description || '',
+        type: task.type || '',
+        dueDate: task.dueDate ? new Date(task.dueDate).toISOString() : null,
+        time: task.time || null,
+        duration: task.duration || null,
+        repeat: task.repeat || null,
+        priority: task.priority || null,
+        reminder: task.reminder !== null && task.reminder !== undefined ? String(task.reminder) : '',
+      });
     }
   }, [task]);
 
@@ -88,7 +103,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     }
 
     const taskData = {
-      id: task?.id || null, // giữ id để PUT khi edit
+      id: task?.id || null,
       title,
       description,
       type: type || null,
@@ -101,21 +116,26 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       repeat: selectedRepeat,
       priority: priority !== null ? priority : null,
       reminder: selectedReminder !== '' ? Number(selectedReminder) : null,
-      completed: task?.completed || false, // giữ trạng thái completed
+      completed: task?.completed || false,
     };
 
     onSubmit(taskData);
 
-    // reset state
-    setTitle('');
-    setDescription('');
-    setType('');
-    setSelectedDate(null);
-    setSelectedTime(null);
-    setSelectedDuration(null);
-    setSelectedRepeat(null);         
-    setPriority(null);
-    setSelectedReminder('');
+    if (isEdit) {
+      // 👉 nếu update thì đóng form luôn
+      onCancel();
+    } else {
+      // reset state khi add task mới
+      setTitle('');
+      setDescription('');
+      setType('');
+      setSelectedDate(null);
+      setSelectedTime(null);
+      setSelectedDuration(null);
+      setSelectedRepeat(null);         
+      setPriority(null);
+      setSelectedReminder('');
+    }
   };
 
   const handleCancelClick = () => {
@@ -137,6 +157,22 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   };
 
   const isTitleEmpty = !title.trim();
+
+  // kiểm tra có thay đổi so với bản gốc không
+  const isChanged = () => {
+    if (!originalTask) return true; // khi add task thì luôn true
+    return (
+      title !== originalTask.title ||
+      description !== originalTask.description ||
+      type !== originalTask.type ||
+      (selectedDate ? selectedDate.toISOString() : null) !== originalTask.dueDate ||
+      (selectedTime ? selectedTime.toISOString() : null) !== originalTask.time ||
+      selectedDuration !== originalTask.duration ||
+      selectedRepeat !== originalTask.repeat ||
+      priority !== originalTask.priority ||
+      selectedReminder !== originalTask.reminder
+    );
+  };
 
   return (
     <Motion.form
@@ -210,8 +246,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           </button>
           <button
             type="submit"
-            className={`submit-btn${isTitleEmpty ? ' disabled' : ''}`}
-            disabled={isTitleEmpty}
+            className={`submit-btn${isTitleEmpty || (isEdit && !isChanged()) ? ' disabled' : ''}`}
+            disabled={isTitleEmpty || (isEdit && !isChanged())}
           >
             {isEdit ? 'Update task' : 'Add task'}
           </button>
