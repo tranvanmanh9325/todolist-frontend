@@ -16,6 +16,28 @@ const TaskItem = ({ task, onEdit, onToggleComplete, onDelete }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Hàm lấy màu priority giống trong TaskOptions
+  const getPriorityColor = (level) => {
+    switch (level) {
+      case 1: return 'red';
+      case 2: return 'orange';
+      case 3: return 'blue';
+      case 4: return 'gray';
+      default: return '#ccc';
+    }
+  };
+
+  // Hàm lấy nhãn priority cho tooltip
+  const getPriorityLabel = (level) => {
+    switch (level) {
+      case 1: return 'Priority 1';
+      case 2: return 'Priority 2';
+      case 3: return 'Priority 3';
+      case 4: return 'Priority 4';
+      default: return '';
+    }
+  };
+
   return (
     <div className="task-item">
       <div className="task-left">
@@ -28,7 +50,19 @@ const TaskItem = ({ task, onEdit, onToggleComplete, onDelete }) => {
           <span className="custom-circle"></span>
         </div>
         <div className="task-text">
-          <div className="task-title">{task.title}</div>
+          <div className="task-title">
+            {/* Hiển thị cờ ưu tiên nếu có */}
+            {task.priority && (
+              <span
+                className="priority-flag"
+                style={{ color: getPriorityColor(task.priority), marginRight: 6 }}
+                title={getPriorityLabel(task.priority)}
+              >
+                ⚑
+              </span>
+            )}
+            {task.title}
+          </div>
           {/* 🔹 hiển thị description thay cho note */}
           {task.description && <div className="task-time">{task.description}</div>}
         </div>
