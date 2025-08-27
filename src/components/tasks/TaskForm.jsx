@@ -49,8 +49,11 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       setSelectedDuration(task.duration || null);
       setSelectedRepeat(task.repeat || null);   
       setPriority(task.priority || null);
-      // ép reminder thành string để UI hiển thị đúng
-      setSelectedReminder(task.reminder !== null && task.reminder !== undefined ? String(task.reminder) : '');
+      setSelectedReminder(
+        task.reminder !== null && task.reminder !== undefined
+          ? String(task.reminder)
+          : ''
+      );
     }
   }, [task]);
 
@@ -85,20 +88,20 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
     }
 
     const taskData = {
-      ...task,
+      id: task?.id || null, // giữ id để PUT khi edit
       title,
       description,
-      type: type || null, 
+      type: type || null,
       dueDate: finalDate ? finalDate.toISOString() : null,
       time:
         selectedTime instanceof Date && !isNaN(selectedTime)
           ? selectedTime.toISOString()
           : null,
       duration: selectedDuration,
-      repeat: selectedRepeat,          
-      priority,
-      // ép reminder thành số khi submit
-      reminder: selectedReminder ? Number(selectedReminder) : null,
+      repeat: selectedRepeat,
+      priority: priority !== null ? priority : null,
+      reminder: selectedReminder !== '' ? Number(selectedReminder) : null,
+      completed: task?.completed || false, // giữ trạng thái completed
     };
 
     onSubmit(taskData);
