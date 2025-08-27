@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
-import { setHours, setMinutes } from 'date-fns'; 
+import { setHours, setMinutes, format } from 'date-fns'; 
 import TaskOptions from './TaskOptions';
 import './TaskForm.css';
 
@@ -35,6 +35,9 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const priorityButtonRef = useRef();
   const reminderButtonRef = useRef();
   const titleRef = useRef();
+
+  // hàm format local datetime -> string yyyy-MM-dd'T'HH:mm:ss
+  const fmt = (d) => format(d, "yyyy-MM-dd'T'HH:mm:ss");
 
   // Load dữ liệu khi edit
   useEffect(() => {
@@ -107,10 +110,10 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       title,
       description,
       type: type || null,
-      dueDate: finalDate ? finalDate.toISOString() : null,
+      dueDate: finalDate ? fmt(finalDate) : null, // dùng local format
       time:
         selectedTime instanceof Date && !isNaN(selectedTime)
-          ? selectedTime.toISOString()
+          ? fmt(selectedTime) // dùng local format
           : null,
       duration: selectedDuration,
       repeat: selectedRepeat,
