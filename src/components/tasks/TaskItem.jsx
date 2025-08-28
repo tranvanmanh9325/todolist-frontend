@@ -16,6 +16,9 @@ const TaskItem = ({ task, onEdit, onToggleComplete, onDelete }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // 🔹 lấy dữ liệu từ taskDetail (nếu có)
+  const detail = task.taskDetail || {};
+
   // Hàm lấy màu priority giống trong TaskOptions
   const getPriorityColor = (level) => {
     switch (level) {
@@ -43,27 +46,27 @@ const TaskItem = ({ task, onEdit, onToggleComplete, onDelete }) => {
       <div className="task-left">
         <div
           className="checkbox-wrapper"
-          onClick={() => onToggleComplete(task.id, true)}
-          title="Mark as completed"
+          onClick={() => onToggleComplete(task.id, !task.completed)}
+          title={task.completed ? "Mark as not completed" : "Mark as completed"}
         >
-          <input type="checkbox" className="custom-checkbox" />
+          <input type="checkbox" className="custom-checkbox" checked={task.completed} readOnly />
           <span className="custom-circle"></span>
         </div>
         <div className="task-text">
           <div className="task-title">
             {/* Hiển thị cờ ưu tiên nếu có */}
-            {task.priority && (
+            {detail.priority && (
               <span
                 className="priority-flag"
-                style={{ color: getPriorityColor(task.priority), marginRight: 6 }}
-                title={getPriorityLabel(task.priority)}
+                style={{ color: getPriorityColor(detail.priority), marginRight: 6 }}
+                title={getPriorityLabel(detail.priority)}
               >
                 ⚑
               </span>
             )}
             {task.title}
           </div>
-          {/* 🔹 hiển thị description thay cho note */}
+          {/* 🔹 hiển thị description (từ task) */}
           {task.description && <div className="task-time">{task.description}</div>}
         </div>
       </div>
@@ -81,7 +84,7 @@ const TaskItem = ({ task, onEdit, onToggleComplete, onDelete }) => {
             ⋯
           </button>
         </div>
-        {/* 🔹 hiển thị type thay cho project */}
+        {/* 🔹 hiển thị type (từ task) */}
         <span className="project-name">{task.type || 'Inbox'}</span>
         <span className="project-icon">📁</span>
 

@@ -22,7 +22,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const [priority, setPriority] = useState(null);
   const [selectedReminder, setSelectedReminder] = useState('');
 
-  const [originalTask, setOriginalTask] = useState(null); // lưu dữ liệu gốc
+  const [originalTask, setOriginalTask] = useState(null); // dữ liệu gốc để so sánh
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showPriorityPopup, setShowPriorityPopup] = useState(false);
@@ -36,46 +36,48 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const reminderButtonRef = useRef();
   const titleRef = useRef();
 
-  // hàm format local datetime -> string yyyy-MM-dd'T'HH:mm:ss
+  // format datetime -> string
   const fmt = (d) => format(d, "yyyy-MM-dd'T'HH:mm:ss");
 
   // Load dữ liệu khi edit
   useEffect(() => {
     if (task) {
       setTitle(task.title || '');
-      setDescription(task.description || '');
-      setType(task.type || ''); 
-      setSelectedDate(task.dueDate ? new Date(task.dueDate) : null);
+      setDescription(task.description || '');   // ✅ lấy từ Task, không phải taskDetail
+      setType(task.type || '');                // ✅ cũng lấy từ Task
 
-      let parsedTime = task.time ? new Date(task.time) : null;
+      const detail = task.taskDetail || {};
+      setSelectedDate(detail.dueDate ? new Date(detail.dueDate) : null);
+
+      let parsedTime = detail.time ? new Date(detail.time) : null;
       if (isNaN(parsedTime)) parsedTime = null;
       setSelectedTime(parsedTime);
 
-      setSelectedDuration(task.duration || null);
-      setSelectedRepeat(task.repeat || null);   
-      setPriority(task.priority || null);
+      setSelectedDuration(detail.duration || null);
+      setSelectedRepeat(detail.repeat || null);   
+      setPriority(detail.priority || null);
       setSelectedReminder(
-        task.reminder !== null && task.reminder !== undefined
-          ? String(task.reminder)
+        detail.reminder !== null && detail.reminder !== undefined
+          ? String(detail.reminder)
           : ''
       );
 
-      // lưu bản gốc để so sánh khi update
+      // dữ liệu gốc để so sánh
       setOriginalTask({
         title: task.title || '',
-        description: task.description || '',
-        type: task.type || '',
-        dueDate: task.dueDate ? new Date(task.dueDate).toISOString() : null,
-        time: task.time || null,
-        duration: task.duration || null,
-        repeat: task.repeat || null,
-        priority: task.priority || null,
-        reminder: task.reminder !== null && task.reminder !== undefined ? String(task.reminder) : '',
+        description: task.description || '',   // ✅ gốc từ Task
+        type: task.type || '',                 // ✅ gốc từ Task
+        dueDate: detail.dueDate ? new Date(detail.dueDate).toISOString() : null,
+        time: detail.time || null,
+        duration: detail.duration || null,
+        repeat: detail.repeat || null,
+        priority: detail.priority || null,
+        reminder: detail.reminder !== null && detail.reminder !== undefined ? String(detail.reminder) : '',
       });
     }
   }, [task]);
 
-  // Đóng dropdown khi click ra ngoài
+  // Đóng dropdown khi click ngoài
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -105,28 +107,30 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       );
     }
 
+    // ✅ sửa chỗ này: description & type nằm ở Task, không trong taskDetail
     const taskData = {
       id: task?.id || null,
       title,
-      description,
-      type: type || null,
-      dueDate: finalDate ? fmt(finalDate) : null, // dùng local format
-      time:
-        selectedTime instanceof Date && !isNaN(selectedTime)
-          ? fmt(selectedTime) // dùng local format
-          : null,
-      duration: selectedDuration,
-      repeat: selectedRepeat,
-      priority: priority !== null ? priority : null,
-      reminder: selectedReminder !== '' ? Number(selectedReminder) : null,
+      description: description || '',
+      type: type || '',
       completed: task?.completed || false,
+      taskDetail: {
+        dueDate: finalDate ? fmt(finalDate) : null,
+        time:
+          selectedTime instanceof Date && !isNaN(selectedTime)
+            ? fmt(selectedTime)
+            : null,
+        duration: selectedDuration,
+        repeat: selectedRepeat,
+        priority: priority !== null ? priority : null,
+        reminder: selectedReminder !== '' ? Number(selectedReminder) : null,
+      }
     };
 
     onSubmit(taskData);
 
     if (isEdit) {
-      // 👉 nếu update thì đóng form luôn
-      onCancel();
+      onCancel(); // edit thì đóng form
     } else {
       // reset state khi add task mới
       setTitle('');
@@ -161,9 +165,9 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
 
   const isTitleEmpty = !title.trim();
 
-  // kiểm tra có thay đổi so với bản gốc không
+  // kiểm tra có thay đổi so với gốc không
   const isChanged = () => {
-    if (!originalTask) return true; // khi add task thì luôn true
+    if (!originalTask) return true;
     return (
       title !== originalTask.title ||
       description !== originalTask.description ||

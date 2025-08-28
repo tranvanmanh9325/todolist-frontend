@@ -77,10 +77,12 @@ const SelectDatePopup = ({
             selectedRepeat={selectedRepeat}   // ✅ truyền repeat vào input
             onChange={({ date, time, duration }) => {
               onChange({
-                date,
-                time,
-                duration: duration ?? selectedDuration,
-                repeat: selectedRepeat,
+                taskDetail: {
+                  dueDate: date,
+                  time,
+                  duration: duration ?? selectedDuration,
+                  repeat: selectedRepeat,
+                }
               });
             }}
             onClose={onClose}
@@ -95,13 +97,22 @@ const SelectDatePopup = ({
                 setSelectedTime(null);
                 setSelectedDuration("none");
                 setSelectedRepeat(null);
-                onChange({ date: null, time: null, duration: "none", repeat: null });
+                onChange({
+                  taskDetail: {
+                    dueDate: null,
+                    time: null,
+                    duration: "none",
+                    repeat: null,
+                  }
+                });
               } else {
                 onChange({
-                  date,
-                  time: selectedTime,
-                  duration: selectedDuration || "none",
-                  repeat: selectedRepeat,
+                  taskDetail: {
+                    dueDate: date,
+                    time: selectedTime,
+                    duration: selectedDuration || "none",
+                    repeat: selectedRepeat,
+                  }
                 });
               }
             }}
@@ -115,10 +126,12 @@ const SelectDatePopup = ({
             selectedDate={selectedDate}
             onChange={(date) =>
               onChange({
-                date,
-                time: selectedTime,
-                duration: selectedDuration,
-                repeat: selectedRepeat,
+                taskDetail: {
+                  dueDate: date,
+                  time: selectedTime,
+                  duration: selectedDuration,
+                  repeat: selectedRepeat,
+                }
               })
             }
             onClose={onClose}
@@ -143,10 +156,12 @@ const SelectDatePopup = ({
 
               onChange &&
                 onChange({
-                  date: finalDate,
-                  time: selectedTime,
-                  duration: selectedDuration,
-                  repeat: repeatValue,
+                  taskDetail: {
+                    dueDate: finalDate,
+                    time: selectedTime,
+                    duration: selectedDuration,
+                    repeat: repeatValue,
+                  }
                 });
             }}
             onSave={({ time, duration }) => {
@@ -181,10 +196,12 @@ const SelectDatePopup = ({
 
               onChange &&
                 onChange({
-                  date: finalDate,
-                  time: time instanceof Date ? time : null,
-                  duration,
-                  repeat: selectedRepeat,
+                  taskDetail: {
+                    dueDate: finalDate,
+                    time: time instanceof Date ? time : null,
+                    duration,
+                    repeat: selectedRepeat,
+                  }
                 });
             }}
           />

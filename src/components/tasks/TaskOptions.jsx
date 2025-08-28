@@ -165,17 +165,18 @@ const TaskOptions = ({
           selectedTime={selectedTime}
           selectedDuration={selectedDuration}
           selectedRepeat={selectedRepeat}
-          onChange={({ date, time, duration, repeat }) => {
-            if (date !== undefined) setSelectedDate(date);
-            if (date === null) {
-              setSelectedTime(null);
-              setSelectedDuration('none');
-              setSelectedRepeat(null);
-              setSelectedReminder("");
+          onChange={({ taskDetail }) => {
+            if (taskDetail) {
+              if ('dueDate' in taskDetail) setSelectedDate(taskDetail.dueDate);
+              if ('time' in taskDetail) setSelectedTime(taskDetail.time);
+              if ('duration' in taskDetail) setSelectedDuration(taskDetail.duration);
+              if ('repeat' in taskDetail) setSelectedRepeat(taskDetail.repeat);
+
+              // Nếu clear date → reset luôn reminder
+              if (taskDetail.dueDate === null) {
+                setSelectedReminder("");
+              }
             }
-            if (time !== undefined) setSelectedTime(time);
-            if (duration !== undefined) setSelectedDuration(duration);
-            if (repeat !== undefined) setSelectedRepeat(repeat);
           }}
           onClose={() => setShowDatePicker(false)}
         />
