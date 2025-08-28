@@ -39,12 +39,16 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   // format datetime -> string
   const fmt = (d) => format(d, "yyyy-MM-dd'T'HH:mm:ss");
 
+  // hàm chuẩn hóa so sánh ngày/giờ
+  const normalizeDate = (d) =>
+    d instanceof Date && !isNaN(d) ? d.toISOString() : null;
+
   // Load dữ liệu khi edit
   useEffect(() => {
     if (task) {
       setTitle(task.title || '');
-      setDescription(task.description || '');   // ✅ lấy từ Task, không phải taskDetail
-      setType(task.type || '');                // ✅ cũng lấy từ Task
+      setDescription(task.description || '');   // ✅ lấy từ Task
+      setType(task.type || '');                
 
       const detail = task.taskDetail || {};
       setSelectedDate(detail.dueDate ? new Date(detail.dueDate) : null);
@@ -62,17 +66,20 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           : ''
       );
 
-      // dữ liệu gốc để so sánh
+      // dữ liệu gốc để so sánh (toàn bộ chuẩn hóa sang ISO string)
       setOriginalTask({
         title: task.title || '',
-        description: task.description || '',   // ✅ gốc từ Task
-        type: task.type || '',                 // ✅ gốc từ Task
+        description: task.description || '',
+        type: task.type || '',
         dueDate: detail.dueDate ? new Date(detail.dueDate).toISOString() : null,
-        time: detail.time || null,
+        time: detail.time ? new Date(detail.time).toISOString() : null,
         duration: detail.duration || null,
         repeat: detail.repeat || null,
         priority: detail.priority || null,
-        reminder: detail.reminder !== null && detail.reminder !== undefined ? String(detail.reminder) : '',
+        reminder:
+          detail.reminder !== null && detail.reminder !== undefined
+            ? String(detail.reminder)
+            : '',
       });
     }
   }, [task]);
@@ -107,7 +114,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       );
     }
 
-    // ✅ sửa chỗ này: description & type nằm ở Task, không trong taskDetail
+    // ✅ description & type nằm ở Task
     const taskData = {
       id: task?.id || null,
       title,
@@ -172,8 +179,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       title !== originalTask.title ||
       description !== originalTask.description ||
       type !== originalTask.type ||
-      (selectedDate ? selectedDate.toISOString() : null) !== originalTask.dueDate ||
-      (selectedTime ? selectedTime.toISOString() : null) !== originalTask.time ||
+      normalizeDate(selectedDate) !== originalTask.dueDate ||
+      normalizeDate(selectedTime) !== originalTask.time ||
       selectedDuration !== originalTask.duration ||
       selectedRepeat !== originalTask.repeat ||
       priority !== originalTask.priority ||
