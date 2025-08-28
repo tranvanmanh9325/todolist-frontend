@@ -23,7 +23,6 @@ const MainContent = () => {
       body: JSON.stringify({
         completed: newStatus,
         completedAt: newStatus ? new Date().toISOString() : null,
-        // description & type giữ nguyên, không bị mất vì backend merge field
       }),
     })
       .then((res) => res.json())
@@ -78,40 +77,63 @@ const MainContent = () => {
               <p className="task-count">
                 {activeTasks.length} {activeTasks.length > 1 ? 'tasks' : 'task'}
               </p>
-              {activeTasks.map((task) => (
-                <TaskItem
-                  key={task.id}
-                  task={task}
-                  onEdit={(t) => {
-                    setEditTask(t);
-                    setShowForm(true);
-                  }}
-                  onToggleComplete={handleToggleComplete}
-                  onDelete={handleDeleteTask}
-                />
-              ))}
+
+              {activeTasks.map((task) =>
+                editTask && editTask.id === task.id && showForm ? (
+                  // 🔹 Nếu task đang được edit thì render TaskForm thay vì TaskItem
+                  <TaskForm
+                    key={task.id}
+                    task={task}
+                    onCancel={() => {
+                      setShowForm(false);
+                      setEditTask(null);
+                    }}
+                    onSubmit={(updatedTask) => {
+                      submitTask(updatedTask);
+                      setShowForm(false);
+                      setEditTask(null);
+                    }}
+                  />
+                ) : (
+                  <TaskItem
+                    key={task.id}
+                    task={task}
+                    onEdit={(t) => {
+                      setEditTask(t);
+                      setShowForm(true);
+                    }}
+                    onToggleComplete={handleToggleComplete}
+                    onDelete={handleDeleteTask}
+                  />
+                )
+              )}
             </div>
           )}
 
-          {showForm ? (
+          {/* 🔹 Form thêm mới task (không có editTask) */}
+          {showForm && !editTask ? (
             <TaskForm
-              task={editTask}
               onCancel={() => {
                 setShowForm(false);
                 setEditTask(null);
               }}
-              onSubmit={submitTask} // ✅ gửi description + type đúng chuẩn từ TaskForm
+              onSubmit={(newTask) => {
+                submitTask(newTask);
+                setShowForm(false);
+              }}
             />
           ) : (
-            <button
-              className="add-task-main"
-              onClick={() => {
-                setShowForm(true);
-                setEditTask(null);
-              }}
-            >
-              <span className="plus-icon">+</span> Add task
-            </button>
+            !editTask && (
+              <button
+                className="add-task-main"
+                onClick={() => {
+                  setShowForm(true);
+                  setEditTask(null);
+                }}
+              >
+                <span className="plus-icon">+</span> Add task
+              </button>
+            )
           )}
         </div>
       )}

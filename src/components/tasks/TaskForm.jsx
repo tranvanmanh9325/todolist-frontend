@@ -22,7 +22,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   const [priority, setPriority] = useState(null);
   const [selectedReminder, setSelectedReminder] = useState('');
 
-  const [originalTask, setOriginalTask] = useState(null); // dữ liệu gốc để so sánh
+  const [originalTask, setOriginalTask] = useState(null); 
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showPriorityPopup, setShowPriorityPopup] = useState(false);
@@ -38,8 +38,6 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
 
   // format datetime -> string
   const fmt = (d) => format(d, "yyyy-MM-dd'T'HH:mm:ss");
-
-  // hàm chuẩn hóa so sánh ngày/giờ
   const normalizeDate = (d) =>
     d instanceof Date && !isNaN(d) ? d.toISOString() : null;
 
@@ -47,8 +45,8 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   useEffect(() => {
     if (task) {
       setTitle(task.title || '');
-      setDescription(task.description || '');   // ✅ lấy từ Task
-      setType(task.type || '');                
+      setDescription(task.description || '');
+      setType(task.type || '');
 
       const detail = task.taskDetail || {};
       setSelectedDate(detail.dueDate ? new Date(detail.dueDate) : null);
@@ -66,7 +64,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
           : ''
       );
 
-      // dữ liệu gốc để so sánh (toàn bộ chuẩn hóa sang ISO string)
+      // dữ liệu gốc để so sánh
       setOriginalTask({
         title: task.title || '',
         description: task.description || '',
@@ -97,7 +95,6 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
         setShowTypeDropdown(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showTypeDropdown]);
@@ -114,7 +111,6 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       );
     }
 
-    // ✅ description & type nằm ở Task
     const taskData = {
       id: task?.id || null,
       title,
@@ -134,10 +130,10 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       }
     };
 
-    onSubmit(taskData);
+    onSubmit(taskData); // báo lên cha để update
 
     if (isEdit) {
-      onCancel(); // edit thì đóng form
+      onCancel(); // đóng form sau khi update
     } else {
       // reset state khi add task mới
       setTitle('');
@@ -154,7 +150,7 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
 
   const handleCancelClick = () => {
     setIsExiting(true);
-    setTimeout(() => onCancel(), 180);
+    setTimeout(() => onCancel(), 180); // báo lên cha để đóng form
   };
 
   const handleTypeSelect = (t) => {
@@ -171,8 +167,6 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
   };
 
   const isTitleEmpty = !title.trim();
-
-  // kiểm tra có thay đổi so với gốc không
   const isChanged = () => {
     if (!originalTask) return true;
     return (
