@@ -10,30 +10,33 @@ html,
 body {
   height: 100%;
   width: 100%;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #fafafa;
   color: #202020;
-  overflow: hidden;
+  /* ❌ bỏ overflow: hidden ở đây để login page có thể cuộn */
 }
 
 /* Gốc ứng dụng React */
 #root {
   height: 100%;
   width: 100%;
+  min-height: 100vh;
   display: flex;
+  flex-direction: column;
 }
 
-/* Wrapper chính để chứa sidebar + main content */
+/* Wrapper chính để chứa sidebar + main content (Todo app) */
 .app-container {
   display: flex;
   flex: 1;
   height: 100%;
   width: 100%;
-  overflow: hidden;
+  overflow: hidden; /* ✅ chỉ Todo app bị khóa cuộn */
 }
 
 /* Main content (phần bên phải) */
@@ -41,6 +44,15 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow-y: auto; /* ✅ cho phép nội dung Todo list cuộn */
   background-color: #fff;
+}
+
+/* Login/Register layout */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+  overflow-y: auto; /* ✅ cho phép login cuộn khi nội dung dài */
+  background-color: #f8f9fa;
 }

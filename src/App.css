@@ -1,3 +1,4 @@
+/* ==================== TODO APP LAYOUT ==================== */
 .app-container {
   display: flex;
   height: 100vh;
@@ -10,4 +11,78 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+}
+
+/* ==================== LOGIN/REGISTER LAYOUT ==================== */
+.login-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  overflow: hidden; /* không cho container cuộn, chỉ cuộn bên trái */
+}
+
+.login-left-motion {
+  flex: 1;
+  max-width: 500px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: white;
+  overflow-y: auto; /* ✅ cho phép cuộn khi form dài */
+
+  /* ✅ Ẩn thanh cuộn trên tất cả trình duyệt */
+  scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none;  /* IE và Edge */
+}
+
+.login-left-motion::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.login-right {
+  flex: 1;
+  background: #f80000d5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+}
+
+/* ==================== FORGOT PASSWORD ==================== */
+.centered-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 20px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .login-left-motion {
+    max-width: 100%;
+    width: 100%;
+    padding: 20px;
+    overflow-y: auto; /* vẫn cho cuộn ở mobile */
+
+    /* Ẩn scrollbar ở mobile luôn */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .login-left-motion::-webkit-scrollbar {
+    display: none;
+  }
+
+  .login-right {
+    min-height: 250px;
+    padding: 10px;
+  }
 }
