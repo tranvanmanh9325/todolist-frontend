@@ -25,8 +25,8 @@ const LoginForm = () => {
       const { token } = response.data;
       localStorage.setItem('token', token);
 
-      // ✅ Đổi hướng về trang ToDoList ("/") thay vì /dashboard
-      navigate('/');
+      // ✅ Đăng nhập xong chuyển vào Todo App (main page)
+      navigate('/app/main', { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
     }

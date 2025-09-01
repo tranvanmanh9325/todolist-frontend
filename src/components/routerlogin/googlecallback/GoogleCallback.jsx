@@ -36,8 +36,8 @@ const GoogleCallback = () => {
         const { token } = response.data;
         localStorage.setItem('token', token);
 
-        // ✅ Đổi hướng về ToDoList ("/")
-        navigate('/');
+        // ✅ Sau khi login bằng Google thì vào Todo App
+        navigate('/app/main', { replace: true });
       } catch (err) {
         console.error('Google login error:', err);
         alert('Google login failed on server side.');

@@ -30,10 +30,10 @@ function AppLayout() {
         <Sidebar />
         <div className="main-wrapper">
           <Routes>
-            <Route path="/" element={<MainContent />} />
-            <Route path="/completed" element={<Completed />} />
-            <Route path="/overview" element={<TaskReport />} />
-            <Route path="/help" element={<Help />} />
+            <Route path="main" element={<MainContent />} />
+            <Route path="completed" element={<Completed />} />
+            <Route path="overview" element={<TaskReport />} />
+            <Route path="help" element={<Help />} />
           </Routes>
         </div>
         <TaskOverlay />
@@ -133,9 +133,12 @@ function App() {
         />
         <Route path="/google-callback" element={<GoogleCallback />} />
 
+        {/* ✅ Redirect root "/" → /login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
         {/* Todo app layout - chỉ cho vào khi đã login */}
         <Route
-          path="/*"
+          path="/app/*"
           element={
             <PrivateRoute>
               <AppLayout />
@@ -143,7 +146,7 @@ function App() {
           }
         />
 
-        {/* Redirect mặc định */}
+        {/* Catch all */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
