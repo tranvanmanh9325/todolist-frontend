@@ -22,10 +22,17 @@ const LoginForm = () => {
         { withCredentials: true }
       );
 
-      const { token } = response.data;
-      localStorage.setItem('token', token);
+      // ✅ Lấy đầy đủ thông tin từ backend
+      const { id, name, email: userEmail, token, avatar } = response.data;
 
-      // ✅ Đăng nhập xong chuyển vào Todo App (main page)
+      // ✅ Lưu token + user info vào localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem(
+        'user',
+        JSON.stringify({ id, name, email: userEmail, avatar })
+      );
+
+      // ✅ Chuyển vào Todo App
       navigate('/app/main', { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
@@ -34,9 +41,10 @@ const LoginForm = () => {
 
   const handleGoogleLogin = () => {
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    const redirectUri = `${window.location.origin}/google-callback`;
+    const redirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI; // ✅ lấy từ .env
     const scope = encodeURIComponent('email profile openid');
     const responseType = 'code';
+
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}`;
 
     window.location.href = authUrl;

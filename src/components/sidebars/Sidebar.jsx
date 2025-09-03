@@ -11,6 +11,12 @@ const Sidebar = () => {
   const location = useLocation();
   const { openOverlayForm } = useTaskForm();
 
+  // ✅ Lấy user từ localStorage
+  const storedUser = JSON.parse(localStorage.getItem('user'));
+  const userName = storedUser?.name || 'User';
+  const userAvatar = storedUser?.avatar || null;
+  const userInitial = userName.charAt(0).toUpperCase();
+
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
   };
@@ -90,12 +96,15 @@ const Sidebar = () => {
       <header className="sidebar-header">
         <div className="user-profile">
           <div className="avatar">
-            <span>M</span>
+            {userAvatar ? (
+              <img src={userAvatar} alt="avatar" className="avatar-img" />
+            ) : (
+              <span>{userInitial}</span>
+            )}
           </div>
         </div>
 
         <div className="header-actions">
-          {/* Đã xoá hai nút SVG dưới avatar */}
           <button
             aria-controls="sidebar"
             aria-expanded={!collapsed}
