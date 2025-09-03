@@ -42,15 +42,15 @@
 
 /* Avatar wrapper */
 .avatar {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   flex-shrink: 0;
   overflow: hidden; /* đảm bảo ảnh không tràn */
