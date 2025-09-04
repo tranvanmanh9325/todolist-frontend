@@ -92,8 +92,8 @@
 .divider {
   border: none;
   border-top: 1px solid #eee;
-  margin: 10px -16px;
-  width: calc(100% + 32px);
+  margin: 10px 0;
+  width: 100%;
 }
 
 /* ---------------- Footer ---------------- */
