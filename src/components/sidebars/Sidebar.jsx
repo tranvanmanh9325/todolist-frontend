@@ -21,9 +21,10 @@ const Sidebar = () => {
     setCollapsed(!collapsed);
   };
 
+  // ✅ Tất cả path chuyển sang /app/...
   const navItems = [
     {
-      path: '/search',
+      path: '/app/search',
       label: 'Search',
       icon: (
         <path
@@ -35,7 +36,7 @@ const Sidebar = () => {
       ),
     },
     {
-      path: '/',
+      path: '/app/main',
       label: 'Inbox',
       icon: (
         <>
@@ -45,7 +46,7 @@ const Sidebar = () => {
       ),
     },
     {
-      path: '/today',
+      path: '/app/today',
       label: 'Today',
       icon: (
         <>
@@ -55,7 +56,7 @@ const Sidebar = () => {
       ),
     },
     {
-      path: '/upcoming',
+      path: '/app/upcoming',
       label: 'Upcoming',
       icon: (
         <>
@@ -65,7 +66,7 @@ const Sidebar = () => {
       ),
     },
     {
-      path: '/overview',
+      path: '/app/overview',
       label: 'Overview',
       icon: (
         <>
@@ -75,7 +76,7 @@ const Sidebar = () => {
       ),
     },
     {
-      path: '/completed',
+      path: '/app/completed',
       label: 'Completed',
       icon: (
         <>
@@ -171,8 +172,8 @@ const Sidebar = () => {
 
       <div className="sidebar-footer">
         <div
-          className={`footer-item ${location.pathname === '/help' ? 'active' : ''}`}
-          onClick={() => navigate('/help')}
+          className={`footer-item ${location.pathname === '/app/help' ? 'active' : ''}`}
+          onClick={() => navigate('/app/help')}
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5" />

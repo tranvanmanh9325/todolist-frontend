@@ -34,6 +34,14 @@ function AppLayout() {
             <Route path="completed" element={<Completed />} />
             <Route path="overview" element={<TaskReport />} />
             <Route path="help" element={<Help />} />
+
+            {/* ✅ Bổ sung các route con */}
+            <Route path="today" element={<div>Today page (placeholder)</div>} />
+            <Route path="upcoming" element={<div>Upcoming page (placeholder)</div>} />
+            <Route path="search" element={<div>Search page (placeholder)</div>} />
+
+            {/* ✅ Redirect /app → /app/main */}
+            <Route index element={<Navigate to="main" replace />} />
           </Routes>
         </div>
         <TaskOverlay />
