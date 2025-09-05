@@ -60,8 +60,20 @@ const Sidebar = () => {
       label: 'Upcoming',
       icon: (
         <>
-          <path d="M2 8L8 2L14 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M3 7V13C3 13.5523 3.44772 14 4 14H12C12.5523 14 13 13.5523 13 13V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M2 8L8 2L14 8"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M3 7V13C3 13.5523 3.44772 14 4 14H12C12.5523 14 13 13.5523 13 13V7"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </>
       ),
     },
@@ -70,7 +82,13 @@ const Sidebar = () => {
       label: 'Overview',
       icon: (
         <>
-          <path d="M8 2V8L12 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M8 2V8L12 12"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
           <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5" />
         </>
       ),
@@ -80,7 +98,13 @@ const Sidebar = () => {
       label: 'Completed',
       icon: (
         <>
-          <path d="M11 6L7 10L5 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M11 6L7 10L5 8"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
           <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5" />
         </>
       ),
@@ -103,6 +127,8 @@ const Sidebar = () => {
               <span>{userInitial}</span>
             )}
           </div>
+          {/* 👇 Thêm tên user cạnh avatar */}
+          <span className="username">{userName}</span>
         </div>
 
         <div className="header-actions">
@@ -115,8 +141,19 @@ const Sidebar = () => {
             className={`list-toggle-btn ${collapsed ? '' : 'align-right'}`}
           >
             <div className="list-toggle-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path fill="currentColor" fillRule="evenodd" d="M19 4.001H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-12a2 2 0 0 0-2-2m-15 2a1 1 0 0 1 1-1h4v14H5a1 1 0 0 1-1-1zm6 13h9a1 1 0 0 0 1-1v-12a1 1 0 0 0-1-1h-9z" clipRule="evenodd" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="currentColor"
+                  fillRule="evenodd"
+                  d="M19 4.001H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-12a2 2 0 0 0-2-2m-15 2a1 1 0 0 1 1-1h4v14H5a1 1 0 0 1-1-1zm6 13h9a1 1 0 0 0 1-1v-12a1 1 0 0 0-1-1h-9z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
           </button>

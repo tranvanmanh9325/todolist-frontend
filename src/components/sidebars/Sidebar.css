@@ -30,6 +30,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  position: relative; /* cần cho tooltip */
 }
 
 .sidebar.collapsed .user-profile .username,
@@ -54,6 +55,7 @@
   font-weight: 600;
   flex-shrink: 0;
   overflow: hidden; /* đảm bảo ảnh không tràn */
+  cursor: default;
 }
 
 /* Avatar là ảnh */
@@ -77,11 +79,34 @@
   font-size: 14px;
   font-weight: 500;
   color: #202020;
+  white-space: nowrap;
 }
 
-.dropdown-icon {
-  color: #666;
-  margin-left: auto;
+/* Tooltip khi sidebar collapsed */
+.sidebar.collapsed .user-profile .avatar:hover::after {
+  content: attr(data-username);
+  position: absolute;
+  left: 45px;
+  background: #333;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+/* Mũi tên nhỏ cho tooltip */
+.sidebar.collapsed .user-profile .avatar:hover::before {
+  content: "";
+  position: absolute;
+  left: 38px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent #333 transparent transparent;
 }
 
 /* HEADER ACTIONS */
