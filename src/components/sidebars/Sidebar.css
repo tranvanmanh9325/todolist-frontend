@@ -206,13 +206,13 @@
 
 /* Add Task button */
 .add-task-btn {
-  margin: 16px 20px;
+  margin: 0px 16px 6px 16px; /* dịch cao hơn avatar + ít khoảng cách */
+  padding: 6px 0;
   background: none;
   border: none;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 0;
   cursor: pointer;
   color: #dc4c3e;
   font-size: 14px;
@@ -245,12 +245,14 @@
 
 /* NAVIGATION */
 .sidebar-nav {
-  padding: 0 20px;
-  transition: padding 0.2s ease;
+  padding: 0 16px;
+  margin-top: 2px;   /* dịch sát lên */
+  transition: padding 0.2s ease, margin 0.2s ease;
 }
 
 .sidebar.collapsed .sidebar-nav {
   padding: 0 12px;
+  margin-top: 0;
 }
 
 .nav-item,
@@ -258,12 +260,12 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 0;
+  padding: 6px 0;       /* nhỏ gọn hơn */
   cursor: pointer;
   color: #666;
   font-size: 14px;
   border-radius: 4px;
-  margin-bottom: 2px;
+  margin: 2px 0;        /* cách đều item */
   transition: all 0.2s ease;
   background: none;
   border: none;
@@ -338,7 +340,8 @@
 
 /* Projects section */
 .projects-section {
-  padding: 20px;
+  padding: 10px 16px;  /* gọn hơn */
+  margin-top: 4px;     /* dịch cao hơn */
   border-top: 1px solid #e8e8e8;
   transition: opacity 0.2s ease;
 }
@@ -354,7 +357,7 @@
   font-size: 13px;
   font-weight: 600;
   color: #666;
-  margin: 0;
+  margin: 2px 0 0 0;  /* dịch lên trên */
 }
 
 /* Footer section */
