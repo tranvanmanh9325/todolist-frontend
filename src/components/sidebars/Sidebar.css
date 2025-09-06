@@ -7,6 +7,8 @@
   height: 100vh;
   overflow: hidden;
   transition: width 0.2s ease;
+  position: relative; /* thêm để user-menu định vị */
+  z-index: 1000;
 }
 
 /* HEADER */
@@ -31,21 +33,23 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  position: relative;
-  width: 100%;
+  cursor: pointer;
+  position: relative; /* popup bám avatar */
+  width: auto;
+  z-index: 2000;
 }
 
 .sidebar.collapsed .user-profile {
-  justify-content: flex-end; /* avatar sát mép phải */
-  padding-right: 8px;
+  justify-content: center;
+  width: 100%;
 }
 
 .sidebar.collapsed .user-profile .username,
 .sidebar.collapsed .user-profile .dropdown-icon {
-  display: none !important; /* ẩn hẳn để không chiếm chỗ */
+  display: none !important;
 }
 
-/* Avatar wrapper */
+/* Avatar */
 .avatar {
   width: 32px;
   height: 32px;
@@ -59,11 +63,11 @@
   font-weight: 600;
   flex-shrink: 0;
   overflow: hidden;
-  cursor: default;
+  cursor: pointer;
   position: relative;
+  z-index: 2100; /* đảm bảo trên các layer khác */
 }
 
-/* Avatar là ảnh */
 .avatar-img {
   width: 100%;
   height: 100%;
@@ -71,7 +75,6 @@
   object-fit: cover;
 }
 
-/* Avatar là chữ cái */
 .avatar span {
   display: block;
   font-size: 16px;
@@ -88,11 +91,46 @@
   white-space: nowrap;
 }
 
+/* Popup user menu */
+.user-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  padding: 4px 0;
+  z-index: 3000;
+  min-width: 160px;
+}
+
+/* Khi sidebar collapsed vẫn hiển thị đúng */
+.sidebar.collapsed .user-menu {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.user-menu button {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+
+.user-menu button:hover {
+  background-color: #f5f5f5;
+}
+
 /* Tooltip khi sidebar collapsed */
 .sidebar.collapsed .user-profile .avatar:hover::after {
   content: attr(data-username);
   position: absolute;
-  right: 45px; /* hiển thị tooltip bên trái avatar */
+  right: 45px;
   background: #333;
   color: #fff;
   font-size: 12px;
@@ -100,7 +138,7 @@
   padding: 4px 8px;
   border-radius: 4px;
   white-space: nowrap;
-  z-index: 10;
+  z-index: 2500;
   top: 50%;
   transform: translateY(-50%);
 }
@@ -140,7 +178,6 @@
   background-color: #f0f0f0;
 }
 
-/* Toggle sidebar button */
 .list-toggle-btn {
   background: none;
   border: none;
@@ -214,7 +251,6 @@
   padding: 0 12px;
 }
 
-/* Common styles for nav + footer */
 .nav-item,
 .footer-item {
   display: flex;

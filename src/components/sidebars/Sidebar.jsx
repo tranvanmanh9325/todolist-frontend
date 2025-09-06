@@ -1,31 +1,63 @@
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
-import { motion, AnimatePresence } from 'framer-motion';
-import { useTaskForm } from '../../contexts/TaskFormContext';
-import './Sidebar.css';
+import { motion, AnimatePresence } from "framer-motion";
+import { useTaskForm } from "../../contexts/TaskFormContext";
+import "./Sidebar.css";
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { openOverlayForm } = useTaskForm();
 
   // ✅ Lấy user từ localStorage
-  const storedUser = JSON.parse(localStorage.getItem('user'));
-  const userName = storedUser?.name || 'User';
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const userName = storedUser?.name || "User";
   const userAvatar = storedUser?.avatar || null;
   const userInitial = userName.charAt(0).toUpperCase();
 
-  const toggleSidebar = () => {
-    setCollapsed(!collapsed);
+  const toggleSidebar = () => setCollapsed(!collapsed);
+
+  // ✅ Xử lý click avatar
+  const handleAvatarClick = () => {
+    if (collapsed) {
+      // Nếu đang thu gọn → mở rộng sidebar trước
+      setCollapsed(false);
+      // đợi sidebar expand xong (trùng với transition 0.2s) rồi show menu
+      setTimeout(() => setShowMenu(true), 220);
+    } else {
+      // Nếu đang mở → toggle menu bình thường
+      setShowMenu((prev) => !prev);
+    }
   };
 
-  // ✅ Tất cả path chuyển sang /app/...
+  // ✅ Đóng popup khi click ra ngoài
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // ✅ Log out
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setShowMenu(false);
+    navigate("/login");
+  };
+
+  // ✅ Nav items
   const navItems = [
     {
-      path: '/app/search',
-      label: 'Search',
+      path: "/app/search",
+      label: "Search",
       icon: (
         <path
           fill="currentColor"
@@ -36,28 +68,54 @@ const Sidebar = () => {
       ),
     },
     {
-      path: '/app/main',
-      label: 'Inbox',
+      path: "/app/main",
+      label: "Inbox",
       icon: (
         <>
-          <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M6 7H10M6 10H8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <rect
+            x="2"
+            y="3"
+            width="12"
+            height="10"
+            rx="2"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
+          <path
+            d="M6 7H10M6 10H8"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
         </>
       ),
     },
     {
-      path: '/app/today',
-      label: 'Today',
+      path: "/app/today",
+      label: "Today",
       icon: (
         <>
-          <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M6 1V5M10 1V5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <rect
+            x="2"
+            y="3"
+            width="12"
+            height="10"
+            rx="2"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
+          <path
+            d="M6 1V5M10 1V5"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
         </>
       ),
     },
     {
-      path: '/app/upcoming',
-      label: 'Upcoming',
+      path: "/app/upcoming",
+      label: "Upcoming",
       icon: (
         <>
           <path
@@ -78,8 +136,8 @@ const Sidebar = () => {
       ),
     },
     {
-      path: '/app/overview',
-      label: 'Overview',
+      path: "/app/overview",
+      label: "Overview",
       icon: (
         <>
           <path
@@ -89,13 +147,19 @@ const Sidebar = () => {
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5" />
+          <circle
+            cx="8"
+            cy="8"
+            r="6"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
         </>
       ),
     },
     {
-      path: '/app/completed',
-      label: 'Completed',
+      path: "/app/completed",
+      label: "Completed",
       icon: (
         <>
           <path
@@ -105,7 +169,13 @@ const Sidebar = () => {
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5" />
+          <circle
+            cx="8"
+            cy="8"
+            r="6"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
         </>
       ),
     },
@@ -113,22 +183,45 @@ const Sidebar = () => {
 
   return (
     <motion.aside
-      className={`sidebar ${collapsed ? 'collapsed' : ''}`}
+      className={`sidebar ${collapsed ? "collapsed" : ""}`}
       animate={{ width: collapsed ? 72 : 280 }}
       initial={false}
-      transition={{ duration: 0.2, ease: 'easeInOut' }}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
     >
       <header className="sidebar-header">
-        <div className="user-profile">
-          <div className="avatar">
+        {/* User profile + popup */}
+        <div className="user-profile" ref={menuRef}>
+          <div
+            className="avatar"
+            data-username={userName}
+            onClick={handleAvatarClick}
+          >
             {userAvatar ? (
               <img src={userAvatar} alt="avatar" className="avatar-img" />
             ) : (
               <span>{userInitial}</span>
             )}
           </div>
-          {/* 👇 Thêm tên user cạnh avatar */}
-          <span className="username">{userName}</span>
+          {!collapsed && (
+            <span className="username" onClick={handleAvatarClick}>
+              {userName}
+            </span>
+          )}
+
+          {/* Popup Log out */}
+          <AnimatePresence>
+            {showMenu && (
+              <motion.div
+                className="user-menu"
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                transition={{ duration: 0.2 }}
+              >
+                <button onClick={handleLogout}>Log out</button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         <div className="header-actions">
@@ -138,7 +231,7 @@ const Sidebar = () => {
             aria-label="Open/close sidebar"
             type="button"
             onClick={toggleSidebar}
-            className={`list-toggle-btn ${collapsed ? '' : 'align-right'}`}
+            className={`list-toggle-btn ${collapsed ? "" : "align-right"}`}
           >
             <div className="list-toggle-icon">
               <svg
@@ -160,6 +253,7 @@ const Sidebar = () => {
         </div>
       </header>
 
+      {/* Add Task */}
       <AnimatePresence>
         {!collapsed && (
           <motion.button
@@ -176,11 +270,14 @@ const Sidebar = () => {
         )}
       </AnimatePresence>
 
+      {/* Navigation */}
       <nav className="sidebar-nav">
         {navItems.map(({ path, label, icon }) => (
           <motion.div
             key={path}
-            className={`nav-item ${location.pathname === path ? 'active' : ''}`}
+            className={`nav-item ${
+              location.pathname === path ? "active" : ""
+            }`}
             onClick={() => navigate(path)}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -194,6 +291,7 @@ const Sidebar = () => {
         ))}
       </nav>
 
+      {/* Projects */}
       <AnimatePresence>
         {!collapsed && (
           <motion.div
@@ -207,14 +305,28 @@ const Sidebar = () => {
         )}
       </AnimatePresence>
 
+      {/* Footer */}
       <div className="sidebar-footer">
         <div
-          className={`footer-item ${location.pathname === '/app/help' ? 'active' : ''}`}
-          onClick={() => navigate('/app/help')}
+          className={`footer-item ${
+            location.pathname === "/app/help" ? "active" : ""
+          }`}
+          onClick={() => navigate("/app/help")}
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5" />
-            <path d="M8 5V8M8 11H8.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <circle
+              cx="8"
+              cy="8"
+              r="6"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+            <path
+              d="M8 5V8M8 11H8.01"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
           </svg>
           {!collapsed && <span>Help & Contact</span>}
         </div>
