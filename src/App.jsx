@@ -97,7 +97,7 @@ function RegisterLayout() {
 
 /* ==================== PrivateRoute ==================== */
 function PrivateRoute({ children }) {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token'); // ✅ đồng bộ key 'token'
   return token ? children : <Navigate to="/login" replace />;
 }
 

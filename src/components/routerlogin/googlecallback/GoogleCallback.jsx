@@ -12,14 +12,14 @@ const GoogleCallback = () => {
     const error = urlParams.get('error');
 
     if (error) {
-      console.error('Google OAuth error:', error);
+      console.error('❌ Google OAuth error:', error);
       alert('Google login was cancelled or failed.');
       navigate('/login');
       return;
     }
 
     if (!code) {
-      console.error('No authorization code returned from Google');
+      console.error('❌ No authorization code returned from Google');
       alert('Google login failed. No code provided.');
       navigate('/login');
       return;
@@ -36,12 +36,15 @@ const GoogleCallback = () => {
 
         const response = await axios.post(
           `${import.meta.env.VITE_API_URL}/auth/google-login`,
-          { code, redirectUri }, // ✅ gửi thêm redirectUri
-          { withCredentials: true }
+          { code, redirectUri }
         );
 
-        // ✅ Nhận đầy đủ thông tin từ backend
+        // ✅ Nhận thông tin từ backend
         const { id, name, email, token, avatar } = response.data;
+
+        if (!token) {
+          throw new Error('No JWT returned from backend');
+        }
 
         // ✅ Lưu token + user info vào localStorage
         localStorage.setItem('token', token);
@@ -55,10 +58,7 @@ const GoogleCallback = () => {
         // ✅ Sau khi login bằng Google thì vào Todo App
         navigate('/app/main', { replace: true });
       } catch (err) {
-        console.error(
-          '❌ Google login error:',
-          err.response?.data || err.message
-        );
+        console.error('❌ Google login error:', err.response?.data || err.message);
         alert('Google login failed on server side.');
         navigate('/login');
       }
@@ -70,7 +70,7 @@ const GoogleCallback = () => {
   return (
     <div className="google-callback-container">
       <div className="spinner" />
-      <p className="loading-text">Loading...</p>
+      <p className="loading-text">Login with Google...</p>
     </div>
   );
 };

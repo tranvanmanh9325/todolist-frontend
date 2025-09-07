@@ -4,44 +4,66 @@ import TaskForm from '../tasks/TaskForm';
 import TaskItem from '../tasks/TaskItem';
 import { useTaskForm } from '../../contexts/TaskFormContext'; // ✅ lấy context
 
+// 🔹 Hàm tiện ích gọi API có kèm JWT
+const apiFetch = async (url, options = {}) => {
+  const token = localStorage.getItem('token');
+  const headers = {
+    ...(options.headers || {}),
+    Authorization: token ? `Bearer ${token}` : '',
+    'Content-Type': 'application/json',
+  };
+
+  const res = await fetch(url, { ...options, headers });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`API error ${res.status}: ${errorText}`);
+  }
+
+  // Nếu có JSON thì parse, nếu không (ví dụ DELETE) thì trả về null
+  const contentType = res.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    return res.json();
+  }
+  return null;
+};
+
 const MainContent = () => {
   const [showForm, setShowForm] = useState(false);
   const [editTask, setEditTask] = useState(null);
   const { tasks, setTasks, submitTask } = useTaskForm(); // ✅ dùng từ context
 
+  // 🔹 Load danh sách task khi vào trang
   useEffect(() => {
-    fetch('/api/tasks')
-      .then((res) => res.json())
+    apiFetch('/api/tasks')
       .then((data) => setTasks(data))
-      .catch((err) => console.error(err));
+      .catch((err) => console.error('Lỗi khi load tasks:', err));
   }, [setTasks]);
 
+  // 🔹 Đánh dấu hoàn thành / bỏ hoàn thành
   const handleToggleComplete = (taskId, newStatus) => {
-    fetch(`/api/tasks/${taskId}`, {
+    apiFetch(`/api/tasks/${taskId}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         completed: newStatus,
         completedAt: newStatus ? new Date().toISOString() : null,
       }),
     })
-      .then((res) => res.json())
       .then((updatedTask) => {
         setTasks((prev) =>
           prev.map((task) => (task.id === updatedTask.id ? updatedTask : task))
         );
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error('Lỗi khi cập nhật task:', err));
   };
 
+  // 🔹 Xóa task
   const handleDeleteTask = (taskId) => {
-    fetch(`/api/tasks/${taskId}`, {
-      method: 'DELETE',
-    })
+    apiFetch(`/api/tasks/${taskId}`, { method: 'DELETE' })
       .then(() => {
         setTasks((prev) => prev.filter((task) => task.id !== taskId));
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error('Lỗi khi xóa task:', err));
   };
 
   const activeTasks = tasks.filter((t) => !t.completed);
