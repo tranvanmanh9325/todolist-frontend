@@ -4,6 +4,9 @@ import TaskForm from '../tasks/TaskForm';
 import TaskItem from '../tasks/TaskItem';
 import { useTaskForm } from '../../contexts/TaskFormContext'; // ✅ lấy context
 
+// Lấy base API URL từ biến môi trường
+const API_URL = import.meta.env.VITE_API_URL;
+
 // 🔹 Hàm tiện ích gọi API có kèm JWT
 const apiFetch = async (url, options = {}) => {
   const token = localStorage.getItem('token');
@@ -24,7 +27,6 @@ const apiFetch = async (url, options = {}) => {
     throw new Error(`API error ${res.status}: ${errorText}`);
   }
 
-  // Nếu có JSON thì parse, nếu không (ví dụ DELETE) thì trả về null
   const contentType = res.headers.get('content-type');
   if (contentType && contentType.includes('application/json')) {
     return res.json();
@@ -39,17 +41,17 @@ const MainContent = () => {
 
   // 🔹 Load danh sách task khi vào trang
   useEffect(() => {
-    apiFetch('/api/tasks')
+    apiFetch(`${API_URL}/tasks`)
       .then((data) => setTasks(data || []))
       .catch((err) => {
         console.error('Lỗi khi load tasks:', err.message);
-        setTasks([]); // fallback: không hiển thị task nào nếu lỗi
+        setTasks([]);
       });
   }, [setTasks]);
 
   // 🔹 Đánh dấu hoàn thành / bỏ hoàn thành
   const handleToggleComplete = (taskId, newStatus) => {
-    apiFetch(`/api/tasks/${taskId}`, {
+    apiFetch(`${API_URL}/tasks/${taskId}`, {
       method: 'PUT',
       body: JSON.stringify({
         completed: newStatus,
@@ -66,7 +68,7 @@ const MainContent = () => {
 
   // 🔹 Xóa task
   const handleDeleteTask = (taskId) => {
-    apiFetch(`/api/tasks/${taskId}`, { method: 'DELETE' })
+    apiFetch(`${API_URL}/tasks/${taskId}`, { method: 'DELETE' })
       .then(() => {
         setTasks((prev) => prev.filter((task) => task.id !== taskId));
       })
@@ -109,7 +111,6 @@ const MainContent = () => {
 
               {activeTasks.map((task) =>
                 editTask && editTask.id === task.id && showForm ? (
-                  // 🔹 Nếu task đang được edit thì render TaskForm thay vì TaskItem
                   <TaskForm
                     key={task.id}
                     task={task}
@@ -139,7 +140,6 @@ const MainContent = () => {
             </div>
           )}
 
-          {/* 🔹 Form thêm mới task (không có editTask) */}
           {showForm && !editTask ? (
             <TaskForm
               onCancel={() => {

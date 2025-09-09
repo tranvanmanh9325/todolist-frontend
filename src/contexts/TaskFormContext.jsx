@@ -2,6 +2,9 @@ import React, { createContext, useState, useContext } from 'react';
 
 const TaskFormContext = createContext();
 
+// 🔹 Lấy base API URL từ biến môi trường
+const API_URL = import.meta.env.VITE_API_URL;
+
 // 🔹 Hàm tiện ích gọi API có kèm JWT
 const apiFetch = async (url, options = {}) => {
   const token = localStorage.getItem("token");
@@ -58,7 +61,9 @@ export const TaskFormProvider = ({ children }) => {
   const submitTask = async (task) => {
     const isEditing = Boolean(task.id);
     const method = isEditing ? "PUT" : "POST";
-    const url = isEditing ? `/api/tasks/${task.id}` : "/api/tasks";
+    const url = isEditing
+      ? `${API_URL}/tasks/${task.id}`
+      : `${API_URL}/tasks`;
 
     const body = JSON.stringify({
       ...task,
