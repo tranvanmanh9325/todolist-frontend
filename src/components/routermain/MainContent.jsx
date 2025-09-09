@@ -15,6 +15,10 @@ const apiFetch = async (url, options = {}) => {
 
   const res = await fetch(url, { ...options, headers });
 
+  if (res.status === 401 || res.status === 403) {
+    throw new Error('Unauthorized: vui lòng đăng nhập lại');
+  }
+
   if (!res.ok) {
     const errorText = await res.text();
     throw new Error(`API error ${res.status}: ${errorText}`);
@@ -36,8 +40,11 @@ const MainContent = () => {
   // 🔹 Load danh sách task khi vào trang
   useEffect(() => {
     apiFetch('/api/tasks')
-      .then((data) => setTasks(data))
-      .catch((err) => console.error('Lỗi khi load tasks:', err));
+      .then((data) => setTasks(data || []))
+      .catch((err) => {
+        console.error('Lỗi khi load tasks:', err.message);
+        setTasks([]); // fallback: không hiển thị task nào nếu lỗi
+      });
   }, [setTasks]);
 
   // 🔹 Đánh dấu hoàn thành / bỏ hoàn thành
@@ -54,7 +61,7 @@ const MainContent = () => {
           prev.map((task) => (task.id === updatedTask.id ? updatedTask : task))
         );
       })
-      .catch((err) => console.error('Lỗi khi cập nhật task:', err));
+      .catch((err) => console.error('Lỗi khi cập nhật task:', err.message));
   };
 
   // 🔹 Xóa task
@@ -63,7 +70,7 @@ const MainContent = () => {
       .then(() => {
         setTasks((prev) => prev.filter((task) => task.id !== taskId));
       })
-      .catch((err) => console.error('Lỗi khi xóa task:', err));
+      .catch((err) => console.error('Lỗi khi xóa task:', err.message));
   };
 
   const activeTasks = tasks.filter((t) => !t.completed);

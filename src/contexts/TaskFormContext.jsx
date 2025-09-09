@@ -4,25 +4,40 @@ const TaskFormContext = createContext();
 
 // 🔹 Hàm tiện ích gọi API có kèm JWT
 const apiFetch = async (url, options = {}) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
+
   const headers = {
+    "Content-Type": "application/json",
     ...(options.headers || {}),
-    Authorization: token ? `Bearer ${token}` : '',
-    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 
-  const res = await fetch(url, { ...options, headers });
+  try {
+    const res = await fetch(url, {
+      ...options,
+      headers,
+      credentials: "include", // phòng khi backend có cookie
+    });
 
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`API error ${res.status}: ${errorText}`);
-  }
+    if (res.status === 401 || res.status === 403) {
+      localStorage.removeItem("token"); // 🔑 xóa token hỏng
+      throw new Error("Unauthorized: vui lòng đăng nhập lại");
+    }
 
-  const contentType = res.headers.get('content-type');
-  if (contentType && contentType.includes('application/json')) {
-    return res.json();
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`API error ${res.status}: ${errorText}`);
+    }
+
+    const contentType = res.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      return res.json();
+    }
+    return null;
+  } catch (err) {
+    console.error("❌ Lỗi API:", err.message);
+    throw err;
   }
-  return null;
 };
 
 export const TaskFormProvider = ({ children }) => {
@@ -32,21 +47,23 @@ export const TaskFormProvider = ({ children }) => {
   // Form overlay khi click từ Sidebar (mọi route)
   const [showOverlayForm, setShowOverlayForm] = useState(false);
 
-  // Danh sách task toàn cục (để chia sẻ)
+  // Danh sách task toàn cục (chia sẻ giữa các component)
   const [tasks, setTasks] = useState([]);
 
   // Mở/Tắt overlay form
   const openOverlayForm = () => setShowOverlayForm(true);
   const closeOverlayForm = () => setShowOverlayForm(false);
 
-  // 🔹 Gửi task mới hoặc cập nhật task cũ
+  // 🔹 Submit task mới hoặc update task cũ
   const submitTask = async (task) => {
     const isEditing = Boolean(task.id);
-    const method = isEditing ? 'PUT' : 'POST';
-    const url = isEditing ? `/api/tasks/${task.id}` : '/api/tasks';
-    const body = isEditing
-      ? JSON.stringify(task)
-      : JSON.stringify({ ...task, completed: false });
+    const method = isEditing ? "PUT" : "POST";
+    const url = isEditing ? `/api/tasks/${task.id}` : "/api/tasks";
+
+    const body = JSON.stringify({
+      ...task,
+      completed: isEditing ? task.completed : false,
+    });
 
     try {
       const data = await apiFetch(url, { method, body });
@@ -57,10 +74,11 @@ export const TaskFormProvider = ({ children }) => {
           : [...prev, data]
       );
 
-      closeOverlayForm(); // ✅ đóng overlay sau khi submit
-      setShowInlineForm(false); // ✅ đóng inline nếu dùng chung
+      // đóng form sau khi submit
+      closeOverlayForm();
+      setShowInlineForm(false);
     } catch (err) {
-      console.error('❌ Lỗi khi gửi task:', err);
+      console.error("❌ Lỗi khi gửi task:", err.message);
     }
   };
 
@@ -74,7 +92,7 @@ export const TaskFormProvider = ({ children }) => {
         closeOverlayForm,
         tasks,
         setTasks,
-        submitTask, // ✅ hàm mới để gửi task
+        submitTask,
       }}
     >
       {children}
@@ -82,6 +100,6 @@ export const TaskFormProvider = ({ children }) => {
   );
 };
 
-// Hook để dùng trong các component
+// Hook để dùng trong component khác
 // eslint-disable-next-line react-refresh/only-export-components
 export const useTaskForm = () => useContext(TaskFormContext);
