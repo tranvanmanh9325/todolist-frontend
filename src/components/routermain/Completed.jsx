@@ -1,19 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import './Completed.css';
+import React from "react";
+import "./Completed.css";
+import { useTaskForm } from "../../contexts/TaskFormContext"; // ✅ dùng context
 
 const Completed = () => {
-  const [tasks, setTasks] = useState([]);
+  const { tasks } = useTaskForm(); // ✅ lấy tasks từ context
 
-  useEffect(() => {
-    fetch('/api/tasks')
-      .then((res) => res.json())
-      .then((data) => {
-        const completed = data.filter((t) => t.completed && t.completedAt);
-        setTasks(completed);
-      })
-      .catch((err) => console.error(err));
-  }, []);
+  // lọc task đã hoàn thành
+  const completed = tasks.filter((t) => t.completed && t.completedAt);
 
+  // nhóm task theo ngày hoàn thành
   const groupByDate = (list) => {
     return list.reduce((groups, task) => {
       const date = new Date(task.completedAt).toDateString();
@@ -25,17 +20,18 @@ const Completed = () => {
 
   const formatTime = (isoString) => {
     const date = new Date(isoString);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
-  const grouped = groupByDate(tasks);
+  const grouped = groupByDate(completed);
 
   return (
     <div className="completed-section">
       <header>
         <h1>Completed</h1>
       </header>
-      {tasks.length === 0 ? (
+
+      {completed.length === 0 ? (
         <div className="no-completed">
           <img src="/assets/sparkle.png" alt="No tasks" />
           <h2>No completed tasks yet</h2>
@@ -55,7 +51,13 @@ const Completed = () => {
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <circle cx="10" cy="10" r="9" stroke="#4CAF50" strokeWidth="2" />
+                    <circle
+                      cx="10"
+                      cy="10"
+                      r="9"
+                      stroke="#4CAF50"
+                      strokeWidth="2"
+                    />
                     <path
                       d="M6 10.5L9 13L14 7"
                       stroke="#4CAF50"
@@ -67,11 +69,11 @@ const Completed = () => {
                 </div>
                 <div className="completed-task-info">
                   <p>
-                    <strong>You</strong> completed a task:{' '}
+                    <strong>You</strong> completed a task:{" "}
                     <span className="task-title">{task.title}</span>
                   </p>
                   <span className="completed-meta">
-                    {formatTime(task.completedAt)} · {task.project || 'Inbox'} 📁
+                    {formatTime(task.completedAt)} · {task.project || "Inbox"} 📁
                   </span>
                 </div>
               </div>
