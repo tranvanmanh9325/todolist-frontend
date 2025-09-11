@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './MainContent.css';
 import TaskForm from '../tasks/TaskForm';
 import TaskItem from '../tasks/TaskItem';
@@ -38,16 +38,6 @@ const MainContent = () => {
   const [showForm, setShowForm] = useState(false);
   const [editTask, setEditTask] = useState(null);
   const { tasks, setTasks, submitTask } = useTaskForm(); // ✅ dùng từ context
-
-  // 🔹 Load danh sách task khi vào trang
-  useEffect(() => {
-    apiFetch(`${API_URL}/tasks`)
-      .then((data) => setTasks(data || []))
-      .catch((err) => {
-        console.error('Lỗi khi load tasks:', err.message);
-        setTasks([]);
-      });
-  }, [setTasks]);
 
   // 🔹 Đánh dấu hoàn thành / bỏ hoàn thành
   const handleToggleComplete = (taskId, newStatus) => {
