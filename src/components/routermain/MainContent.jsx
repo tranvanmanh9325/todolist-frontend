@@ -51,16 +51,20 @@ const MainContent = () => {
 
   // 🔹 Đánh dấu hoàn thành / bỏ hoàn thành
   const handleToggleComplete = (taskId, newStatus) => {
+    const task = tasks.find((t) => t.id === taskId);
+    if (!task) return;
+
     apiFetch(`${API_URL}/tasks/${taskId}`, {
       method: 'PUT',
       body: JSON.stringify({
+        ...task, // ✅ giữ nguyên title, description, type...
         completed: newStatus,
         completedAt: newStatus ? new Date().toISOString() : null,
       }),
     })
       .then((updatedTask) => {
         setTasks((prev) =>
-          prev.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+          prev.map((t) => (t.id === updatedTask.id ? updatedTask : t))
         );
       })
       .catch((err) => console.error('Lỗi khi cập nhật task:', err.message));

@@ -5,10 +5,10 @@ import { useTaskForm } from "../../contexts/TaskFormContext"; // ✅ dùng conte
 const Completed = () => {
   const { tasks } = useTaskForm(); // ✅ lấy tasks từ context
 
-  // lọc task đã hoàn thành
+  // 🔹 lọc task đã hoàn thành
   const completed = tasks.filter((t) => t.completed && t.completedAt);
 
-  // nhóm task theo ngày hoàn thành
+  // 🔹 nhóm task theo ngày hoàn thành
   const groupByDate = (list) => {
     return list.reduce((groups, task) => {
       const date = new Date(task.completedAt).toDateString();
@@ -73,7 +73,7 @@ const Completed = () => {
                     <span className="task-title">{task.title}</span>
                   </p>
                   <span className="completed-meta">
-                    {formatTime(task.completedAt)} · {task.project || "Inbox"} 📁
+                    {formatTime(task.completedAt)} · {task.type || "Inbox"} 📁
                   </span>
                 </div>
               </div>

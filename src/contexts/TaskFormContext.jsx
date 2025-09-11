@@ -65,10 +65,13 @@ export const TaskFormProvider = ({ children }) => {
       ? `${API_URL}/tasks/${task.id}`
       : `${API_URL}/tasks`;
 
-    const body = JSON.stringify({
-      ...task,
-      completed: isEditing ? task.completed : false,
-    });
+    // ✅ Nếu là edit → giữ nguyên dữ liệu cũ và merge task mới
+    // ✅ Nếu là create → completed mặc định false
+    const body = JSON.stringify(
+      isEditing
+        ? { ...task }
+        : { ...task, completed: false }
+    );
 
     try {
       const data = await apiFetch(url, { method, body });

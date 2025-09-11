@@ -13,11 +13,12 @@ const TaskReport = () => {
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter((t) => t.completed).length;
 
+  // 🔹 gom task theo type (trước đây nhầm là project)
   const categoryMap = {};
   tasks.forEach((task) => {
-    const project = task.project || 'Uncategorized';
-    if (!categoryMap[project]) categoryMap[project] = 0;
-    categoryMap[project]++;
+    const category = task.type || 'Uncategorized';
+    if (!categoryMap[category]) categoryMap[category] = 0;
+    categoryMap[category]++;
   });
 
   const chartData = Object.entries(categoryMap).map(([name, count]) => ({
@@ -28,7 +29,7 @@ const TaskReport = () => {
 
   return (
     <div className="task-report">
-      <h2 className="chart-title">Tasks Per Category</h2> {/* ✅ chuyển lên đầu */}
+      <h2 className="chart-title">Tasks Per Category</h2>
 
       <ResponsiveContainer width="100%" height={400}>
         <PieChart>
@@ -49,7 +50,6 @@ const TaskReport = () => {
         </PieChart>
       </ResponsiveContainer>
 
-      {/* ✅ chuyển phần tổng xuống dưới */}
       <div className="task-report-summary">
         <div className="summary-box">
           <span>Total Tasks:</span>
