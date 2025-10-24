@@ -61,7 +61,9 @@ export const TaskFormProvider = ({ children }) => {
   useEffect(() => {
     const loadTasks = async () => {
       try {
+        console.log("🔄 Loading tasks from:", `${API_URL}/tasks`);
         const data = await apiFetch(`${API_URL}/tasks`);
+        console.log("✅ Tasks loaded:", data);
         setTasks(data || []);
       } catch (err) {
         console.error("❌ Lỗi khi load tasks:", err.message);

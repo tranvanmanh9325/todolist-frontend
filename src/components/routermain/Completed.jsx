@@ -1,6 +1,7 @@
 import React from "react";
 import "./Completed.css";
 import { useTaskForm } from "../../contexts/TaskFormContext"; // ✅ dùng context
+import { safeToDateString, safeToTimeString } from "../../utils/dateUtils";
 
 const Completed = () => {
   const { tasks } = useTaskForm(); // ✅ lấy tasks từ context
@@ -11,7 +12,9 @@ const Completed = () => {
   // 🔹 nhóm task theo ngày hoàn thành
   const groupByDate = (list) => {
     return list.reduce((groups, task) => {
-      const date = new Date(task.completedAt).toDateString();
+      if (!task.completedAt) return groups;
+      const date = safeToDateString(task.completedAt);
+      if (date === 'Invalid date') return groups;
       if (!groups[date]) groups[date] = [];
       groups[date].push(task);
       return groups;
@@ -19,8 +22,7 @@ const Completed = () => {
   };
 
   const formatTime = (isoString) => {
-    const date = new Date(isoString);
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    return safeToTimeString(isoString, { hour: "2-digit", minute: "2-digit" });
   };
 
   const grouped = groupByDate(completed);

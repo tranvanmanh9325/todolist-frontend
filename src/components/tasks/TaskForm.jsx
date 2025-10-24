@@ -49,10 +49,31 @@ const TaskForm = ({ onCancel, onSubmit, task }) => {
       setType(task.type || '');
 
       const detail = task.taskDetail || {};
-      setSelectedDate(detail.dueDate ? new Date(detail.dueDate) : null);
+      
+      // Safe date parsing
+      let parsedDate = null;
+      if (detail.dueDate) {
+        try {
+          parsedDate = new Date(detail.dueDate);
+          if (isNaN(parsedDate)) parsedDate = null;
+        } catch (error) {
+          console.warn('Invalid dueDate:', detail.dueDate, error);
+          parsedDate = null;
+        }
+      }
+      setSelectedDate(parsedDate);
 
-      let parsedTime = detail.time ? new Date(detail.time) : null;
-      if (isNaN(parsedTime)) parsedTime = null;
+      // Safe time parsing
+      let parsedTime = null;
+      if (detail.time) {
+        try {
+          parsedTime = new Date(detail.time);
+          if (isNaN(parsedTime)) parsedTime = null;
+        } catch (error) {
+          console.warn('Invalid time:', detail.time, error);
+          parsedTime = null;
+        }
+      }
       setSelectedTime(parsedTime);
 
       setSelectedDuration(detail.duration || null);

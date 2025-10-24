@@ -9,9 +9,10 @@ import Sidebar from './components/sidebars/Sidebar';
 import MainContent from './components/routermain/MainContent';
 import Completed from './components/routermain/Completed';
 import TaskOverlay from './components/tasks/TaskOverlay';
-import TaskReport from './components/tasks/TaskReport';
+import Overview from './components/routermain/Overview';
 import Help from './components/routerhelp/Help';
 import { TaskFormProvider } from './contexts/TaskFormContext';
+import ErrorBoundary from './components/ErrorBoundary';
 
 import ImageSlider from './components/routerlogin/background/ImageSlider';
 import LoginForm from './components/routerlogin/signin/LoginForm';
@@ -26,26 +27,28 @@ import './App.css';
 function AppLayout() {
   return (
     <TaskFormProvider>
-      <div className="app-container">
-        <Sidebar />
-        <div className="main-wrapper">
-          <Routes>
-            <Route path="main" element={<MainContent />} />
-            <Route path="completed" element={<Completed />} />
-            <Route path="overview" element={<TaskReport />} />
-            <Route path="help" element={<Help />} />
+      <ErrorBoundary>
+        <div className="app-container">
+          <Sidebar />
+          <div className="main-wrapper">
+            <Routes>
+              <Route path="main" element={<MainContent />} />
+              <Route path="completed" element={<Completed />} />
+              <Route path="overview" element={<Overview />} />
+              <Route path="help" element={<Help />} />
 
-            {/* ✅ Bổ sung các route con */}
-            <Route path="today" element={<div>Today page (placeholder)</div>} />
-            <Route path="upcoming" element={<div>Upcoming page (placeholder)</div>} />
-            <Route path="search" element={<div>Search page (placeholder)</div>} />
+              {/* ✅ Bổ sung các route con */}
+              <Route path="today" element={<div>Today page (placeholder)</div>} />
+              <Route path="upcoming" element={<div>Upcoming page (placeholder)</div>} />
+              <Route path="search" element={<div>Search page (placeholder)</div>} />
 
-            {/* ✅ Redirect /app → /app/main */}
-            <Route index element={<Navigate to="main" replace />} />
-          </Routes>
+              {/* ✅ Redirect /app → /app/main */}
+              <Route index element={<Navigate to="main" replace />} />
+            </Routes>
+          </div>
+          <TaskOverlay />
         </div>
-        <TaskOverlay />
-      </div>
+      </ErrorBoundary>
     </TaskFormProvider>
   );
 }
