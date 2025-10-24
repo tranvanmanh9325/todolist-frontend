@@ -20,6 +20,18 @@ const Sidebar = () => {
   const userAvatar = storedUser?.avatar || null;
   const userInitial = fullName.charAt(0).toUpperCase(); // lấy chữ cái đầu tiên của full name
 
+  // 🔧 Fallback: Sử dụng avatar trực tiếp nếu backend proxy không hoạt động
+  const avatarUrl = userAvatar;
+
+  // 🔍 Debug avatar
+  console.log('🔍 Avatar Debug:', {
+    userAvatar,
+    avatarUrl,
+    userId: storedUser?.id,
+    userAvatarType: typeof userAvatar,
+    userAvatarLength: userAvatar?.length
+  });
+
   const toggleSidebar = () => setCollapsed(!collapsed);
 
   // ✅ Xử lý click avatar
@@ -195,10 +207,24 @@ const Sidebar = () => {
             onClick={handleAvatarClick}
           >
             {userAvatar ? (
-              <img src={userAvatar} alt="avatar" className="avatar-img" />
-            ) : (
-              <span>{userInitial}</span>
-            )}
+              <img 
+                src={avatarUrl} 
+                alt="avatar" 
+                className="avatar-img"
+                onLoad={() => {
+                  console.log('✅ Avatar loaded successfully:', avatarUrl);
+                }}
+                onError={(e) => {
+                  console.log('❌ Avatar failed to load:', avatarUrl);
+                  console.log('❌ Error details:', e);
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'block';
+                }}
+              />
+            ) : null}
+            <span style={{ display: userAvatar ? 'none' : 'block' }}>
+              {userInitial}
+            </span>
           </div>
           {!collapsed && (
             <span className="username" onClick={handleAvatarClick}>
