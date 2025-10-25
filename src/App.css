@@ -18,7 +18,7 @@
   display: flex;
   min-height: 100vh;
   background-color: #f8f9fa;
-  overflow: hidden; /* không cho container cuộn, chỉ cuộn bên trái */
+  overflow: hidden;
 }
 
 .login-left-motion {
@@ -29,15 +29,29 @@
   flex-direction: column;
   justify-content: flex-start;
   background-color: white;
-  overflow-y: auto; /* ✅ cho phép cuộn khi form dài */
-
-  /* ✅ Ẩn thanh cuộn trên tất cả trình duyệt */
-  scrollbar-width: none;     /* Firefox */
-  -ms-overflow-style: none;  /* IE và Edge */
+  overflow-y: auto;
+  max-height: 100vh;
+  
+  /* Custom scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(248, 0, 0, 0.3) transparent;
 }
 
 .login-left-motion::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  width: 6px;
+}
+
+.login-left-motion::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.login-left-motion::-webkit-scrollbar-thumb {
+  background: rgba(248, 0, 0, 0.3);
+  border-radius: 3px;
+}
+
+.login-left-motion::-webkit-scrollbar-thumb:hover {
+  background: rgba(248, 0, 0, 0.5);
 }
 
 .login-right {
@@ -62,6 +76,17 @@
 }
 
 /* ==================== RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+  .login-left-motion {
+    padding: 30px;
+    max-width: 100%;
+  }
+  
+  .login-right {
+    padding: 15px;
+  }
+}
+
 @media (max-width: 768px) {
   .login-container {
     flex-direction: column;
@@ -70,19 +95,31 @@
   .login-left-motion {
     max-width: 100%;
     width: 100%;
-    padding: 20px;
-    overflow-y: auto; /* vẫn cho cuộn ở mobile */
-
-    /* Ẩn scrollbar ở mobile luôn */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  .login-left-motion::-webkit-scrollbar {
-    display: none;
+    padding: 24px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    margin: 16px;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   }
 
   .login-right {
-    min-height: 250px;
+    min-height: 200px;
     padding: 10px;
+    order: -1; /* Đặt ảnh lên trên ở mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .login-left-motion {
+    padding: 20px;
+    margin: 12px;
+    border-radius: 12px;
+    max-height: calc(100vh - 150px);
+  }
+  
+  .login-right {
+    min-height: 150px;
+    padding: 8px;
   }
 }

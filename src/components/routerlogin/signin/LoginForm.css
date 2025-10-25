@@ -4,7 +4,32 @@
   display: flex;
   flex-direction: column;
   max-width: 500px;
-  background-color: white;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.login-left::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #f80000d5, #ff4444, #f80000d5);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 .logo-section {
@@ -15,6 +40,11 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
 }
 
 .logo-icon {
@@ -23,12 +53,33 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background: transparent;
+  border-radius: 8px;
+  padding: 4px;
+  color: #f80000d5;
+  transition: all 0.3s ease;
+}
+
+.logo-icon:hover {
+  transform: rotate(5deg);
+  color: #ff4444;
 }
 
 .logo-text {
   font-size: 24px;
   font-weight: 700;
-  color: #f80000d5;
+  background: linear-gradient(135deg, #f80000d5, #ff4444);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: all 0.3s ease;
+}
+
+.logo:hover .logo-text {
+  background: linear-gradient(135deg, #ff4444, #f80000d5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .login-form-section {
@@ -40,14 +91,30 @@
 .welcome-title {
   font-size: 32px;
   font-weight: 700;
-  color: #1f2937;
+  background: linear-gradient(135deg, #1f2937, #374151);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: 8px;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .welcome-subtitle {
   font-size: 16px;
   color: #6b7280;
   margin-bottom: 40px;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
 }
 
 .login-form {
@@ -70,17 +137,23 @@
 }
 
 .form-input {
-  padding: 12px 16px;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
+  padding: 16px 20px;
+  border: 2px solid rgba(229, 231, 235, 0.5);
+  border-radius: 12px;
   font-size: 16px;
-  transition: border-color 0.2s;
-  background-color: white;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  position: relative;
+  animation: fadeInUp 0.6s ease-out 0.4s both;
 }
 
 .form-input:focus {
   outline: none;
   border-color: #f80000d5;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 4px rgba(248, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .form-input::placeholder {
@@ -103,19 +176,40 @@
 }
 
 .sign-in-btn {
-  background-color: #f80000d5;
+  background: linear-gradient(135deg, #f80000d5, #ff4444);
   color: white;
   border: none;
-  padding: 14px;
-  border-radius: 8px;
+  padding: 16px 24px;
+  border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.6s ease-out 0.6s both;
+  box-shadow: 0 8px 24px rgba(248, 0, 0, 0.3);
+}
+
+.sign-in-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.sign-in-btn:hover::before {
+  left: 100%;
 }
 
 .sign-in-btn:hover {
-  background-color: #d60000d5;
+  background: linear-gradient(135deg, #d60000d5, #e60000);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(248, 0, 0, 0.4);
 }
 
 .divider {
@@ -192,18 +286,157 @@
 /* Style for GoogleLogin button to match existing design */
 .google-oauth-button {
   width: 100%;
-  padding: 12px;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  background-color: white;
+  padding: 16px 24px;
+  border: 2px solid rgba(229, 231, 235, 0.5);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
   font-size: 16px;
   font-weight: 500;
   color: #374151;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: all 0.3s ease;
   margin-bottom: 10px;
+  animation: fadeInUp 0.6s ease-out 0.8s both;
+  position: relative;
+  overflow: hidden;
+}
+
+.google-oauth-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+  transition: left 0.5s ease;
+}
+
+.google-oauth-button:hover::before {
+  left: 100%;
 }
 
 .google-oauth-button:hover {
   border-color: #d1d5db;
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .login-left {
+    padding: 30px;
+    max-width: 100%;
+    margin: 20px;
+    border-radius: 20px;
+  }
+  
+  .logo-section {
+    margin-bottom: 40px;
+  }
+  
+  .welcome-title {
+    font-size: 28px;
+  }
+  
+  .welcome-subtitle {
+    font-size: 15px;
+    margin-bottom: 30px;
+  }
+  
+  .login-form {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .login-left {
+    padding: 24px;
+    margin: 16px;
+    border-radius: 16px;
+    max-height: calc(100vh - 32px);
+  }
+  
+  .logo-section {
+    margin-bottom: 32px;
+  }
+  
+  .logo-text {
+    font-size: 20px;
+  }
+  
+  .welcome-title {
+    font-size: 24px;
+  }
+  
+  .welcome-subtitle {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+  
+  .login-form {
+    gap: 16px;
+  }
+  
+  .form-input {
+    padding: 14px 16px;
+    font-size: 15px;
+  }
+  
+  .sign-in-btn {
+    padding: 14px 20px;
+    font-size: 15px;
+  }
+  
+  .google-oauth-button {
+    padding: 14px 20px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-left {
+    padding: 20px;
+    margin: 12px;
+    border-radius: 12px;
+    max-height: calc(100vh - 24px);
+  }
+  
+  .logo-section {
+    margin-bottom: 24px;
+  }
+  
+  .logo-text {
+    font-size: 18px;
+  }
+  
+  .welcome-title {
+    font-size: 22px;
+  }
+  
+  .welcome-subtitle {
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  
+  .login-form {
+    gap: 14px;
+  }
+  
+  .form-input {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+  
+  .sign-in-btn {
+    padding: 12px 18px;
+    font-size: 14px;
+  }
+  
+  .google-oauth-button {
+    padding: 12px 18px;
+    font-size: 14px;
+  }
 }

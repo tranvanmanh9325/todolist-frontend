@@ -12,28 +12,58 @@ const images = [
 
 const ImageSlider = () => {
   const [current, setCurrent] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % images.length);
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrent((prev) => (prev + 1) % images.length);
+        setIsTransitioning(false);
+      }, 300);
     }, 3000);
 
     return () => clearInterval(interval);
-  }, []); // ✅ Đảm bảo luôn dùng đúng số lượng ảnh
+  }, []);
+
+  const handleDotClick = (index) => {
+    if (index !== current) {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrent(index);
+        setIsTransitioning(false);
+      }, 300);
+    }
+  };
 
   return (
     <div className="image-slider">
+      {/* Floating particles */}
+      <div className="particles">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="particle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${3 + Math.random() * 4}s`,
+            }}
+          />
+        ))}
+      </div>
+      
       <img
         src={images[current]}
         alt={`Slide ${current + 1}`}
-        className="slider-image"
+        className={`slider-image ${isTransitioning ? 'transitioning' : ''}`}
       />
       <div className="slider-dots">
         {images.map((_, index) => (
           <span
             key={index}
             className={`dot ${index === current ? 'active' : ''}`}
-            onClick={() => setCurrent(index)} // ✅ Click dot để chuyển ảnh
+            onClick={() => handleDotClick(index)}
           ></span>
         ))}
       </div>

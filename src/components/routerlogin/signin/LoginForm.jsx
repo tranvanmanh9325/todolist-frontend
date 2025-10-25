@@ -69,12 +69,12 @@ const LoginForm = () => {
                 width="18"
                 height="18"
                 rx="2"
-                stroke="#f80000d5"
+                stroke="currentColor"
                 strokeWidth="2"
               />
               <path
                 d="M9 12l2 2 4-4"
-                stroke="#f80000d5"
+                stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"

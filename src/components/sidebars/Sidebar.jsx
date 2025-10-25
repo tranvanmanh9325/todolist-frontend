@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
+import { createPortal } from "react-dom";
 import { useTaskForm } from "../../contexts/TaskFormContext";
 import "./Sidebar.css";
 
@@ -48,7 +49,11 @@ const Sidebar = () => {
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setShowMenu(false);
+        // Kiểm tra xem click có phải vào popup không
+        const popup = document.querySelector('.user-menu');
+        if (popup && !popup.contains(e.target)) {
+          setShowMenu(false);
+        }
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -233,19 +238,34 @@ const Sidebar = () => {
           )}
 
           {/* Popup Log out */}
-          <AnimatePresence>
-            {showMenu && (
+          {showMenu && createPortal(
+            <AnimatePresence>
               <motion.div
                 className="user-menu"
+                style={{
+                  position: 'fixed',
+                  top: menuRef.current ? menuRef.current.getBoundingClientRect().bottom + 8 : 0,
+                  left: menuRef.current ? menuRef.current.getBoundingClientRect().left : 0,
+                  zIndex: 99999
+                }}
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
                 transition={{ duration: 0.2 }}
               >
-                <button onClick={handleLogout}>Log out</button>
+                <button 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleLogout();
+                  }}
+                >
+                  Log out
+                </button>
               </motion.div>
-            )}
-          </AnimatePresence>
+            </AnimatePresence>,
+            document.body
+          )}
         </div>
 
         {/* Toggle button */}
